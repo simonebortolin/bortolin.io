@@ -1,7 +1,6 @@
 ---
 title: "Il percorso verso l'ecosostenibilità"
 description: "Come conciliare comfort ed ambiente"
-slug: livello--3-parte-1
 date: 2023-01-01
 math: true
 ---
@@ -52,7 +51,7 @@ Un edificio sicuro e duraturo lo è se è costruito secondo le più recenti norm
 - Presenza di un un numero adeguato di interuttori di protezione MCB, RCD e/o RCBO, tutti ben coordinati e rispettosi delle normative CEI 64-08 e CEI 0-21, in particolare consiglio di massimizzare il numero di RCBO e di minizzare il numero di RCD, garantendo una migliore selettività differenziale, e di avere per le prese, pompe di calore e climatizzatori una protezione tipo A o F.
 - Presenza di un numero adeguato di corrugati aggiuntivi per future espansioni.
 
-## Aggiornamento 15 dicembre 2022
+## Cosa ne pensa l'unione europea
 
 Secondo la Commissione europea, gli edifici dell'UE sono responsabili del 40% del consumo energetico e del 36% delle emissioni di gas a effetto serra. Il 15 dicembre 2021 la Commissione ha approvato una proposta legislativa di revisione della direttiva sulla prestazione energetica nell'edilizia, Energy performance of building directive (Epbd), che fa parte del pacchetto "Pronti per il 55%".L’obiettivo del provvedimento è di agire in modo prioritario sul 15% degli edifici più energivori per ogni stato membro, collocati nella classe energetica G (la più bassa). 
 

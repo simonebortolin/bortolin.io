@@ -1,0 +1,14 @@
+baseURL: https://bortolin.io/
+languageCode: it-it
+title: Simone Bortolin Blog
+theme: "PaperMod"
+params:
+  comments: true
+  author: Simone Bortolin
+  ShowReadingTime: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowBreadCrumbs: true
+  ShowCodeCopyButtons: true
+  UseHugoToc: true
+  disableSpecial1stPost: true

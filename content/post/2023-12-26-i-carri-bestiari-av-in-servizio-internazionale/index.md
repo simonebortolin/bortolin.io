@@ -73,7 +73,7 @@ Come si può notare, il Frecciarossa 1000, soprattutto a causa della notevole ri
 
 ## ETR.600: Ultimo Baluardo della Vera Alta Velocità, che speriamo non sia l'ultimo
 
-D'altra parte, gli ETR.600, costruiti nel 2012, sono mantenuti in ottime condizioni e costituiscono gli ultimi treni dotati di un meccanismo di pendolamento. Questa caratteristica consente loro di raggiungere elevate velocità anche su linee tortuose, garantendo un'esperienza di viaggio avanzata e confortevole. Tuttavia, il loro numero è limitato a soli 12, di cui 11 sono effettivamente in servizio dopo l'incidente di Faenza, sperando che rientrerà in servizio il prima possibile.
+D'altra parte, gli ETR.600, costruiti tra il 2006 e il 2008, sono mantenuti in ottime condizioni e costituiscono gli ultimi treni dotati di un meccanismo di pendolamento. Questa caratteristica consente loro di raggiungere elevate velocità anche su linee tortuose, garantendo un'esperienza di viaggio avanzata e confortevole. Tuttavia, il loro numero è limitato a soli 12, di cui 11 sono effettivamente in servizio dopo l'incidente di Faenza, sperando che rientrerà in servizio il prima possibile.
 
 Allo stesso modo, sembra che i servizi internazionali tra l'Italia e la Slovenia saranno gestiti dagli ETR.700. Questa decisione appare discutibile, soprattutto considerando che il territorio montuoso della Slovenia si adatta bene ai treni di tipo pendolino. Inoltre, la linea Venezia-Trieste permette velocità superiori rango P (cioè per i treni che pendolano) rispetto agli ETR.700. È fondamentale notare che i servizi ad alta velocità locali sono già svolti con i treni SŽ 310, una variante dell'ETR.460 italiano. Questo solleva il terzo campanello d'allarme sull'appropriato utilizzo degli ETR.700 in questa relazione.
 

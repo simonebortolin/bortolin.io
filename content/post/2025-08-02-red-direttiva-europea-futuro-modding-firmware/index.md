@@ -4,14 +4,24 @@ date: 2025-08-02
 math: false
 ---
 
+![](red.png)
+
 > Una rete più sicura, meno modificabile — ma non per forza meno libera: In breve:
+> 
 > 🇪🇺 La Direttiva RED e il Regolamento UE 2022/30 impongono nuovi requisiti di sicurezza per dispositivi radio (Wi-Fi, Bluetooth, LTE) venduti in Europa.
+> 
 > 🛡️ I produttori dovranno garantire che il firmware radio non sia modificabile per evitare abusi o interferenze.
+> 
 > 🖥️ Linux e firmware alternativi (OpenWrt, LineageOS) non sono vietati, ma l’hardware futuro sarà più blindato.
+> 
 > 🔐 Solo sistemi con Secure Boot attivo e kernel firmati avranno piena compatibilità.
+> 
 > ⚠️ Alcune distribuzioni libere (Arch, Gentoo, Alpine) potrebbero avere supporto limitato.
+> 
 > 🧩 L’impatto è minimo per gli utenti esperti, e il vantaggio è una rete più sicura e meno vulnerabile.
+> 
 > 🧯 Fine del ciarpame: la RED bloccherà la vendita di dispositivi IoT insicuri, con firmware scadente o configurazioni pericolose.
+> 
 > 📅 Applicazione effettiva: dal 1 agosto 2025 per tutti i dispositivi nuovi sul mercato UE.
 
 Negli ultimi anni, l’Unione Europea ha deciso di affrontare di petto un problema spesso ignorato: la **sicurezza dei dispositivi radio e connessi**. Router, smartphone, notebook, smart home, giocattoli Wi-Fi: tutto ciò che trasmette o riceve segnali deve essere progettato per resistere a intrusioni, abusi, configurazioni pericolose.
@@ -38,6 +48,8 @@ Nel 2022, con il **Regolamento Delegato (UE) 2022/30**[^red_regolamento], l’UE
 - integrità delle reti.
 
 Tutto questo entrerà pienamente in vigore il **1 agosto 2025**. Da quel momento, ogni dispositivo radio venduto in Europa dovrà dimostrare di essere “cybersecure”.
+
+![](timeline.png)
 
 ## Perché il firmware radio deve essere regolato
 
@@ -147,8 +159,6 @@ Chi è abituato ad avere pieno controllo sui dispositivi dovrà adattarsi, ma **
 
 E in fondo, se tutto questo significa meno router con *admin/admin* e meno prese smart zombie sulla rete...  
 ...forse ne vale la pena.
-
----
 
 📚 **Fonti e approfondimenti**  
 [^red_direttiva]: [Direttiva RED 2014/53/EU](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32014L0053)  

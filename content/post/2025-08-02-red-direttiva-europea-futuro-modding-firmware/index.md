@@ -82,11 +82,11 @@ La preoccupazione più comune è che queste normative blocchino la possibilità 
 
 Il punto è più sfumato.
 
-La RED **non vieta Linux**, né i firmware open source. Ma richiede che il produttore del dispositivo garantisca che **le componenti radio non possano essere alterate liberamente**, per evitare abusi o danni a terzi.
+La RED **non vieta Linux**, né i firmware open source. Ma richiede che il produttore del dispositivo garantisca che **le componenti radio non possano essere alterate liberamente**, per evitare abusi o danni a terzi. Attualmente i produttori di pc già validano tramite il BIOS le schede wifi installate e il loro firmware, e molto probabilmente verrà rafforzata la protezione di questa parte non vietato Linux.
 
 ### Cosa cambia per router, smartphone e PC?
 
-- **Firmware radio**: dovranno essere firmati, controllati, non modificabili. Non per censura, ma per evitare che l’utente (anche se esperto) possa, ad esempio, aumentare la potenza Wi-Fi o usare frequenze vietate.
+- **Firmware radio**: dovranno essere firmati, controllati, non modificabili. Non per limitare il modding, ma per evitare che l’utente (anche se esperto) possa, ad esempio, aumentare la potenza Wi-Fi o usare frequenze vietate.
 - **Bootloader**: alcuni produttori (come Samsung[^dday]) stanno iniziando a bloccare lo sblocco del bootloader per garantire la sicurezza della piattaforma e poter rispettare la direttiva[^samsung].
 - **Driver open source**: potrebbero ridursi, perché i produttori preferiranno rilasciare driver chiusi e certificati, garantendo così la conformità automatica.
 - **UART e accessi fisici**: le interfacce seriali e debug dovranno essere disattivate o protette.
@@ -140,6 +140,8 @@ non possiamo più permettere che la libertà personale coincida con la possibili
 
 C'è molta confusione online su cosa comporterà davvero l'applicazione della Direttiva RED e del Regolamento 2022/30. Vale la pena chiarire alcuni punti fondamentali:
 
+- ❌ **In America non ci sono questi vincoli** → **Falso**. In America le normative sono più stringenti, e normative simili alla RED esistono già da anni.
+
 - ❌ **La RED vieta Linux** → **Falso**. Linux, così come qualsiasi altro sistema operativo, può continuare ad essere usato. La RED si applica **ai dispositivi** e in particolare ai **moduli radio**, non ai sistemi operativi.
 
 - ❌ **OpenWrt sarà illegale** → **Falso**. Nessuna normativa vieta i firmware alternativi. Sarà però responsabilità del produttore garantire che l’uso di firmware modificati **non comprometta la sicurezza radio**, ad esempio tramite l’uso di componenti separati o firmware radio firmati.
@@ -147,6 +149,7 @@ C'è molta confusione online su cosa comporterà davvero l'applicazione della Di
 - ❌ **Non si potranno più aggiornare i dispositivi** → **Falso**. Gli aggiornamenti continueranno a esistere, ma in modo più sicuro: **firmati, autenticati, provenienti da fonti affidabili**. Questo non impedisce modifiche, ma le rende più strutturate e meno improvvisate.
 
 Come spesso accade, **non è la tecnologia a cambiare**, ma il modo in cui la gestiamo — con più attenzione alle conseguenze.
+
 
 ## Conclusione
 

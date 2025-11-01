@@ -29,12 +29,12 @@ Questo significa che un attaccante con accesso locale o con un malware può:
 
 Sia Windows che macOS (e iOS) includono da tempo un componente fondamentale:
 
-TPM (Trusted Platform Module) su Windows
+- TPM (Trusted Platform Module) su Windows
+- Secure Enclave su macOS e dispositivi Apple
 
-Secure Enclave su macOS e dispositivi Apple
-
-- Questi moduli custodiscono chiavi crittografiche in modo isolato dal sistema operativo.
-- Le chiavi non possono essere esportate, lette dalla CPU o copiate altrove: ogni operazione di cifratura/decifratura avviene all’interno del chip.
+Questi moduli custodiscono chiavi crittografiche in modo isolato dal sistema operativo.
+Le chiavi non possono essere esportate, lette dalla CPU o copiate altrove: ogni operazione di cifratura/decifratura avviene all’interno del chip.
+Per approfondire come Windows utilizza il TPM per proteggere credenziali e sessioni, Microsoft fornisce una guida dettagliata sul funzionamento del Trusted Platform Module[^microsoft_tpm].
 
 Questo significa che:
 
@@ -107,6 +107,8 @@ Molti progetti open source, anche se teoricamente trasparenti, non seguono siste
 
 In sintesi: la sicurezza e l’affidabilità dipendono dall’approccio ingegneristico e dai processi di validazione, non solo dalla disponibilità del codice sorgente.
 
+Questi processi di sicurezza sono necessari anche per rispettare le direttive europee sulla cybersecurity, come **NIS2**, il **GDPR** e gli standard ISO/IEC 27001/27002[^nis2_gdpr].
+
 ## Conclusione
 
 La vera sicurezza non viene da un software, ma dalla combinazione tra hardware di fiducia e buone pratiche di autenticazione.
@@ -119,10 +121,14 @@ Il futuro della sicurezza non è “gestire meglio le password” — è smetter
 📚 **Fonti e approfondimenti**  
 
 [^youtube_hack]: Esempi significativi di furti di sessione / “cookie theft” e takeover di canali YouTube:
-- **Linus Tech Tips (Linus Media Group)** — takeover avvenuto tramite furto di token/session cookie dal browser di un dipendente: gli attaccanti hanno avviato live con truffe in criptovalute bypassando password e 2FA. Analisi e ricostruzioni dell’incidente sono disponibili in diversi resoconti tecnici e post di approfondimento. :contentReference[oaicite:0]{index=0}
-- **Andrea Bentivegna (BlackGeek)** — il creator italiano ha raccontato pubblicamente di vari episodi di hacking e takeover (tra cui clonazione SIM e compromissione del canale) in diversi video sul suo canale; sono reperibili i video in cui parla dell’accaduto. :contentReference[oaicite:1]{index=1}
-- **Campagna “Cookie Theft” (phishing / malware) contro creator YouTube** — Google Threat Analysis Group ha descritto e interrotto dal 2019 una campagna che distribuiva malware “cookie‑stealer” per rubare sessioni attive salvate nei browser; indagini e reportage nazionali ne hanno dato conto (es. Punto Informatico, CyberTrends). :contentReference[oaicite:2]{index=2}
+- **Linus Tech Tips (Linus Media Group)** — (takeover avvenuto tramite furto di token/session cookie dal browser di un dipendente: gli attaccanti hanno avviato live con truffe in criptovalute bypassando password e 2FA. Analisi e ricostruzioni dell’incidente sono disponibili in diversi resoconti tecnici e post di approfondimento)[https://www.tomshw.it/hardware/lhack-al-canale-linus-tech-tips-mostra-che-nessuno-e-al-sicuro?utm_source=chatgpt.com]
+- **Andrea Bentivegna (BlackGeek)** — (il creator italiano ha raccontato pubblicamente di vari episodi di hacking e takeover (tra cui clonazione SIM e compromissione del canale) in diversi video sul suo canale; sono reperibili i video in cui parla dell’accaduto)[https://www.youtube.com/watch?v=nU3zEVtaBTQ&utm_source=chatgpt.com]
+- **Campagna “Cookie Theft” (phishing / malware) contro creator YouTube** — (Google Threat Analysis Group ha descritto e interrotto dal 2019 una campagna che distribuiva malware “cookie‑stealer” per rubare sessioni attive salvate nei browser; indagini e reportage nazionali ne hanno dato conto (es. Punto Informatico, CyberTrends))[https://www.punto-informatico.it/cookie-theft-attacco-phishing-contro-youtuber/?utm_source=chatgpt.com]
+**Nota:** le modalità tecniche variano (malware che estrae cookie, file fasulli con payload, clonazione SIM come vettore complementare) e le timeline precise differiscono per caso; per Linus l’incidente principale è documentato nei report pubblici del 2023/2024, mentre la campagna “Cookie Theft” è stata segnalata pubblicamente da Google a partire dal 2021.  
 
-**Nota:** le modalità tecniche variano (malware che estrae cookie, file fasulli con payload, clonazione SIM come vettore complementare) e le timeline precise differiscono per caso; per Linus l’incidente principale è documentato nei report pubblici del 2023/2024, mentre la campagna “Cookie Theft” è stata segnalata pubblicamente da Google a partire dal 2021. :contentReference[oaicite:3]{index=3}
-
-[^bitwarden_vuln]: Un utente su Reddit ha segnalato una vulnerabilità nell’estensione del browser di Bitwarden che permetterebbe, con un semplice click, l’esfiltrazione di dati sensibili come carta di credito, login, TOTP o passkey. La discussione è ancora aperta e il problema non è stato completamente risolto al momento della pubblicazione. :contentReference[oaicite:0]{index=0}
+[^bitwarden_vuln]: (Un utente su Reddit ha segnalato una vulnerabilità nell’estensione del browser di Bitwarden che permetterebbe, con un semplice click, l’esfiltrazione di dati sensibili come carta di credito, login, TOTP o passkey. La discussione è ancora aperta e il problema non è stato completamente risolto al momento della pubblicazione)[https://www.reddit.com/r/Bitwarden/comments/1mtwnin/bitwarden_browser_extension_vulnerability/]
+[^microsoft_tpm]: (Microsoft Learn — How Windows uses the TPM)[https://learn.microsoft.com/en-us/windows/security/hardware-security/tpm/how-windows-uses-the-tpm]
+[^nis2_gdpr]: Direttive e regolamenti europei: 
+- (NIS2 (Network and Information Security Directive))[https://digital-strategy.ec.europa.eu/en/policies/nis-directive]
+- (GDPR (General Data Protection Regulation))[https://gdpr-info.eu/]
+- ISO/IEC 27001/27002 — standard internazionali per la gestione della sicurezza delle informazioni.

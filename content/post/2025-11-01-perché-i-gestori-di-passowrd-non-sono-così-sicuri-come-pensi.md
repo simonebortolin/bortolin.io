@@ -1,6 +1,6 @@
 ---
 title: "Perché i gestori di password non sono così sicuri come pensi"
-date: 2025-11-11
+date: 2025-11-01
 math: false
 ---
 

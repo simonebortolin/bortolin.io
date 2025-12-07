@@ -50,9 +50,9 @@ Con una differenza sostanziale:
 Chi lavora nel mondo startup lo sa bene:  
 i tempi sono stretti, i team piccoli, le priorità cambiano ogni settimana.
 
-La sicurezza? "Dopo il lancio".  
-Le patch? "Più avanti".  
-DevOps? "C'è Docker, facciamo tutto in container".
+- La sicurezza? "Dopo il lancio".  
+- Le patch? "Più avanti".  
+- DevOps? "C'è Docker, facciamo tutto in container".
 
 Il risultato sono infrastrutture che sembrano funzionare… finché qualcosa non si rompe.  
 E quando qualcosa si rompe — come nel caso di questa vulnerabilità Next.js — ci si accorge del castello di carte:
@@ -98,7 +98,8 @@ Alcuni sviluppatori ripetono con convinzione:
 Suona bene, ma è una bugia. In realtà:
 - senza hardening, logging e healthcheck, il container non aiuta a capire nulla;
 - build non deterministiche, dato che si usa :latest, significano che il container in locale può essere completamente diverso da quello in produzione;
-- "muletto" senza strumenti di sviluppo = più problemi e false sensazioni di sicurezza.
+- "muletto" senza strumenti di sviluppo = più problemi e false sensazioni di sicurezza;
+- lentezza aggiuntiva: un layer di virtualizzazione in più su stack già lenti come TypeScript/JavaScript.
 
 Per molte startup la soluzione più sicura sarebbe affidarsi a servizi gestiti:
 - Vercel, Netlify, Render o simili riducono drasticamente i problemi di build, spazio, aggiornamenti e sicurezza;
@@ -131,6 +132,8 @@ E aggiungo sempre un'immagine più concreta:
 
 > "Non usate i Dockerfile, è come mettersi un bastone nella ruota mentre si va in bici."
 
+Un po' come quando uno sviluppatore scopre qualche magia che fa i template del C++ e li abusa: sembra potente, ma alla fine ti ritrovi con un sistema incomprensibile, lento e fragile.
+
 In pratica, molti sviluppatori fraintendono il Dockerfile come strumento quotidiano di sviluppo, quando il suo vero scopo è la build per produzione e la distribuzione in ambienti controllati (CI/CD, cluster Kubernetes, cloud).
 
 #### Quando il Dockerfile non serve a nulla
@@ -139,10 +142,10 @@ In pratica, molti sviluppatori fraintendono il Dockerfile come strumento quotidi
 
 Alcuni esempi concreti:
 
-- **.NET**: si usa dotnet run, dotnet test; compilare dentro un container è raro, tipicamente solo in CI.
-- **Java**: sviluppo locale con Maven (mvn spring-boot:run) o Gradle (./gradlew bootRun), debugger, hot reload; il container qui non aggiunge nulla.
-- **pnpm/npm**: sviluppo live con Vite, Next.js, React-scripts, ts-node. Tutti vogliono hot reload, debugger, dev server. Il container qui è solo latenza e frustrazione.
-- **Python**: venv, Poetry, pipenv, Jupyter. Usare un container introduce complessità su volumi, virtualenv e debugging.
+- **.NET**: si usa `dotnet run`, `dotnet test`; compilare dentro un container è raro, tipicamente solo in CI.
+- **Java**: sviluppo locale con Maven (`mvn spring-boot:run`) o Gradle (`./gradlew bootRun`), debugger, hot reload; il container qui non aggiunge nulla.
+- **pnpm/npm**: sviluppo live con Vite, Next.js, React-scripts, `ts-node`. Tutti vogliono hot reload, debugger, dev server. Il container qui è solo latenza e frustrazione.
+- **Python**: `venv`, Poetry, pipenv, Jupyter. Usare un container introduce complessità su volumi, virtualenv e debugging.
 
 Ogni ecosistema ha già un gestore d'ambiente (package manager, virtualenv, runtime, strumenti di build), quindi aggiungere un Dockerfile spesso significa doppiare le modalità di configurazione senza benefici reali.
 

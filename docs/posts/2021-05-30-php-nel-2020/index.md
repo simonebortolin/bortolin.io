@@ -1,7 +1,6 @@
 ---
 title: PHP nel 2021
 date: '2021-05-30'
-layout: post
 excerpt: >-
     Sento sempre più parlare che non ha senso imparare il PHP nel 2021, ma è realmente vero? Iniziamo con il primo problema: la modalità classica di PHP (legacy), quella didattica non fa distinzione tra richieste GET e POST.
 ---

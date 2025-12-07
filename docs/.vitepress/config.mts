@@ -1,5 +1,6 @@
 import { defineConfig } from 'vitepress'
 import markdownItKatex from 'markdown-it-katex'
+import markdownItFootnote from 'markdown-it-footnote'
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -7,6 +8,7 @@ export default defineConfig({
   description: "Blog personale di Simone Bortolin",
   lang: 'it-IT',
   base: '/',
+  cleanUrls: true,
   
   head: [
     ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css', integrity: 'sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV', crossorigin: 'anonymous' }]
@@ -15,6 +17,7 @@ export default defineConfig({
   markdown: {
     config: (md) => {
       md.use(markdownItKatex)
+      md.use(markdownItFootnote)
     }
   },
 

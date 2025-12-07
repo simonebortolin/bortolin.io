@@ -19,8 +19,10 @@ const isPost = computed(() => {
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
+  // Return original string as fallback if date parsing fails
+  // This prevents displaying "Invalid Date" in the UI
   if (isNaN(date.getTime())) {
-    return dateString // Return original string if invalid
+    return dateString
   }
   return date.toLocaleDateString('it-IT', {
     year: 'numeric',

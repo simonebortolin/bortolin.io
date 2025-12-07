@@ -108,6 +108,61 @@ Per molte startup la soluzione più sicura sarebbe affidarsi a servizi gestiti:
 La cultura DevOps "di superficie" è uno dei motivi principali del disastro.  
 Uno dei motivi per cui la vulnerabilità Next.js ha avuto un impatto così pesante è la qualità mediocre (e a volte disastrosa) dei Dockerfile usati in produzione.
 
+### Il Dockerfile: mito, realtà e perché quasi nessuno ne ha bisogno
+
+#### Cosa è un Dockerfile
+
+Un Dockerfile è un file di testo che contiene istruzioni per costruire un'immagine Docker, ovvero un'istantanea di un ambiente software pronto per essere eseguito come container. Include informazioni su:
+
+- Sistema operativo base (ad esempio ubuntu o alpine)
+- Dipendenze e librerie da installare
+- Configurazioni dell'ambiente (variabili, directory di lavoro)
+- Comandi da eseguire all'avvio del container (ENTRYPOINT, CMD)
+
+Il suo obiettivo principale è creare un ambiente riproducibile, che può essere eseguito su qualsiasi macchina con Docker installato.
+
+Come dico sempre, il Dockerfile è come i template del C++:
+
+> "O li conosci bene e li sai usare, oppure improvvisarsi con i Dockerfile è un male."
+
+E aggiungo sempre un'immagine più concreta:
+
+> "Non usate i Dockerfile, è come mettersi un bastone nella ruota mentre si va in bici."
+
+In pratica, molti sviluppatori fraintendono il Dockerfile come strumento quotidiano di sviluppo, quando il suo vero scopo è la build per produzione e la distribuzione in ambienti controllati (CI/CD, cluster Kubernetes, cloud).
+
+#### Quando il Dockerfile non serve a nulla
+
+"Il Dockerfile è irrilevante nel ciclo di sviluppo reale."
+
+Alcuni esempi concreti:
+
+- **.NET**: si usa dotnet run, dotnet test; compilare dentro un container è raro, tipicamente solo in CI.
+- **Java**: sviluppo locale con Maven (mvn spring-boot:run) o Gradle (./gradlew bootRun), debugger, hot reload; il container qui non aggiunge nulla.
+- **pnpm/npm**: sviluppo live con Vite, Next.js, React-scripts, ts-node. Tutti vogliono hot reload, debugger, dev server. Il container qui è solo latenza e frustrazione.
+- **Python**: venv, Poetry, pipenv, Jupyter. Usare un container introduce complessità su volumi, virtualenv e debugging.
+
+Ogni ecosistema ha già un gestore d'ambiente (package manager, virtualenv, runtime, strumenti di build), quindi aggiungere un Dockerfile spesso significa doppiare le modalità di configurazione senza benefici reali.
+
+Qualcuno difende il Dockerfile:
+
+> "Alla fine ci sono i Dockerfile, è riproducibile, non è una strage se non abbiamo IaC"
+
+Sì, rispondo solo se lo si fa con le best practices, ed il 99% dei Dockerfile non lo è.
+
+#### Chi fa i Dockerfile
+
+Chi parla con passione del proprio Dockerfile di solito rientra in quattro categorie:
+
+1. **Aziende con requisiti di sovranità dei dati** (banche, assicurazioni). Il Dockerfile è necessario, ma nessuno se ne vanta.
+2. **Aziende pubbliche o università**, dove i dipendenti cercano di rendersi indispensabili gestendo self-hosted e citando la "sovranità dei dati" come scusa.
+3. **Startup che vogliono risparmiare sui costi di hosting**.
+4. **Laboratori casalinghi**, appassionati che sperimentano con Proxmox e server riciclati dalla fiera dell'usato.
+
+Insomma, se incontri qualcuno che parla con passione del suo Dockerfile, probabilmente rientra in una delle ultime tre categorie: carriera garantita, risparmio fittizio o laboratorio casalingo con server riciclati.
+
+---
+
 Le startup spesso partono da:
 
 - un template trovato su GitHub,

@@ -1,6 +1,6 @@
 ---
 title: "La vulnerabilità Next.js che nessuno vuole raccontare: startup, DevOps improvvisati e Dockerfile pericolosi"
-date: 2025-02-12
+date: 2025-12-07
 math: false
 ---
 

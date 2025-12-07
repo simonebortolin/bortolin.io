@@ -14,7 +14,7 @@ import { computed } from 'vue'
 const { page, frontmatter } = useData()
 
 const isPost = computed(() => {
-  return page.value.relativePath.startsWith('posts/')
+  return page.value.relativePath.startsWith('post/')
 })
 
 function formatDate(dateString: string): string {

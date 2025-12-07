@@ -19,6 +19,9 @@ const isPost = computed(() => {
 
 function formatDate(dateString: string): string {
   const date = new Date(dateString)
+  if (isNaN(date.getTime())) {
+    return dateString // Return original string if invalid
+  }
   return date.toLocaleDateString('it-IT', {
     year: 'numeric',
     month: 'long',

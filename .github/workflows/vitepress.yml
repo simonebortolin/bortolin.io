@@ -53,7 +53,7 @@ jobs:
           NODE_ENV: production
       
       - name: Copy CNAME to dist
-        run: cp CNAME docs/.vitepress/dist/
+        run: cp CNAME docs/.vitepress/dist/ || echo "CNAME file not found, skipping"
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

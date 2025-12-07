@@ -189,6 +189,8 @@ La riproducibilità promessa dal Dockerfile è quasi sempre illusoria, a meno di
 
 ---
 
+### Gli antipattern più diffusi: come le startup distruggono i loro Dockerfile
+
 Le startup spesso partono da:
 
 - un template trovato su GitHub,

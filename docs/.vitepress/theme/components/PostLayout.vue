@@ -35,6 +35,9 @@ function formatDate(dateString: string): string {
 <style scoped>
 .post-layout h1 {
   margin-top: 0;
+  font-size: 2.5rem;
+  line-height: 1.2;
+  font-weight: 700;
 }
 
 .post-date {

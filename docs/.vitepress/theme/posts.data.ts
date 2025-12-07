@@ -29,7 +29,19 @@ export default createContentLoader('posts/**/*.md', {
 
 function formatDate(raw: string): Post['date'] {
   const date = new Date(raw)
+  
+  // Validate date
+  if (isNaN(date.getTime())) {
+    console.warn(`Invalid date format: ${raw}`)
+    return {
+      time: 0,
+      string: 'Data non valida'
+    }
+  }
+  
+  // Set to noon UTC to avoid timezone issues
   date.setUTCHours(12)
+  
   return {
     time: +date,
     string: date.toLocaleDateString('it-IT', {

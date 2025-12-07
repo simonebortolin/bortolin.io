@@ -95,7 +95,7 @@ Alcuni sviluppatori ripetono con convinzione:
 
 Suona bene, ma è una bugia. In realtà:
 - senza hardening, logging e healthcheck, il container non aiuta a capire nulla;
-- build non deterministiche, dato che si usa :lasts, significano che il container in locale può essere completamente diverso da quello in produzione;
+- build non deterministiche, dato che si usa :latest, significano che il container in locale può essere completamente diverso da quello in produzione;
 - "muletto" senza strumenti di sviluppo = più problemi e false sensazioni di sicurezza.
 
 Per molte startup la soluzione più sicura sarebbe affidarsi a servizi gestiti:
@@ -229,13 +229,10 @@ VOLUME /data
 
 Montare volumi senza controllo:
 
-espone file sensibili,
-
-permette all'attaccante di modificare la build in tempo reale,
-
-bypassa il filesystem read-only,
-
-rende impossibile tracciare modifiche malevole.
+- espone file sensibili,
+- permette all'attaccante di modificare la build in tempo reale,
+- bypassa il filesystem read-only,
+- rende impossibile tracciare modifiche malevole.
 
 ### Il Dockerfile "funziona in debug, quindi va bene"
 

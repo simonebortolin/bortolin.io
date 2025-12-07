@@ -1,0 +1,13 @@
+/**
+ * Custom styles for the blog
+ */
+
+.giscus {
+    margin-top: 20px;
+}
+
+/* Math rendering fixes */
+.katex-display {
+    overflow-x: auto;
+    overflow-y: hidden;
+}

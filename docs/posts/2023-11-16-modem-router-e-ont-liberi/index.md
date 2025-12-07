@@ -3,7 +3,7 @@ title: Modem, router e ONT liberi
 date: '2023-11-16'
 layout: post
 excerpt: >-
-    Sento sempre più parlare che non ha senso imparare il PHP nel 2021, ma è realmente vero? Iniziamo con il primo problema: la modalità classica di PHP (legacy), quella didattica non fa distinzione tra richieste GET e POST.
+    Analisi sulla libertà di scelta di modem, router e ONT in Italia, dalla vittoria della Free Modem Alliance alla diffusione della FTTH e le sfide degli ONT liberi.
 ---
 
 Recentemente, la Free Modem Alliance[^1] ha intensificato gli sforzi per promuovere la questione degli ONT liberi. Dopo la vittoria nella battaglia per i modem liberi nel 2018, l'attenzione si è spostata sulla crescente diffusione della FTTH, con l'obiettivo di eliminare gli ONT all'interno degli appartamenti degli utenti. Tuttavia, non è tutto oro quello che luccica, e in questo post esamineremo il perché.

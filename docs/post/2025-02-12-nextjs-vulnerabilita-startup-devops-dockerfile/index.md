@@ -18,6 +18,8 @@ Una vulnerabilità nella supply chain di un framework così diffuso può generar
 - 📦 SBOM, analisi delle dipendenze e aggiornamenti regolari devono diventare obbligatori, non consigliati.  
 - 🛡️ DevOps non è optional: serve cultura, non solo strumenti.
 
+![Ecosistema Next.js e Docker](https://github.com/user-attachments/assets/f466f7bd-1695-4f14-bf31-f40d1c6e84a1)
+
 ---
 
 ## Non è solo una CVE: è un fallimento culturale

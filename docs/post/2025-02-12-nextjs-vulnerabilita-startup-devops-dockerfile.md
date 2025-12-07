@@ -161,6 +161,27 @@ Chi parla con passione del proprio Dockerfile di solito rientra in quattro categ
 
 Insomma, se incontri qualcuno che parla con passione del suo Dockerfile, probabilmente rientra in una delle ultime tre categorie: carriera garantita, risparmio fittizio o laboratorio casalingo con server riciclati.
 
+#### Il mito del Dockerfile "miracoloso"
+
+C'è una frase che circola tra alcuni DevOps e appassionati di container:
+
+> "I Dockerfile ti aiutano a debuggare anche in un muletto senza gli strumenti di sviluppo e garantiscono la riproducibilità assoluta."
+
+Spoiler: non è vero. 😅
+
+L'engine Docker pesa molto di più di un classico runtime come dotnet o npm. Non stiamo parlando solo di qualche MB: parliamo di layer di runtime, daemon, network overlay, storage driver… un container è più ingombrante di un ambiente di sviluppo locale già ottimizzato.
+
+Per fare debugging dentro un container, spesso perdi l'integrazione con:
+- hot reload
+- debugger
+- strumenti interattivi
+
+Per un React dev, un Spring Boot developer o uno sviluppatore Python con Jupyter, il container diventa un ostacolo più che un aiuto.
+
+La riproducibilità promessa dal Dockerfile è quasi sempre illusoria, a meno di seguire rigorosamente le best practices, cosa che il 99% dei Dockerfile non fa.
+
+**In sintesi**: il Dockerfile non sostituisce mai gli strumenti nativi del ciclo di sviluppo. Serve solo a creare l'immagine finale per produzione, da distribuire su cloud o cluster. Tutto il resto è mito, frustrazione o… esercizio per server casalinghi riciclati.
+
 ---
 
 Le startup spesso partono da:

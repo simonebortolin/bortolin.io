@@ -3,7 +3,6 @@ title: L’Alligatore, una serie TV noir Veneta
 date: '2021-01-10'
 thumb_img_path: images/alligatore.jpg
 content_img_path: images/alligatore.jpg
-layout: post
 excerpt: >-
     L'Alligatore è una serie televisiva italiana del 2020 basata sui romanzi della Saga dell'Alligatore di Massimo Carlotto girata ad inizio 2020 giusto prima dello scoppio della Pandemia, tra gli attori troviamo Matteo Martari volto noto della TV italiana che ultimamente è stato protagonista di alcune serie. La serie TV è ambientata nella “Louisiana veneta” che secondo Massimo Carlotto (autore della Saga) è il triangolo tra i Colli Euganei, Comacchio e Latisana piena di Canali e Fiumi, prendendo dentro la laguna veneta e il delta del Po’ aree di perse “mistiche” e bellissime. Si riconoscono i luoghi iconici di Padova, come l’Orto Botanico e il Castello Carrarese, Sotto il Salone, la piazza delle Erbe, della Frutta e dei Signori, il Caffè Pedrocchi, Prato della Valle, l’ex cinema Quirinetta, ora QBar, in Piazza Insurrezione, lo storico pub “Gasoline” all'Arcella, il Palazzo Santo Stefano, sede storica della Provincia di Padova in Piazza Antenore, La Cittadella in Piazzetta Bardella. Oltre che casali, vigneti e ville dei Colli Euganei, l’aviosuperficie di Bagnoli di Sopra, Montegrotto Terme, località come Lio Piccolo, Porto Viro e Albarella, e per finire il delta del Po.
 ---

@@ -1,7 +1,6 @@
 ---
 title: La rivoluzione dell'USB-C
 date: '2021-01-20'
-layout: post
 excerpt: >-
     È da 5/6 anni che si sente parlare di USB-C, il connettore del futuro, esso infatti garantisce due linee indipendenti USB 3.1 garantendo quindi una velocità massima di 20 Gb/s (due linee da 10 Gb/s), ma non solo questo infatti attraverso la modalità “ALT” è capace di instradare pure segnali DisplayPort, MHL e Thunderbolt.
 ---

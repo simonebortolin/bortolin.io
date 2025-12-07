@@ -3,7 +3,6 @@ title: Il ponte di Genova, la rinascita dell'Ingegneria Italiana
 date: '2020-06-04'
 thumb_img_path: images/ponte-genova.jpg
 content_img_path: images/ponte-genova.jpg
-layout: post
 excerpt: >-
     L’Italia, insieme alla Francia, è sempre stata una pioniera dell’ingegneria. È dal cinquecento che le discipline ingegneristiche attraggono un forte interesse dalle comunità accademiche e scientifiche. Ma soprattutto dal 900 l’ingegneria ha visto un grandissimo passo in avanti: dall’introduzione del cemento armato e il convertitore Bessemer che portò a una maggiore disponibilità di Acciaio fanno sì che gli edifici son sempre più alti, nacquero gli ascensori inventati da E. Otis, ancora oggi su numerosi ascensori e scale mobili troviamo questo nome, nacquero le prime grandi strutture in cemento armato e acciaio (la torre Eiffel, i primi ponti in cemento armato, …), tutti pensavano che il cemento fosse eterno, come i resti dei Romani, ancora oggi visibili e staticamente intatti. Nel dopoguerra inizia l’uso del cemento armato precompresso, ampiamente usato in tutta la fase di ricostruzione post-bellica attraverso le travi precompresse tipiche di qualsiasi ponte costruito dal dopoguerra ad oggi. Ma negli ultimi trent'anni la nostra ingegneria sembra proprio morta.
 

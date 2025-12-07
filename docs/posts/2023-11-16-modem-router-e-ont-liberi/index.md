@@ -1,7 +1,6 @@
 ---
 title: Modem, router e ONT liberi
 date: '2023-11-16'
-layout: post
 excerpt: >-
     Analisi sulla libertà di scelta di modem, router e ONT in Italia, dalla vittoria della Free Modem Alliance alla diffusione della FTTH e le sfide degli ONT liberi.
 ---

@@ -1,12 +1,12 @@
 ---
 title: "La vulnerabilità Next.js che nessuno vuole raccontare: startup, DevOps improvvisati e Dockerfile pericolosi"
-date: 2025-02-12
+date: 2025-12-07
 math: false
 ---
 
 Negli ultimi anni abbiamo assistito a una proliferazione di framework "full-stack" progettati per ridurre al minimo la complessità percepita dagli sviluppatori. Next.js è il re indiscusso di questa generazione: semplice, elegante, potente, con un ecosistema che promette di risolvere tutto — routing, rendering, API, streaming, edge computing, deployment.
 
-Ed è proprio per questo che la recente vulnerabilità critica di Next.js è stata così rischiosa.  
+Ed è proprio per questo che la recente vulnerabilità critica di Next.js ([CVE-2025-55182](https://www.cve.org/CVERecord?id=CVE-2025-55182) / [CVE-2025-66478](https://nextjs.org/blog/CVE-2025-66478)) è stata così rischiosa.  
 Non perché fosse tecnicamente più devastante di altre, ma perché ha colpito **esattamente il posto dove il mondo startup è più fragile: la fiducia cieca nella magia dei framework moderni**.
 
 Una vulnerabilità nella supply chain di un framework così diffuso può generare un impatto **peggiore di Log4j**, non tanto per la gravità intrinseca, quanto per la massa di progetti che dipendono da esso, spesso mantenuti da team piccolissimi e senza competenze DevOps.

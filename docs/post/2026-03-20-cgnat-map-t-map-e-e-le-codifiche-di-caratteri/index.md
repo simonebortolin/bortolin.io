@@ -46,6 +46,15 @@ Nel tempo abbiamo visto approcci molto diversi:
 - UTF-8: efficiente e scalabile
 - UTF-32: perfetto ma costoso
 
+Nella seguente tabella vediamo la rappresentazione di alcuni caratteri con i vari encoding:
+
+| Encoding     | A      | b      | à        | ß        | 漢            | 字            | 😂                      |
+|--------------|--------|--------|----------|----------|---------------|---------------|------------------------|
+| ASCII        | 0x41   | 0x62   | —        | —        | —             | —             | —                      |
+| ISO-8859-1   | 0x41   | 0x62   | 0xE0     | 0xDF     | —             | —             | —                      |
+| UTF-16       | 0x0041 | 0x0062 | 0x00E0   | 0x00DF   | 0x6F22        | 0x5B57        | 0xD83D 0xDE02          |
+| UTF-8        | 0x41   | 0x62   | 0xC3 0xA0| 0xC3 0x9F| 0xE6 0xBC 0xA2| 0xE5 0xAD 0x97| 0xF0 0x9F 0x98 0x82    |
+
 Le transizioni IPv6 raccontano esattamente la stessa storia.
 
 ### ASCII: l'origine di tutto
@@ -125,7 +134,7 @@ Ed è anche per questo che il parallelo con MAP-T regge così bene: entrambi spo
 
 ### MAP-T è come UTF-8
 
-MAP-T è una delle soluzioni più eleganti dal punto di vista ingegneristico, e segue una filosofia molto simile. Fa una cosa semplice ma potente: elimina lo stato nel core. Si mappa un sottoinsieme di indirizzi IPv4 in IPv6 e si fa una traduzione degli IP, proprio come in UTF-8, si usa una codifica che permette di esprimere tutti i 2^20 caratteri in modo scalare, i più usati in 8 bit, poi altri a 16, 24 e infine a 32 bit con le surrogate pairs.
+MAP-T[^RFC7599] è una delle soluzioni più eleganti dal punto di vista ingegneristico, e segue una filosofia molto simile. Fa una cosa semplice ma potente: elimina lo stato nel core. Si mappa un sottoinsieme di indirizzi IPv4 in IPv6 e si fa una traduzione degli IP, proprio come in UTF-8, si usa una codifica che permette di esprimere tutti i 2^20 caratteri in modo scalare, i più usati in 8 bit, poi altri a 16, 24 e infine a 32 bit con le surrogate pairs.
 
 Invece di mantenere un grande stato nel core di rete, MAP-T sposta l'intelligenza verso i bordi e usa una traduzione stateless tra IPv4 e IPv6. Questo riduce drasticamente la complessità operativa dell'ISP e migliora la scalabilità.
 
@@ -139,7 +148,33 @@ Non è perfetto: supporta solo TCP, UDP e ICMP, non altri protocolli come GRE, u
 
 Come UTF-8, MAP-T non è la soluzione più "pura" dal punto di vista teorico, ma è quella che nella pratica tende a funzionare meglio nella maggior parte degli scenari.
 
-Non a caso molti operatori lo preferiscono per deployment su larga scala[^ipv6_case_studies].
+Non a caso molti operatori lo preferiscono per deployment su larga scala[^ipv6_case_studies][^SkyIT-1][^SkyIT-2][^SkyUK].
+
+```mermaid
+flowchart LR
+    %% Left side - User N
+    U1["User N: Private IPv4 Network"]
+    CE1["MAP-T CE: NAPT44 + MAP-T"]
+
+    %% Right side - User M
+    U2["User M: Private IPv4 Network"]
+    CE2["MAP-T CE: NAPT44 + MAP-T"]
+
+    %% Core network
+    CORE["IPv6-only Network"]
+    BR["MAP-T Border Relay"]
+    V4["Public IPv4 Network"]
+
+    %% IPv6 nodes
+    V6N["IPv6 nodes (IPv4-embedded IPv6 address)"]
+
+    %% Connections
+    U1 --> CE1 --> CORE
+    U2 --> CE2 --> CORE
+
+    CORE --> BR --> V4
+    CORE --> V6N
+```
 
 ### UTF-16: un compromesso diverso
 
@@ -171,7 +206,7 @@ Ed è esattamente lo stesso motivo per cui MAP-E, pur non essendo sempre la solu
 
 UTF-16 non è sbagliato — anzi, in certi contesti è molto efficiente — ma introduce un trade-off diverso rispetto a UTF-8.
 
-MAP-E si colloca in una posizione simile.
+MAP-E[^RFC7597] si colloca in una posizione simile.
 
 Invece della traduzione, MAP-E usa l'incapsulamento IPv4-in-IPv6. Questo evita alcune complessità della traduzione stateless, ma introduce overhead di tunneling e un diverso profilo prestazionale.
 
@@ -184,6 +219,28 @@ I punti chiave sono:
 - supporto a qualsiasi protocollo over IP, non solo ICMP, UDP e TCP
 
 Come UTF-16, può essere perfettamente sensato in certi ambienti, ma non è sempre la scelta più efficiente in termini generali. Il fatto che MAP-E supporti qualsiasi protocollo over IP, non solo ICMP, UDP e TCP, ricorda tanto che in UTF-16 la stragrande maggioranza dei caratteri usati quotidianamente (in particolare quelli del Basic Multilingual Plane, quindi anche le lingue orientali) rientra in un singolo code unit da 16 bit, e solamente le estensioni di ideogrammi e le emoji sforano la singola code unit UTF-16.
+
+```
+flowchart LR
+    %% Left side - User N
+    U1["User N: Private IPv4 Network"]
+    CE1["MAP-E CE\nNAPT44 + MAP"]
+
+    %% Right side - User M
+    U2["User M: Private IPv4 Network"]
+    CE2["MAP-E CE: NAPT44 + MAP"]
+
+    %% Core network
+    CORE["IPv6-only Network: (MAP Domain)"]
+    BR["MAP-E Border Relay"]
+    V4["Public IPv4 Network"]
+
+    %% Connections
+    U1 --> CE1 --> CORE
+    U2 --> CE2 --> CORE
+
+    CORE --> BR --> V4
+```
 
 ### UTF-32: l'approccio ideale ma costoso
 
@@ -206,7 +263,7 @@ Finché gli IPv4 costavano poco era sostenibile. Oggi, su larga scala residenzia
 
 ### DS-Lite e Lw4o6
 
-DS-Lite introduce un tunnel IPv4 dentro IPv6, ma mantiene un CGNAT lato operatore.
+DS-Lite[^RFC6333] introduce un tunnel IPv4 dentro IPv6, ma mantiene un CGNAT lato operatore.
 
 È una via di mezzo tra incapsulamento e NAT centralizzato.
 
@@ -216,6 +273,13 @@ Il parallelo più vicino è un UTF-16 senza surrogate pairs, un po' come quello 
 - ma sei ancora vincolato a limiti legacy
 
 Funziona, ma non scala elegantemente.
+
+Lw4o6[^RFC7596][^Lw4o6] è un'estensione dell'architettura DS-Lite che sposta la funzione NAPT44 al tunnel client IPv4/IPv6 situato nel CPE. È
+L'architettura Lw4o6 è composta da due componenti: 
+- lw4o6: Lightweight Basic Bridging BroadBand
+- lwAFTR: Lightweight Address Family Transition Router.
+
+In DS-Lite, NAPT44[^RFC3022] si concentra sull'AFTR. Questa funzione si basa interamente sul mantenimento dello stato (stato per flusso). NAPT44 può anche eseguire funzioni di registrazione per le connessioni in uscita dell'ISP (in alcuni paesi la registrazione delle connessioni è un requisito legale). Lw4o6 fornisce una soluzione al problema di DS-Lite (elevata capacità di elaborazione richiesta per CGNAT e registrazione) distribuendo NAPT44 ai CPE. Pertanto, la quantità di informazioni sullo stato in lwAFTR è significativamente ridotta, poiché non si basa più su un modello per flusso ma su un modello per abbonato (riduzione significativa dell'utilizzo di memoria e CPU da parte di lwAFTR). In altre parole, lwAFTR non richiede più CGNAT.
 
 ### Dove hanno davvero senso: fisso vs mobile
 
@@ -275,7 +339,7 @@ Ma da solo non basta.
 
 Ed è qui che arriva 464XLAT.
 
-464XLAT è un NAT64/DNS64 dove la conversione viene fatta sia tra CPE/Telefono e rete dell'ISP sia in uscita della rete dell'ISP. Questo permette di essere molto simile a livello di funzionamento a MAP-T.
+464XLAT[^RFC6877] è un NAT64/DNS64 dove la conversione viene fatta sia tra CPE/Telefono e rete dell'ISP sia in uscita della rete dell'ISP. Questo permette di essere molto simile a livello di funzionamento a MAP-T.
 
 464XLAT fa doppia conversione:
 
@@ -357,7 +421,18 @@ L'analogia con gli encoding aiuta a vedere una cosa fondamentale:
 
 E proprio come negli encoding, alla fine vince chi trova il miglior equilibrio tra efficienza, compatibilità e complessità.
 
-[^apnic46]: APNIC 46 Training — *IPv6 Transition and IPv6-Only*, disponibile su <https://bgp4all.com/pfs/_media/training/apnic46/ipv6-trans-and-ipv6-only_v10.pdf>
-[^apricot2015]: Akira Nakagawa — *IPv6 Transition Technologies*, presentazione APRICOT 2015, disponibile su <https://www.slideshare.net/slideshow/3-20150304apricot2015fukuokaakira-1425344708/45873211>
-[^ipv6_case_studies]: RapidSeedbox — *IPv6 Case Studies*, disponibile su <https://www.rapidseedbox.com/blog/ipv6-case-studies>
-[^cellular_networks]: *IPv6 in Cellular Networks*, disponibile su <https://www.slideshare.net/slideshow/ipv6-in-cellular-networks/79787780>
+[^apnic46]: [APNIC 46 Training — *IPv6 Transition and IPv6-Only*](https://bgp4all.com/pfs/_media/training/apnic46/ipv6-trans-and-ipv6-only_v10.pdf)
+[^apricot2015]: [Akira Nakagawa — *IPv6 Transition Technologies*, presentazione APRICOT 2015](https://www.slideshare.net/slideshow/3-20150304apricot2015fukuokaakira-1425344708/45873211)
+[^ipv6_case_studies]: [RapidSeedbox — *IPv6 Case Studies*](https://www.rapidseedbox.com/blog/ipv6-case-studies)
+[^cellular_networks]: [*IPv6 in Cellular Networks*](https://www.slideshare.net/slideshow/ipv6-in-cellular-networks/79787780)
+[^RFC3022]: [Traditional IP Network Address Translator (Traditional NAT)](https://datatracker.ietf.org/doc/html/rfc3022)
+[^RFC7599]: [Mapping of Address and Port using Translation (MAP-T)](https://datatracker.ietf.org/doc/html/rfc7599)
+[^RFC7597]: [Mapping of Address and Port with Encapsulation (MAP-E)](https://datatracker.ietf.org/doc/html/rfc7597)
+[^RFC6877]: [464XLAT: Combination of Stateful and Stateless Translation](https://datatracker.ietf.org/doc/html/rfc6877)
+[^RFC7596]: [Lightweight 4over6: An Extension to the Dual-Stack Lite Architecture](https://datatracker.ietf.org/doc/html/rfc7596)
+[^RFC6333]: [Dual-Stack Lite Broadband Deployments Following IPv4 Exhaustion](https://datatracker.ietf.org/doc/html/rfc6333)
+[^Lw4o6]: [Lw4o6 - Overview](https://www.lacnic.net/innovaportal/file/5522/1/lw4o6-en.pdf)
+[^SkyIT-1]: [SKY WIFI & IPv6](https://www.itnog.it/itnog8/files/6-Sky%20Wifi%20&%20MAP-T%20-%20ITNOG.pdf)
+[^SkyIT-2]: [IPv6-Only with MAP-T](https://www.ripe.net/media/documents/Richard_Patterson_-_Sky_Italia_and_MAP-T_-_RIPE_Open_House_2021.pdf)
+[^SkyUK]: [ISP Sky Broadband UK Deploying IP Address Sharing via MAP-T UPDATE](https://www.ispreview.co.uk/index.php/2024/06/isp-sky-broadband-uk-deploying-ip-address-sharing-via-map-t.html)
+

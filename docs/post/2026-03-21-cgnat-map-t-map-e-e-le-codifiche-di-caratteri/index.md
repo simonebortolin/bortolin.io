@@ -293,16 +293,16 @@ Funziona, ma non scala elegantemente.
 
 ```mermaid
 flowchart LR
-    U[Utente IPv4 Privato] -->|Pacchetto IPv4| CPE[CPE/Router DS-Lite]
-    CPE -->|Incapsula IPv4 in IPv6| ISP6[Rete IPv6 dell'ISP]
-    ISP6 -->|Arriva all'AFTR| AFTR[AFTR (Decapsula + CGNAT)]
-    AFTR -->|IPv4 pubblica verso Internet| INTERNET[Internet IPv4]
+    U["Utente IPv4 Privato"] -->|"Pacchetto IPv4"| CPE["CPE/Router DS-Lite"]
+    CPE -->|"Incapsula IPv4 in IPv6"| ISP6["Rete IPv6 dell'ISP"]
+    ISP6 -->|"Arriva all'AFTR"| AFTR[AFTR ("Decapsula + CGNAT")]
+    AFTR -->|"IPv4 pubblica verso Internet"| INTERNET["Internet IPv4"]
 
     %% Frecce di ritorno
-    INTERNET -->|Risposta IPv4| AFTR
-    AFTR -->|Incapsula IPv4 in IPv6| ISP6
-    ISP6 -->|Decapsula| CPE
-    CPE -->|Pacchetto IPv4| U
+    INTERNET -->|"Risposta IPv4"| AFTR
+    AFTR -->|"Incapsula IPv4 in IPv6"| ISP6
+    ISP6 -->|"Decapsula"| CPE
+    CPE -->|"Pacchetto IPv4"| U
 
     style U fill:#f9f9d9,stroke:#999,stroke-width:1px
     style CPE fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
@@ -405,7 +405,7 @@ flowchart LR
     V4P["v4p host"]
 
     %% CLAT
-    CLAT["CLAT\n(Customer-side translator)"]
+    CLAT["CLAT (Customer-side translator)"]
 
     %% IPv6 Internet
     V6NET["IPv6 Internet"]

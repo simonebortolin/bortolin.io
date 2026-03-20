@@ -295,7 +295,7 @@ Funziona, ma non scala elegantemente.
 flowchart LR
     U["Utente IPv4 Privato"] -->|"Pacchetto IPv4"| CPE["CPE/Router DS-Lite"]
     CPE -->|"Incapsula IPv4 in IPv6"| ISP6["Rete IPv6 dell'ISP"]
-    ISP6 -->|"Arriva all'AFTR"| AFTR[AFTR ("Decapsula + CGNAT")]
+    ISP6 -->|"Arriva all'AFTR"| AFTR["AFTR (Decapsula + CGNAT)"]
     AFTR -->|"IPv4 pubblica verso Internet"| INTERNET["Internet IPv4"]
 
     %% Frecce di ritorno

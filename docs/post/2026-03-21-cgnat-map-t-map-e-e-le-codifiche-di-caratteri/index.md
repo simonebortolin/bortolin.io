@@ -362,6 +362,8 @@ Android lo supporta nativamente da anni, e questo ha fatto la differenza.
 
 ## Dove ha senso usare cosa
 
+![DS-Lite, MAP-E, 464XLAT, MAP-T: Tunnel vs traduzione, Stateful vs Stateless](grafico.png)
+
 Nel fisso, dove hai CPE potenti e topologie stabili, puoi permetterti soluzioni più sofisticate:
 
 - MAP-T

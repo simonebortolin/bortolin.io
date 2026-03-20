@@ -1,6 +1,6 @@
 ---
 title: "CGNAT, MAP-T e MAP-E spiegati con le codifiche di caratteri"
-date: 2026-03-20
+date: 2026-03-21
 math: false
 excerpt: >-
     Negli ultimi anni, con l'esaurimento degli IPv4, gli operatori hanno iniziato

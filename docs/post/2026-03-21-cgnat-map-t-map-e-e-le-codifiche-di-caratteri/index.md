@@ -257,7 +257,6 @@ flowchart LR
     style CORE fill:#d3e0f9,stroke:#2a52be,stroke-width:2px
     style BR fill:#f9d3d3,stroke:#e36414,stroke-width:2px
     style V4 fill:#f0f0f0,stroke:#555,stroke-width:1px
-    style V6N fill:#e5d3f9,stroke:#9b30ff,stroke-width:2px
 ```
 
 ### UTF-32: l'approccio ideale ma costoso

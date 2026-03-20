@@ -174,6 +174,15 @@ flowchart LR
 
     CORE --> BR --> V4
     CORE --> V6N
+
+    style U1 fill:#f9f9d9,stroke:#999,stroke-width:1px
+    style U2 fill:#f9f9d9,stroke:#999,stroke-width:1px
+    style CE1 fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
+    style CE2 fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
+    style CORE fill:#d3e0f9,stroke:#2a52be,stroke-width:2px
+    style BR fill:#f9d3d3,stroke:#e36414,stroke-width:2px
+    style V4 fill:#f0f0f0,stroke:#555,stroke-width:1px
+    style V6N fill:#e5d3f9,stroke:#9b30ff,stroke-width:2px
 ```
 
 ### UTF-16: un compromesso diverso
@@ -220,7 +229,7 @@ I punti chiave sono:
 
 Come UTF-16, può essere perfettamente sensato in certi ambienti, ma non è sempre la scelta più efficiente in termini generali. Il fatto che MAP-E supporti qualsiasi protocollo over IP, non solo ICMP, UDP e TCP, ricorda tanto che in UTF-16 la stragrande maggioranza dei caratteri usati quotidianamente (in particolare quelli del Basic Multilingual Plane, quindi anche le lingue orientali) rientra in un singolo code unit da 16 bit, e solamente le estensioni di ideogrammi e le emoji sforano la singola code unit UTF-16.
 
-```
+```mermaid
 flowchart LR
     %% Left side - User N
     U1["User N: Private IPv4 Network"]
@@ -240,6 +249,15 @@ flowchart LR
     U2 --> CE2 --> CORE
 
     CORE --> BR --> V4
+
+    style U1 fill:#f9f9d9,stroke:#999,stroke-width:1px
+    style U2 fill:#f9f9d9,stroke:#999,stroke-width:1px
+    style CE1 fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
+    style CE2 fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
+    style CORE fill:#d3e0f9,stroke:#2a52be,stroke-width:2px
+    style BR fill:#f9d3d3,stroke:#e36414,stroke-width:2px
+    style V4 fill:#f0f0f0,stroke:#555,stroke-width:1px
+    style V6N fill:#e5d3f9,stroke:#9b30ff,stroke-width:2px
 ```
 
 ### UTF-32: l'approccio ideale ma costoso
@@ -273,6 +291,26 @@ Il parallelo più vicino è un UTF-16 senza surrogate pairs, un po' come quello 
 - ma sei ancora vincolato a limiti legacy
 
 Funziona, ma non scala elegantemente.
+
+```mermaid
+flowchart LR
+    U[Utente IPv4 Privato] -->|Pacchetto IPv4| CPE[CPE/Router DS-Lite]
+    CPE -->|Incapsula IPv4 in IPv6| ISP6[Rete IPv6 dell'ISP]
+    ISP6 -->|Arriva all'AFTR| AFTR[AFTR (Decapsula + CGNAT)]
+    AFTR -->|IPv4 pubblica verso Internet| INTERNET[Internet IPv4]
+
+    %% Frecce di ritorno
+    INTERNET -->|Risposta IPv4| AFTR
+    AFTR -->|Incapsula IPv4 in IPv6| ISP6
+    ISP6 -->|Decapsula| CPE
+    CPE -->|Pacchetto IPv4| U
+
+    style U fill:#f9f9d9,stroke:#999,stroke-width:1px
+    style CPE fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
+    style ISP6 fill:#d3e0f9,stroke:#2a52be,stroke-width:2px
+    style AFTR fill:#f9d3d3,stroke:#e36414,stroke-width:2px
+    style INTERNET fill:#f0f0f0,stroke:#555,stroke-width:1px
+```
 
 Lw4o6[^RFC7596][^Lw4o6] è un'estensione dell'architettura DS-Lite che sposta la funzione NAPT44 al tunnel client IPv4/IPv6 situato nel CPE. È
 L'architettura Lw4o6 è composta da due componenti: 
@@ -359,6 +397,53 @@ Motivi tecnici molto concreti:
 Android lo supporta nativamente da anni, e questo ha fatto la differenza.
 
 È, realisticamente, la soluzione più pragmatica per reti cellulari di massa.
+
+```mermaid
+flowchart LR
+    %% Left side hosts
+    V6H1["v6 host"]
+    V4PV6["v4p/v6 host"]
+    V4P["v4p host"]
+
+    %% CLAT
+    CLAT["CLAT\n(Customer-side translator)"]
+
+    %% IPv6 Internet
+    V6NET["IPv6 Internet"]
+
+    %% PLAT
+    PLAT["PLAT\n(Provider NAT64)"]
+
+    %% IPv4 Internet
+    V4NET["IPv4 Internet"]
+
+    %% Right side host
+    V4G["v4g host"]
+
+    %% Connections (left to core)
+    V6H1 --> V6NET
+    V4PV6 --> CLAT
+    V4P --> CLAT
+
+    %% CLAT to IPv6
+    CLAT --> V6NET
+
+    %% Core path
+    V6NET --> PLAT --> V4NET --> V4G
+
+    %% Labels (logical flow)
+    CLAT -. "XLAT (v4p → v6)" .-> V6NET
+    PLAT -. "XLAT (v6 → v4g)" .-> V4NET
+
+    style V6H1 fill:#d3e0f9,stroke:#2a52be,stroke-width:2px
+    style V4PV6 fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
+    style V4P fill:#d3f9d8,stroke:#3bb54a,stroke-width:2px
+    style CLAT fill:#f9e0d3,stroke:#e36414,stroke-width:2px
+    style V6NET fill:#a3c4f9,stroke:#1f4eb8,stroke-width:2px
+    style PLAT fill:#f9d3d3,stroke:#e36414,stroke-width:2px
+    style V4NET fill:#f0f0f0,stroke:#555,stroke-width:1px
+    style V4G fill:#d9d9d9,stroke:#888,stroke-width:1px
+```
 
 ## Dove ha senso usare cosa
 

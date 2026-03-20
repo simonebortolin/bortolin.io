@@ -134,7 +134,7 @@ Ed è anche per questo che il parallelo con MAP-T regge così bene: entrambi spo
 
 ### MAP-T è come UTF-8
 
-MAP-T[^RFC7599] è una delle soluzioni più eleganti dal punto di vista ingegneristico, e segue una filosofia molto simile. Fa una cosa semplice ma potente: elimina lo stato nel core. Si mappa un sottoinsieme di indirizzi IPv4 in IPv6 e si fa una traduzione degli IP, proprio come in UTF-8, si usa una codifica che permette di esprimere tutti i 2^20 caratteri in modo scalare, i più usati in 8 bit, poi altri a 16, 24 e infine a 32 bit con le surrogate pairs.
+MAP-T[^RFC7599] è una delle soluzioni più eleganti dal punto di vista ingegneristico, e segue una filosofia molto simile. Fa una cosa semplice ma potente: elimina lo stato nel core. Si mappa un sottoinsieme di indirizzi IPv4 in IPv6 e si fa una traduzione degli IP, proprio come in UTF-8, si usa una codifica che permette di esprimere tutti i \(2^20\) caratteri in modo scalare, i più usati in 8 bit, poi altri a 16, 24 e infine a 32 bit con le surrogate pairs.
 
 Invece di mantenere un grande stato nel core di rete, MAP-T sposta l'intelligenza verso i bordi e usa una traduzione stateless tra IPv4 e IPv6. Questo riduce drasticamente la complessità operativa dell'ISP e migliora la scalabilità.
 

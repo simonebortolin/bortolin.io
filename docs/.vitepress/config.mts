@@ -1,9 +1,10 @@
 import { defineConfig } from 'vitepress'
 import markdownItKatex from 'markdown-it-katex'
 import markdownItFootnote from 'markdown-it-footnote'
+import { withMermaid } from 'vitepress-plugin-mermaid'
 
 // https://vitepress.dev/reference/site-config
-export default defineConfig({
+const config = defineConfig({
   title: "Simone Bortolin Blog",
   description: "Blog personale di Simone Bortolin",
   lang: 'it-IT',
@@ -44,3 +45,5 @@ export default defineConfig({
     }
   }
 })
+
+export default withMermaid(config)

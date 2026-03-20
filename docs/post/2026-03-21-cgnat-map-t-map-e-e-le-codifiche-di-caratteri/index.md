@@ -261,7 +261,7 @@ flowchart LR
 
 ### UTF-32: l'approccio ideale ma costoso
 
-UTF-32 è l'approccio ideale ma il più costoso per rappresentare i caratteri. Dato che lo standard Unicode prevede 2^20 caratteri, essi sono codificabili in 20 bit, quindi usare uno spazio di codifica a 32 bit sarebbe l'ideale; peccato che sia realmente costoso — un overhead peggio del base64.
+UTF-32 è l'approccio ideale ma il più costoso per rappresentare i caratteri. Dato che lo standard Unicode prevede \(2^20\) caratteri, essi sono codificabili in 20 bit, quindi usare uno spazio di codifica a 32 bit sarebbe l'ideale; peccato che sia realmente costoso — un overhead peggio del base64.
 
 ### Dual-stack nativo: la soluzione ideale (ma costosa)
 

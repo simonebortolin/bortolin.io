@@ -9,3 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    ignore:
+      # vitepress-plugin-mermaid only supports mermaid 10 || 11
+      - dependency-name: "mermaid"
+        update-types: ["version-update:semver-major"]

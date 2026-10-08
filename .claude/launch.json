@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "vitepress-preview-worktree",
+      "runtimeExecutable": "wsl",
+      "runtimeArgs": ["-e", "bash", "-lc", "cd /mnt/c/Users/simon/source/repos/bortolin.io/.claude/worktrees/sharp-cori-1c3e13 && exec npx vitepress preview docs --port 4174"],
+      "port": 4174
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 ---
 title: "Cyber Resilience Act, responsabilità del software e il futuro dell'open source"
-date: 2026-10-08
+date: 2026-10-11
 math: false
 excerpt: >-
     Tutti dicono che il Cyber Resilience Act renderà il software più sicuro.

@@ -48,3 +48,11 @@ Il sito viene automaticamente deployato su GitHub Pages attraverso GitHub Action
 ## Licenza
 
 MIT
+
+## Tema
+
+Il tema "acrilico" (carosello di foto a tutto schermo e pannelli in vetro smerigliato) è in `docs/.vitepress/theme/acrylic/` ed è lo stesso di [simonebortolin.it](https://simonebortolin.it).
+Le foto di sfondo sono elencate in `docs/.vitepress/theme/acrylic/slides.ts`: per aggiungerne una basta mettere il file in `docs/public/bg/` con il nome indicato nella lista (le voci senza file vengono saltate).
+
+Durante la build viene generato `posts.json` con l'elenco degli articoli, che simonebortolin.it usa per mostrare gli ultimi post.
+

@@ -230,7 +230,11 @@ Una SBOM che vale qualcosa richiede lavoro, non un comando:
 - quello che resta va coperto con l'**analisi dei binari** (firme, stringhe di versione, hash), sapendo che sarà comunque incompleta;
 - e soprattutto serve **qualcuno che la legga**: qualcuno che sappia che dietro un wrapper .NET c'è una libreria C, e che la sua CVE non verrà mai segnalata sul wrapper.
 
-Il CRA chiede una SBOM che copra *almeno* le dipendenze di primo livello. Non va pubblicata: va tenuta nella documentazione tecnica e consegnata alle autorità su richiesta. Ma fermarsi al primo livello significa non vedere né event-stream, né xz, né libgit2. Il minimo legale non coincide con il minimo utile.
+C'è poi un equivoco diffuso sul "primo livello". Il CRA chiede una SBOM che copra *almeno* le dipendenze di primo livello (*top-level dependencies*), e molti l'hanno letto come "basta elencare quello che c'è nel `package.json`". Non va pubblicata: va tenuta nella documentazione tecnica e consegnata alle autorità su richiesta.
+
+Ma l'interpretazione più sensata, e quella che si sta affermando, è un'altra: il "primo livello" è il primo livello di componenti **su cui puoi scaricare la responsabilità**. Se integri la libreria di un fornitore commerciale, quel fornitore è a sua volta un produttore soggetto al CRA, con la sua SBOM e i suoi obblighi: puoi fermarti lì e pretendere la sua. Un componente open source non commerciale, invece, non ha nessun produttore dietro: la responsabilità, come abbiamo visto, è **tua**. E quindi non può fare da confine.
+
+In altre parole: **niente open source al primo livello**. Un pacchetto open source nella SBOM non è un punto in cui fermarsi, è un punto da cui scendere, con tutte le sue dipendenze transitive e i binari nativi che si porta dietro. Fermarsi prima significa non vedere né event-stream, né xz, né libgit2. Ed è esattamente lì che il minimo legale e il minimo utile, letti bene, finiscono per coincidere.
 
 E qui il CRA mette un cronometro. Se una vulnerabilità nel tuo prodotto è attivamente sfruttata, hai **24 ore** per l'early warning. Nel dicembre 2021 molte aziende hanno impiegato settimane solo per rispondere a "ce l'ho?". Con il CRA, senza una SBOM aggiornata quelle 24 ore si passano a fare archeologia nei `.jar` dentro altri `.jar`, o nelle DLL dentro i pacchetti NuGet.
 

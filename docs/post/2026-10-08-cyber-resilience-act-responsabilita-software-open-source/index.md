@@ -185,22 +185,54 @@ Non lo sanno perché:
 
 La sicurezza viene **dopo**, da quello che fai con quell'inventario: correlare le versioni con i database di vulnerabilità, pubblicare documenti VEX per dire "sì, c'è, ma non è sfruttabile nel mio prodotto", avere una politica di aggiornamento, verificare la provenienza dei pacchetti, rendere le build riproducibili.
 
-La buona notizia è che produrla oggi costa letteralmente un comando, ed è il genere di cosa che va messa in pipeline, non in un documento Word:
+### La SBOM da un comando vale poco
+
+Nelle demo dei vendor, generare una SBOM costa letteralmente un comando:
 
 ```bash
-# SBOM CycloneDX di un progetto Node.js
 npx @cyclonedx/cyclonedx-npm --output-file sbom.cdx.json
-
-# SBOM SPDX di un'immagine container, cioè di quello che va davvero in produzione
 syft ghcr.io/acme/app:1.4.2 -o spdx-json > sbom.spdx.json
-
-# E poi la domanda che conta: sono colpito?
 grype sbom:./sbom.spdx.json
 ```
 
-Il CRA la rende obbligatoria, in un formato leggibile dalle macchine, coprendo *almeno* le dipendenze di primo livello. Non va pubblicata: va tenuta nella documentazione tecnica e consegnata alle autorità su richiesta. Ma fermarsi al primo livello significa non vedere né event-stream né xz: la SBOM utile è quella **completa**, generata dall'artefatto che va in produzione e non dal `package.json`.
+Esce un bel JSON, la pipeline diventa verde, la casella del CRA è spuntata. E quel JSON vale poco o nulla.
 
-E qui il CRA mette un cronometro. Se una vulnerabilità nel tuo prodotto è attivamente sfruttata, hai **24 ore** per l'early warning. Nel dicembre 2021 molte aziende hanno impiegato settimane solo per rispondere a "ce l'ho?". Con il CRA, senza una SBOM aggiornata quelle 24 ore si passano a fare archeologia nei `.jar` dentro altri `.jar`.
+Questi strumenti leggono i **manifest**: `package-lock.json`, `packages.lock.json`, il database di `dpkg` nell'immagine. Vedono quello che un package manager ha *dichiarato*, non quello che c'è davvero dentro l'artefatto. E il punto cieco più grande sono i **runtime nativi**.
+
+Prendiamo **LibGit2Sharp**, la libreria .NET con cui mezzo ecosistema .NET (GitVersion, tool di build, estensioni per IDE) parla con Git. LibGit2Sharp non implementa Git: è un wrapper attorno a **libgit2**, una libreria C, che arriva come DLL e `.so` precompilate dentro un altro pacchetto NuGet, `LibGit2Sharp.NativeBinaries`, nella cartella `runtimes/<rid>/native/`.
+
+Il 6 febbraio 2024 libgit2 rilascia la 1.7.2[^libgit2], che corregge due vulnerabilità: CVE-2024-24575 (un loop infinito, quindi DoS) e **CVE-2024-24577**, una corruzione dell'heap in `git_index_add` sfruttabile con un repository costruito ad arte, **CVSS 9.8**. LibGit2Sharp 0.29, l'ultima versione disponibile, includeva libgit2 1.7.1. La versione con libgit2 1.7.2, la 0.30, arriva solo il 19 marzo[^libgit2sharp]. E ogni versione precedente alla 0.30 conteneva una libgit2 vulnerabile: chi era fermo alla 0.27 o alla 0.28, cioè moltissimi progetti, se l'è portata dietro per mesi, in molti casi senza saperlo.
+
+Senza saperlo perché la SBOM generata dal manifest diceva:
+
+```
+LibGit2Sharp 0.27.2
+LibGit2Sharp.NativeBinaries 2.0.320
+```
+
+e su NuGet nessuno dei due pacchetti risulta vulnerabile: la CVE è registrata su **libgit2**, la libreria C, non sui pacchetti .NET che la impacchettano. Lo scanner incrocia i nomi, non trova niente e risponde "tutto a posto". Per sapere quale libgit2 c'è dentro `NativeBinaries 2.0.320` devi andare a leggere il changelog. Oppure aprire la DLL.
+
+Non è un caso isolato, è il modello di distribuzione di mezzo ecosistema:
+
+- su **NuGet**, SkiaSharp, SQLite, librerie di crittografia e di compressione portano con sé binari nativi;
+- su **npm**, i pacchetti con binari precompilati (`sharp` con libvips, i moduli `node-gyp` prebuilt) scaricano o includono librerie che nel `package-lock.json` non compaiono;
+- su **PyPI**, le wheel includono copie private di OpenSSL, libwebp, libjpeg nella cartella `.libs`;
+- in **Java**, i jar con dentro librerie JNI per tre sistemi operativi;
+- e poi i binari **Go e Rust** linkati staticamente, il codice C copiato a mano in `vendor/` o `third_party/`, il `curl | sh` nel Dockerfile, il driver del fornitore arrivato come zip.
+
+L'esempio da manuale è **libwebp** con CVE-2023-4863[^libwebp], nel settembre 2023: sfruttata attivamente, corretta in Chrome in pochi giorni. Ma libwebp era copiata dentro Firefox, dentro ogni app Electron (quindi Slack, Teams, Discord, VS Code), dentro Pillow, dentro SkiaSharp. Ognuno con la sua copia, ognuno con i suoi tempi di aggiornamento, e quasi nessuno visibile in una SBOM fatta leggendo i manifest.
+
+Una SBOM che vale qualcosa richiede lavoro, non un comando:
+
+- va **generata durante la build**, dal grafo reale di quello che viene compilato e impacchettato, non ricostruita dopo leggendo i manifest;
+- deve **scendere dentro i pacchetti**: se `LibGit2Sharp.NativeBinaries` contiene libgit2 1.7.1, la SBOM deve dire `pkg:github/libgit2/libgit2@1.7.1`, come componente annidato, con il suo identificativo;
+- per i binari di terze parti va **pretesa la SBOM dal fornitore**: con il CRA, se il fornitore è commerciale, deve averla;
+- quello che resta va coperto con l'**analisi dei binari** (firme, stringhe di versione, hash), sapendo che sarà comunque incompleta;
+- e soprattutto serve **qualcuno che la legga**: qualcuno che sappia che dietro un wrapper .NET c'è una libreria C, e che la sua CVE non verrà mai segnalata sul wrapper.
+
+Il CRA chiede una SBOM che copra *almeno* le dipendenze di primo livello. Non va pubblicata: va tenuta nella documentazione tecnica e consegnata alle autorità su richiesta. Ma fermarsi al primo livello significa non vedere né event-stream, né xz, né libgit2. Il minimo legale non coincide con il minimo utile.
+
+E qui il CRA mette un cronometro. Se una vulnerabilità nel tuo prodotto è attivamente sfruttata, hai **24 ore** per l'early warning. Nel dicembre 2021 molte aziende hanno impiegato settimane solo per rispondere a "ce l'ho?". Con il CRA, senza una SBOM aggiornata quelle 24 ore si passano a fare archeologia nei `.jar` dentro altri `.jar`, o nelle DLL dentro i pacchetti NuGet.
 
 La SBOM non rende il software più sicuro. Rende possibile **sapere di cosa sei responsabile**. Ed è difficile rispondere di qualcosa che non sai di avere.
 
@@ -217,6 +249,7 @@ Le conseguenze pratiche sono prevedibili:
 - **meno dipendenze**, e scelte con più attenzione: la libreria da dieci righe alla left-pad diventa un rischio legale, non solo tecnico;
 - **pinning delle versioni** e lockfile trattati come documenti di conformità, non come rumore nel diff;
 - **build riproducibili** e firme sugli artefatti (Sigstore, SLSA), per dimostrare che quello che hai venduto è quello che hai compilato;
+- **riduzione dello stack critico**: fino a ieri era normale avere nello stesso programma due librerie di compressione zip, tre client HTTP e due parser JSON, arrivati da dipendenze diverse. Fastidioso, ma accettabile. Con il CRA ogni duplicato è una superficie d'attacco in più da monitorare, una SBOM più lunga, una CVE in più da valutare entro 24 ore: per ogni funzione critica (compressione, crittografia, parsing, rete) ne deve restare **una**, scelta, aggiornata e con un responsabile;
 - più **fork interni** di componenti critici, con tutti i problemi di manutenzione che ne derivano.
 
 ## Startup: la fine del "move fast and break things"
@@ -309,6 +342,9 @@ E se tutto questo significa meno dipendenze installate alla cieca, meno `rm -rf`
 [^xz]: [CVE-2024-3094 – Backdoor in xz/liblzma](https://www.cve.org/CVERecord?id=CVE-2024-3094)
 [^steam]: [Steam for Linux: "Moved ~/.local/share/steam. Ran steam. It deleted everything on system owned by user."](https://github.com/valvesoftware/steam-for-linux/issues/3671)
 [^nodeipc]: [CVE-2022-23812 – node-ipc protestware](https://www.cve.org/CVERecord?id=CVE-2022-23812)
+[^libgit2]: [libgit2 v1.7.2 – Security release (CVE-2024-24575, CVE-2024-24577)](https://github.com/libgit2/libgit2/releases/tag/v1.7.2)
+[^libgit2sharp]: [LibGit2Sharp – CHANGES.md](https://github.com/libgit2/libgit2sharp/blob/master/CHANGES.md)
+[^libwebp]: [CVE-2023-4863 – Heap buffer overflow in libwebp](https://www.cve.org/CVERecord?id=CVE-2023-4863)
 [^polyfill]: [BleepingComputer – Polyfill.io JavaScript supply chain attack impacts over 100K sites](https://www.bleepingcomputer.com/news/security/polyfillio-javascript-supply-chain-attack-impacts-over-100k-sites/)
 [^eventstream]: [event-stream – I don't know what to say (issue #116)](https://github.com/dominictarr/event-stream/issues/116)
 [^uaparser]: [GHSA-pjwm-rvh2-c87w – Embedded malware in ua-parser-js](https://github.com/advisories/GHSA-pjwm-rvh2-c87w)

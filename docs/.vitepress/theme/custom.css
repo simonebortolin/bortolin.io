@@ -1,21 +1,6 @@
 /**
- * Custom styles for the blog
+ * Custom styles for the blog (the acrylic theme is in ./acrylic/style.css)
  */
-
-/* Brand color customization - Dark Green Theme */
-:root {
-  --vp-c-brand-1: #1c542d;
-  --vp-c-brand-2: #27753d;
-  --vp-c-brand-3: #154223;
-  --vp-c-brand-soft: rgba(28, 84, 45, 0.14);
-}
-
-.dark {
-  --vp-c-brand-1: #3a9657;
-  --vp-c-brand-2: #27753d;
-  --vp-c-brand-3: #1e6335;
-  --vp-c-brand-soft: rgba(28, 84, 45, 0.16);
-}
 
 .giscus {
     margin-top: 20px;
@@ -25,4 +10,48 @@
 .katex-display {
     overflow-x: auto;
     overflow-y: hidden;
+}
+
+/* Article typography */
+.is-post .vp-doc h2::before {
+    content: '## ';
+    font-family: var(--vp-font-family-mono);
+    font-size: 0.8em;
+    font-weight: 400;
+    color: var(--vp-c-brand-1);
+}
+
+.is-post .vp-doc h2 {
+    border-top: 0;
+}
+
+.vp-doc table {
+    font-size: 14px;
+}
+
+/* Outline next to the article, on its own glass panel */
+.VPDocAside {
+    padding: 16px 18px;
+    border: 1px solid var(--sb-glass-edge);
+    border-radius: 12px;
+    background-color: var(--sb-glass-strong);
+    background-image: var(--sb-noise);
+    background-blend-mode: soft-light;
+    -webkit-backdrop-filter: blur(28px) saturate(170%);
+    backdrop-filter: blur(28px) saturate(170%);
+}
+
+.VPDoc .aside-content {
+    min-height: 0 !important;
+}
+
+.VPDocAside .spacer,
+.VPDoc .aside-curtain {
+    display: none;
+}
+
+.VPDocAside .VPDocAsideOutline .outline-title {
+    font-family: var(--vp-font-family-mono);
+    font-weight: 400;
+    text-transform: lowercase;
 }

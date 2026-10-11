@@ -42,7 +42,7 @@ Proviamo allora a capire, con un po' di ordine:
 
 ## Il CRA in due minuti
 
-Il Cyber Resilience Act si applica ai **prodotti con elementi digitali** messi a disposizione sul mercato europeo: hardware con software dentro, software venduto da solo, e anche le soluzioni di elaborazione remota senza cui il prodotto non funziona (il cloud della telecamera, il backend dell'app della caldaia). Restano fuori i settori che hanno già una regolamentazione propria (dispositivi medici, automotive, aviazione, nautica) e il SaaS puro, di cui si occupa la NIS2.
+Il Cyber Resilience Act si applica ai **prodotti con elementi digitali** messi a disposizione sul mercato europeo: hardware con software dentro, software venduto da solo, e anche le soluzioni di elaborazione remota senza cui il prodotto non funziona (il cloud della telecamera, il backend dell'app della pompa di calore). Restano fuori i settori che hanno già una regolamentazione propria (dispositivi medici, automotive, aviazione, nautica) e il SaaS puro, di cui si occupa la NIS2.
 
 I prodotti sono divisi in categorie di rischio:
 
@@ -64,17 +64,19 @@ Gli obblighi per il produttore, in sintesi:
 
 Le sanzioni sono in stile GDPR: fino a **15 milioni di euro o il 2,5% del fatturato mondiale** per la violazione dei requisiti essenziali.
 
-E le date:
+### La timeline
 
-| Data | Cosa succede |
-|---|---|
-| 10 dicembre 2024 | Il CRA entra in vigore |
-| 11 giugno 2026 | Si applicano le norme sugli organismi notificati |
-| **11 settembre 2026** | **Obbligo di segnalazione** di vulnerabilità sfruttate e incidenti gravi, anche per i prodotti già sul mercato |
-| 9 dicembre 2026 | Termine per il recepimento della nuova direttiva sulla responsabilità da prodotto |
-| **11 dicembre 2027** | **Applicazione piena** del CRA |
+```mermaid
+timeline
+    title CRA e Direttiva 2024/2853
+    Dicembre 2024 : Entrata in vigore della Direttiva 2024/2853 (8 dic) : Entrata in vigore del CRA (10 dic)
+    Giugno 2026 : Norme sugli organismi notificati (11 giu)
+    Settembre 2026 : Obblighi di segnalazione Art. 14 (11 set)
+    Dicembre 2026 : Recepimento della Direttiva 2024/2853 (9 dic)
+    Dicembre 2027 : Piena applicazione del CRA (11 dic)
+```
 
-Sì: l'obbligo di segnalazione è già in vigore. Da meno di un mese.
+Un dettaglio che molti trascurano: gli obblighi di segnalazione dell'Art. 14 **valgono anche per i prodotti già sul mercato**, non solo per quelli venduti dopo dicembre 2027. Se vendi software in Europa, **sei già dentro**.
 
 ## Perché il CRA non renderà il software più sicuro
 
@@ -114,17 +116,22 @@ C'è un dettaglio della nuova direttiva che merita un paragrafo a parte: tra i d
 
 Tradotto: le foto di famiglia, l'archivio della mail, i documenti personali. Se un software li cancella perché difettoso, chi l'ha messo sul mercato ne risponde.
 
-E non serve un attacco hacker. Basta un bug banale. Nel 2015 lo script di aggiornamento di Steam per Linux conteneva una riga come questa:
+Non è teoria:
 
-```bash
-rm -rf "$STEAMROOT/"*
-```
+- nel 2022 il maintainer di **node-ipc**[^nodeipc], una dipendenza usata da progetti molto diffusi, ha pubblicato versioni che, su macchine con IP russo o bielorusso, **sovrascrivevano i file del disco** con un cuore. L'hanno chiamato *protestware*. Per chi ha perso i dati era semplicemente un `rm -rf` con un'altra estetica;
+- nel 2024 il dominio di **polyfill.io**[^polyfill] è passato di mano e ha iniziato a iniettare codice malevolo in oltre centomila siti: JavaScript che nessuno dei proprietari dei siti aveva mai letto, eseguito nel browser dei loro utenti;
+- i pacchetti npm con script `postinstall` malevoli ormai non fanno più notizia: se ne scoprono di nuovi ogni settimana.
 
-Se `$STEAMROOT` era vuota, la riga diventava `rm -rf "/"*`. Alcuni utenti si sono visti cancellare l'intera home, dischi esterni montati compresi[^steam].
+E non serve nemmeno un attaccante: nel 2015 lo script di avvio di Steam per Linux conteneva `rm -rf "$STEAMROOT/"*`. Con la variabile vuota, la riga diventava `rm -rf "/"*`, e alcuni utenti si sono visti cancellare l'intera home, dischi esterni compresi[^steam].
 
-Oppure basta una dipendenza. Nel 2022 il maintainer di `node-ipc`, una libreria npm con milioni di download settimanali, ha pubblicato una versione che, sulle macchine con IP russo o bielorusso, **sovrascriveva i file del disco**[^nodeipc]. Era una dipendenza transitiva di progetti come Vue CLI: chi l'ha installata non l'aveva mai scelta, probabilmente nemmeno sapeva che esistesse.
+Prima, in tutti questi casi, la risposta era: "leggi i termini di servizio, il software è fornito *AS IS*". Da dicembre 2026, se i dati sono di una **persona fisica** e non usati a fini esclusivamente professionali, quella risposta **non basta più**.
 
-Oggi quegli incidenti finiscono in una issue su GitHub e in un post di scuse. Con la nuova direttiva, se il software è un prodotto venduto a un consumatore, finiscono in una **richiesta di risarcimento**. E non contro il maintainer di `node-ipc`: contro **chi l'ha integrato nel proprio prodotto**.
+Due precisazioni importanti:
+
+- i dati **professionali** restano fuori: il caso CrowdStrike del luglio 2024, che ha bloccato milioni di PC aziendali, resta materia di contratti tra aziende. Ma un incidente analogo su dispositivi consumer ricadrebbe in pieno nella direttiva;
+- a differenza del CRA, la Direttiva 2024/2853 **non esclude il software fornito come servizio**: il software è un prodotto indipendentemente dalla modalità di fornitura.
+
+Ed ecco il collegamento con tutto il resto dell'articolo: il *mobile code*, il codice scaricato ed eseguito al volo come il JavaScript di polyfill.io, è esattamente il codice che **nessuno rilegge prima di eseguirlo**, ed è pieno di dipendenze di terze parti. Se una di quelle dipendenze lancia un `rm -rf` sui dati di un utente, il produttore dell'app non può dire "è colpa della libreria". La libreria è **sua**.
 
 ```mermaid
 flowchart LR
@@ -138,30 +145,64 @@ flowchart LR
 
 La catena della responsabilità risale la supply chain finché trova qualcuno che ha **messo il software sul mercato nell'ambito di un'attività commerciale**. Il maintainer volontario, di norma, è fuori. Tutti gli altri, dentro.
 
-## SBOM: l'ultimo baluardo contro il caos
+## La SBOM non serve per la sicurezza. Serve per sapere cosa stai usando.
 
-Una SBOM è, banalmente, la **lista degli ingredienti** di un software: quali componenti contiene, in quale versione, da dove arrivano, con quale licenza. I formati più diffusi sono SPDX[^spdx] e CycloneDX[^cyclonedx], e generarla oggi costa letteralmente un comando:
+Il *Software Bill of Materials* è diventato la parola magica della sicurezza della supply chain. Viene presentato come lo strumento che "protegge dagli attacchi alla supply chain", il bollino che rende un prodotto sicuro.
+
+Non è così.
+
+Una SBOM è una **distinta base**: un elenco, possibilmente in formato macchina (SPDX[^spdx] o CycloneDX[^cyclonedx]), dei componenti che compongono il tuo software, con versioni, fornitori, licenze e relazioni di dipendenza.
+
+Una SBOM **non blocca nessun attacco**. Non scansiona nulla. Non dice se un componente è malevolo. È esattamente come la distinta base di un'auto: non rende i freni più affidabili, ma quando arriva il richiamo ti dice **in quali auto sono montati quei freni**.
+
+Il problema che risolve non è la sicurezza. È **la governance**.
+
+### Sei incidenti, lo stesso problema
+
+Guardiamo gli incidenti di supply chain più famosi degli ultimi anni con questa lente.
+
+- **left-pad (2016)**[^leftpad]: un maintainer rimuove da npm un pacchetto di 11 righe e mezzo ecosistema JavaScript smette di compilare. Nessuna vulnerabilità, nessun attaccante: semplicemente **nessuno sapeva di dipendere da quella roba**.
+- **event-stream (2018)**[^eventstream]: il maintainer, stanco, cede il progetto a uno sconosciuto che aggiunge una dipendenza transitiva, `flatmap-stream`, con codice malevolo mirato a un wallet Bitcoin. La SBOM l'avrebbe elencata. **Non avrebbe detto che era malevola.**
+- **ua-parser-js (2021)**[^uaparser]: l'account npm del maintainer viene compromesso e tre versioni pubblicate con un cryptominer e un password stealer. Chi aveva un inventario con le versioni esatte ha risposto a "siamo colpiti?" in dieci minuti. Gli altri hanno passato il weekend a fare `grep` nei `package-lock.json`.
+- **Log4Shell (2021)**[^log4shell]: il caso di scuola. Log4j era ovunque, spesso **annidato dentro fat JAR, librerie shaded, appliance di terze parti**. La vulnerabilità era chiara in poche ore; capire *dove* fosse log4j ha richiesto **settimane** a moltissime aziende.
+- **XZ Utils (2024)**[^xz]: una backdoor inserita dopo anni di social engineering ai danni di un maintainer esausto, nascosta nei tarball di release e non nel repository git. Nessuna SBOM l'avrebbe rilevata. Ma la SBOM ti diceva subito **quali sistemi avevano xz 5.6.0 o 5.6.1**.
+- **Next.js / React Server Components (2025)**: ne ho già parlato in [un articolo dedicato](/post/2025-12-07-nextjs-vulnerabilita-startup-devops-dockerfile/). Molte startup non sapevano nemmeno di usare React Server Components, perché erano "dentro" il framework.
+
+Il filo conduttore non è la gravità tecnica delle vulnerabilità. È che **moltissime aziende non sanno quali dipendenze finiscono in produzione**.
+
+Non lo sanno perché:
+
+- le dipendenze transitive sono centinaia, a volte migliaia;
+- le build non sono riproducibili (ciao `npm install` nel Dockerfile di runtime: ne ho parlato a lungo nell'[articolo sui Dockerfile pericolosi](/post/2025-12-07-nextjs-vulnerabilita-startup-devops-dockerfile/));
+- le immagini container includono pacchetti di sistema che nessuno ha scelto;
+- i componenti vendor arrivano come binari opachi;
+- "funziona, non toccare" è ancora la politica di aggiornamento più diffusa;
+- ci sono ancora **script `.bat` scritti nel 2000**, mai aggiornati né riletti, che girano negli installer e nei processi di build. A volte contengono ancora gli easter egg di quando il software si distribuiva su DVD.
+
+### L'ultimo baluardo contro il caos
+
+> La SBOM non è uno strumento di sicurezza. È l'ultimo baluardo contro il caos.
+
+La sicurezza viene **dopo**, da quello che fai con quell'inventario: correlare le versioni con i database di vulnerabilità, pubblicare documenti VEX per dire "sì, c'è, ma non è sfruttabile nel mio prodotto", avere una politica di aggiornamento, verificare la provenienza dei pacchetti, rendere le build riproducibili.
+
+La buona notizia è che produrla oggi costa letteralmente un comando, ed è il genere di cosa che va messa in pipeline, non in un documento Word:
 
 ```bash
 # SBOM CycloneDX di un progetto Node.js
 npx @cyclonedx/cyclonedx-npm --output-file sbom.cdx.json
 
-# SBOM SPDX di un'immagine container
+# SBOM SPDX di un'immagine container, cioè di quello che va davvero in produzione
 syft ghcr.io/acme/app:1.4.2 -o spdx-json > sbom.spdx.json
 
-# E poi la domanda che conta: sono vulnerabile?
+# E poi la domanda che conta: sono colpito?
 grype sbom:./sbom.spdx.json
 ```
 
-Il CRA la rende obbligatoria, in un formato leggibile dalle macchine, coprendo *almeno* le dipendenze di primo livello. Non va pubblicata: va tenuta nella documentazione tecnica e consegnata alle autorità su richiesta.
+Il CRA la rende obbligatoria, in un formato leggibile dalle macchine, coprendo *almeno* le dipendenze di primo livello. Non va pubblicata: va tenuta nella documentazione tecnica e consegnata alle autorità su richiesta. Ma fermarsi al primo livello significa non vedere né event-stream né xz: la SBOM utile è quella **completa**, generata dall'artefatto che va in produzione e non dal `package.json`.
 
-Ma attenzione: **la SBOM non è uno strumento di sicurezza**. Non trova bug, non blocca attacchi, non avrebbe impedito né Log4Shell né la backdoor di xz. È un inventario. E un inventario non protegge il magazzino.
+E qui il CRA mette un cronometro. Se una vulnerabilità nel tuo prodotto è attivamente sfruttata, hai **24 ore** per l'early warning. Nel dicembre 2021 molte aziende hanno impiegato settimane solo per rispondere a "ce l'ho?". Con il CRA, senza una SBOM aggiornata quelle 24 ore si passano a fare archeologia nei `.jar` dentro altri `.jar`.
 
-Eppure è la cosa più importante di tutto il regolamento. Perché il giorno in cui esce la prossima Log4Shell, la prima domanda non è "come la correggo?" ma **"ce l'ho?"**. Nel dicembre 2021 migliaia di aziende hanno impiegato settimane solo per rispondere a questa domanda, cercando a mano file `.jar` dentro altri `.jar` dentro immagini Docker di cui nessuno ricordava l'origine.
-
-Con il CRA, quella domanda ha una scadenza: **24 ore** per l'early warning se la vulnerabilità è attivamente sfruttata nel tuo prodotto. Senza una SBOM aggiornata, quelle 24 ore si passano a fare archeologia.
-
-Ecco perché la SBOM è l'ultimo baluardo contro il caos: non rende il software più sicuro, ma rende possibile **sapere di cosa sei responsabile**. Ed è difficile rispondere di qualcosa che non sai di avere.
+La SBOM non rende il software più sicuro. Rende possibile **sapere di cosa sei responsabile**. Ed è difficile rispondere di qualcosa che non sai di avere.
 
 ## Supply chain: ogni dipendenza è una promessa che fai tu
 
@@ -173,7 +214,7 @@ Fino a oggi, `npm install` era un gesto innocente. Con il CRA, il produttore dev
 
 Le conseguenze pratiche sono prevedibili:
 
-- **meno dipendenze**, e scelte con più attenzione: la libreria da dieci righe per fare il padding di una stringa[^leftpad] diventa un rischio legale, non solo tecnico;
+- **meno dipendenze**, e scelte con più attenzione: la libreria da dieci righe alla left-pad diventa un rischio legale, non solo tecnico;
 - **pinning delle versioni** e lockfile trattati come documenti di conformità, non come rumore nel diff;
 - **build riproducibili** e firme sugli artefatti (Sigstore, SLSA), per dimostrare che quello che hai venduto è quello che hai compilato;
 - più **fork interni** di componenti critici, con tutti i problemi di manutenzione che ne derivano.
@@ -268,6 +309,9 @@ E se tutto questo significa meno dipendenze installate alla cieca, meno `rm -rf`
 [^xz]: [CVE-2024-3094 – Backdoor in xz/liblzma](https://www.cve.org/CVERecord?id=CVE-2024-3094)
 [^steam]: [Steam for Linux: "Moved ~/.local/share/steam. Ran steam. It deleted everything on system owned by user."](https://github.com/valvesoftware/steam-for-linux/issues/3671)
 [^nodeipc]: [CVE-2022-23812 – node-ipc protestware](https://www.cve.org/CVERecord?id=CVE-2022-23812)
+[^polyfill]: [BleepingComputer – Polyfill.io JavaScript supply chain attack impacts over 100K sites](https://www.bleepingcomputer.com/news/security/polyfillio-javascript-supply-chain-attack-impacts-over-100k-sites/)
+[^eventstream]: [event-stream – I don't know what to say (issue #116)](https://github.com/dominictarr/event-stream/issues/116)
+[^uaparser]: [GHSA-pjwm-rvh2-c87w – Embedded malware in ua-parser-js](https://github.com/advisories/GHSA-pjwm-rvh2-c87w)
 [^spdx]: [SPDX – Software Package Data Exchange](https://spdx.dev/)
 [^cyclonedx]: [CycloneDX – Bill of Materials Standard](https://cyclonedx.org/)
 [^leftpad]: [The npm left-pad incident (2016)](https://en.wikipedia.org/wiki/Npm_left-pad_incident)

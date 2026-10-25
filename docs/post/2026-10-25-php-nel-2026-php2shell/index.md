@@ -24,7 +24,7 @@ excerpt: >-
 >
 > 🗜️ Negli stessi giorni è arrivata **HTTP2Shell**, una falla in **Brotli** che colpisce Node.js, Python e tutto ciò che ne include una copia, estensioni PHP comprese.
 
-![](ben-griffiths-php.jpg)
+![Emblema PHP tra le rovine apocalittiche](php-rovine.avif)
 
 Nel maggio 2021 ho scritto [PHP nel 2021](/post/2021-05-30-php-nel-2020/), un articolo piuttosto severo: PHP "legacy" senza distinzione tra GET e POST, il routing basato sul file system, il parsing automatico di `multipart/form-data` che apre la porta a upload indesiderati, il deploy scomodo, l'assenza di Unicode nativo. La conclusione era che fare progetti in PHP "liscio" non avesse senso.
 

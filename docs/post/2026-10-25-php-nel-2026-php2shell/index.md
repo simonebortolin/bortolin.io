@@ -169,7 +169,7 @@ Per onestà intellettuale, rileggiamo il vecchio articolo con gli occhi del 2026
 - **Il runtime fa troppe cose da solo.** Parsing automatico dell'input, upload temporanei, sessioni: comodità del 1998 che nel 2026 sono superficie d'attacco attiva di default.
 - **Il routing sul file system** e i file "dimenticati" nella document root restano un problema: un sito mai aggiornato espone tutto ciò che c'è nella cartella.
 
-La conclusione quindi va aggiornata così: **il linguaggio PHP nel 2026 va benissimo; è il modo in cui la maggior parte dei siti PHP viene installata e dimenticata che non ha senso.**
+La conclusione del 2021 quindi non solo regge, ma va rafforzata: **fare progetti in PHP "liscio", senza framework e senza una pipeline di aggiornamento, non aveva senso allora e nel 2026 è diventato pericoloso.** La sintassi è migliorata, ma il runtime si porta ancora dietro le scelte degli anni '90, e PHP2Shell ce l'ha ricordato nel modo più brutale.
 
 ## Cosa fare adesso
 

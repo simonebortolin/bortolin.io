@@ -135,6 +135,8 @@ La stessa falla ha cambiato nome tre volte in pochi giorni:
 
 Nonostante il nome, **non è una falla del protocollo HTTP/2**: il problema è nella decompressione. Per PHP il core non è coinvolto, ma le estensioni e le librerie che includono una propria copia di Brotli sì[^http2shell]. Chi le usa deve verificare che siano state ricompilate con Brotli 1.0.10, 1.1.1 o 1.2.1, e ricordarsi che un client HTTP che accetta `br` decomprime dati scelti dal server remoto.
 
+E c'è un vettore ancora meno ovvio: le **immagini JPEG XL**. Il formato usa Brotli per comprimere i metadati (i box `brob`, che contengono per esempio Exif e XMP), e **libjxl** li decomprime con il decoder vulnerabile semplicemente aprendo il file[^jxl]. Per un sito PHP significa che non serve nemmeno la compressione HTTP: basta un'immagine `.jxl` caricata da un utente e passata a **Imagick**/ImageMagick o a **libvips** compilati con il supporto JPEG XL per creare la miniatura. Al momento in cui scrivo la correzione è nel ramo principale di libjxl ma non ancora in una release, e diversi progetti (come SDL_image) stanno aggiornando la propria copia inclusa[^jxl]. Finché le librerie di sistema non sono aggiornate, conviene rifiutare gli upload JPEG XL o almeno non elaborarli lato server.
+
 Il fenomeno è interessante quanto la falla: in una settimana di panico **i nomi commerciali delle vulnerabilità si moltiplicano e si mescolano**, PHP2Shell, Node2Shell, Python2Shell, HTTP2Shell, e ogni nuovo nome genera un nuovo giro di allarmi. Il nome che conta è sempre e solo il **CVE**.
 
 ## Il resto del 2026 nel mondo PHP
@@ -254,6 +256,8 @@ Per PHP, che si porta dietro trent'anni di codice C e milioni di installazioni d
 [^cve115560]: The Hacker News, [PHP Warns of Another Unpatched RCE Risk Two Days After Emergency PHP2Shell Patches](https://thehackernews.com/2026/10/urgent-php-warns-of-another-unpatched.html); Red Hat, [RHSB-2026-013](https://access.redhat.com/security/vulnerabilities/RHSB-2026-013).
 
 [^http2shell]: Strobes, [HTTP2Shell: Brotli RCE in Node.js and Python](https://strobes.co/blog/http2shell-brotli-rce-cve-2026-111497/); Brandefense, [HTTP2Shell: One Brotli Flaw, Many Stacks and Their Fixes](https://brandefense.io/blog/http2shell-brotli-cve-2026-111497/); Imperva, [Node2Shell: From Brotli Data to Remote Code Execution](https://www.imperva.com/blog/node2shell-from-brotli-data-to-remote-code-execution/).
+
+[^jxl]: Phoenix Security, [HTTP2Shell Expansion (CVE-2026-111497): Where the Brotli Decoder Bug Went After Node.js and Python](https://phoenix.security/http2shell-expansion-cve-2026-111497-brotli-bundled-copies); SDL, [SDL_image: bump vendored libjxl for brotli/CVE-2026-111497](https://discourse.libsdl.org/t/sdl-image-bump-vendored-libjxl-for-brotli-cve-2026-111497/69637); Debian, [CVE-2026-111497 Security Tracker](https://security-tracker.debian.org/tracker/CVE-2026-111497).
 
 [^composer]: The Hacker News, [articoli su Composer](https://thehackernews.com/search/label/Composer); GitLab Advisory Database, [intercom/intercom-php](https://advisories.gitlab.com/pkg/composer/intercom/intercom-php/).
 

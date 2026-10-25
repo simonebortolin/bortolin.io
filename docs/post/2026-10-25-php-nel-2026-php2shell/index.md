@@ -113,7 +113,7 @@ Il risultato è che, per la prima volta da molto tempo, le autorità hanno consi
 
 I numeri italiani del CSIRT sono impietosi: su **741.523** servizi PHP rilevati, **285.149** usano versioni potenzialmente vulnerabili, cioè l'**81,9%** di quelli di cui è stato possibile identificare la versione[^acn].
 
-Chi stava su hosting gestito, in gran parte, non si è accorto di nulla: provider come SiteGround hanno applicato regole di mitigazione a livello di server prima della pubblicazione e poi installato le patch ufficiali[^siteground]. Cloudflare ha distribuito regole WAF dedicate[^cloudflare]. Chi invece aveva il classico VPS "installato una volta nel 2019 e mai più toccato" si è trovato a dover scegliere tra spegnere o rischiare.
+Chi stava su hosting gestito, in gran parte, non si è accorto di nulla: provider come SiteGround hanno applicato regole di mitigazione a livello di server prima della pubblicazione e poi installato le patch ufficiali[^siteground]. Cloudflare ha distribuito regole WAF dedicate[^cloudflare]. Chi invece aveva il classico VPS "installato una volta nel 2019 e mai più toccato" si è trovato a dover scegliere tra spegnere o rischiare. Oppure, ed è la scelta più diffusa, non ha scelto affatto: ha semplicemente **ignorato** il problema, perché non sa nemmeno più cosa gira su quella VPS, quale versione di PHP ci sia sopra o se qualcuno se ne ricordi la password di root.
 
 ### Il seguito: CVE-2026-115560
 

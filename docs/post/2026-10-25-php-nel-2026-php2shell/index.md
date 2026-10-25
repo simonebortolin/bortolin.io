@@ -137,6 +137,10 @@ Nonostante il nome, **non è una falla del protocollo HTTP/2**: il problema è n
 
 E c'è un vettore ancora meno ovvio: le **immagini JPEG XL**. Il formato usa Brotli per comprimere i metadati (i box `brob`, che contengono per esempio Exif e XMP), e **libjxl** li decomprime con il decoder vulnerabile semplicemente aprendo il file[^jxl]. Per un sito PHP significa che non serve nemmeno la compressione HTTP: basta un'immagine `.jxl` caricata da un utente e passata a **Imagick**/ImageMagick o a **libvips** compilati con il supporto JPEG XL per creare la miniatura. Al momento in cui scrivo la correzione è nel ramo principale di libjxl ma non ancora in una release, e diversi progetti (come SDL_image) stanno aggiornando la propria copia inclusa[^jxl]. Finché le librerie di sistema non sono aggiornate, conviene rifiutare gli upload JPEG XL o almeno non elaborarli lato server.
 
+Non è un caso che proprio JPEG XL abbia una storia travagliata nei browser. Chrome aveva tolto il supporto sperimentale nella versione 110 (inizio 2023): le motivazioni ufficiali parlavano di scarso interesse dell'ecosistema, ma sullo sfondo c'era il timore della superficie d'attacco di un decoder C++ complesso come libjxl, timore condiviso apertamente da Mozilla. Il formato è tornato in Chromium solo con **jxl-rs**, un decoder scritto da zero in **Rust**, quindi *memory safe*, e Google ha annunciato il supporto ufficiale a partire da Chrome 155[^chromejxl]. Con il senno di poi, HTTP2Shell dà ragione a quella prudenza.
+
+La lezione è più generale: **gli stack di compressione e di decodifica delle immagini sono i peggiori**. Sono parser scritti in C o C++, ottimizzati all'osso per le prestazioni, che per definizione elaborano dati arrivati dall'esterno. La storia è lunga: ImageTragick in ImageMagick nel 2016 (CVE-2016-3714), la falla di libwebp sfruttata nel 2023 da spyware commerciali (CVE-2023-4863), le periodiche vulnerabilità in zlib, 7-Zip e compagnia. Ogni sito PHP che crea una miniatura da un'immagine caricata da un utente o decomprime un archivio sta eseguendo uno di questi parser su input non fidato.
+
 Il fenomeno è interessante quanto la falla: in una settimana di panico **i nomi commerciali delle vulnerabilità si moltiplicano e si mescolano**, PHP2Shell, Node2Shell, Python2Shell, HTTP2Shell, e ogni nuovo nome genera un nuovo giro di allarmi. Il nome che conta è sempre e solo il **CVE**.
 
 ## Il resto del 2026 nel mondo PHP
@@ -155,7 +159,7 @@ Per onestà intellettuale, rileggiamo il vecchio articolo con gli occhi del 2026
 
 **Cosa avevo sbagliato:**
 
-- **"PHP 7 ha rallentato tanto l'esecuzione"**: falso. PHP 7 era in media molto più veloce di PHP 5.6 e la serie 8 con OPcache e JIT ha continuato su quella strada. Avevo preso per buoni benchmark aneddotici.
+- **Le prestazioni**: nel 2021 il passaggio dalla 5 alla 7 era percepito da molti come un salto nel buio, tra codice da riscrivere e benchmark contrastanti. Oggi la questione non si pone più: la serie 8, con OPcache sempre più maturo e il compilatore JIT, è nettamente più veloce sia della 5 sia della 7, e non c'è più nessuna scusa prestazionale per restare su una versione vecchia.
 - **"Linguaggio morto"**: decisamente no. PHP è ancora intorno al **70%** dei siti con tecnologia lato server nota[^w3techs] e il linguaggio è migliorato tantissimo: PHP 8.5, uscito il 20 novembre 2025, ha portato il **pipe operator** `|>`, un'estensione **URI** conforme a RFC 3986 e WHATWG, `clone with`, l'attributo `#[\NoDiscard]`, `array_first()` e `array_last()`[^php85]. Tipi, enum, readonly, attributi: scrivere PHP moderno è un'altra esperienza rispetto al 2015.
 - **Il deploy**: oggi tra container, FrankenPHP e piattaforme gestite il deploy di un'applicazione PHP non è più complicato di quello di un'app Node o Python.
 
@@ -258,6 +262,8 @@ Per PHP, che si porta dietro trent'anni di codice C e milioni di installazioni d
 [^http2shell]: Strobes, [HTTP2Shell: Brotli RCE in Node.js and Python](https://strobes.co/blog/http2shell-brotli-rce-cve-2026-111497/); Brandefense, [HTTP2Shell: One Brotli Flaw, Many Stacks and Their Fixes](https://brandefense.io/blog/http2shell-brotli-cve-2026-111497/); Imperva, [Node2Shell: From Brotli Data to Remote Code Execution](https://www.imperva.com/blog/node2shell-from-brotli-data-to-remote-code-execution/).
 
 [^jxl]: Phoenix Security, [HTTP2Shell Expansion (CVE-2026-111497): Where the Brotli Decoder Bug Went After Node.js and Python](https://phoenix.security/http2shell-expansion-cve-2026-111497-brotli-bundled-copies); SDL, [SDL_image: bump vendored libjxl for brotli/CVE-2026-111497](https://discourse.libsdl.org/t/sdl-image-bump-vendored-libjxl-for-brotli-cve-2026-111497/69637); Debian, [CVE-2026-111497 Security Tracker](https://security-tracker.debian.org/tracker/CVE-2026-111497).
+
+[^chromejxl]: Phoronix, [JPEG-XL Image Support Returns To Latest Chrome / Chromium Code](https://www.phoronix.com/news/JPEG-XL-Returns-Chrome-Chromium); TechRadar, [Google quietly brings JPEG XL back to Chrome](https://www.techradar.com/pro/google-restores-much-missed-jpeg-xl-format-to-chromium-code-base-better-image-compression-and-better-bandwidth-are-on-the-way); [Chrome 155 to Support JPEG XL, Using a Rust Decoder](https://xenospectrum.com/en/chrome-155-jpeg-xl-rust/).
 
 [^composer]: The Hacker News, [articoli su Composer](https://thehackernews.com/search/label/Composer); GitLab Advisory Database, [intercom/intercom-php](https://advisories.gitlab.com/pkg/composer/intercom/intercom-php/).
 

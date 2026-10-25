@@ -1,12 +1,12 @@
 ---
-title: "PHP nel 2026: PHP2Shell, html2shell e la settimana in cui mezzo mondo ha spento PHP"
+title: "PHP nel 2026: PHP2Shell, HTTP2Shell e la settimana in cui mezzo mondo ha spento PHP"
 date: 2026-10-25
 math: false
 excerpt: >-
     Cinque anni fa mi chiedevo se avesse ancora senso usare PHP. Nell'ottobre 2026
     la domanda se la sono fatta governi, università e operatori telefonici, che hanno
     spento i propri siti per giorni a causa di PHP2Shell. Cosa è successo davvero,
-    perché "html2shell" non esiste, cosa avevo sbagliato nel 2021 e cosa invece
+    cosa c'entra HTTP2Shell, cosa avevo sbagliato nel 2021 e cosa invece
     avevo visto giusto.
 ---
 
@@ -22,7 +22,7 @@ excerpt: >-
 >
 > 🇮🇹 In Italia **285.149** servizi PHP esposti su versioni vulnerabili (dati CSIRT al 25 ottobre).
 >
-> 👻 **html2shell** non esiste: è la storpiatura di **HTTP2Shell**, una falla in **Brotli** che con PHP c'entra poco.
+> 🗜️ Negli stessi giorni è arrivata **HTTP2Shell**, una falla in **Brotli** che colpisce Node.js, Python e tutto ciò che ne include una copia, estensioni PHP comprese.
 
 ![](ben-griffiths-php.jpg)
 
@@ -123,21 +123,19 @@ PHP la considera un rischio improbabile e la correggerà nel prossimo rilascio o
 
 La morale però è chiara: **quando si apre un sottosistema, i ricercatori (e gli attaccanti) ci scavano dentro per settimane**. Aspettatevi altre CVE sull'upload progress.
 
-## "html2shell" non esiste
+## E poi è arrivata HTTP2Shell
 
-In questi giorni mi sono arrivati messaggi preoccupati su una presunta **html2shell**, "la versione di PHP2Shell che colpisce anche i siti statici".
+Come se non bastasse, negli stessi giorni è esplosa **HTTP2Shell**, cioè la **CVE-2026-111497**: una scrittura fuori dai limiti nel decoder **Brotli** di Google (versioni dalla 1.0.3 alla 1.2.0), l'algoritmo di compressione usato tra l'altro per il `Content-Encoding: br` di HTTP. Uno stream compresso costruito ad arte corrompe la memoria di qualsiasi processo che lo decomprime, e anche questa ha un punteggio CVSS 4.0 di **9.2**[^http2shell].
 
-Non esiste. Nel database NVD non c'è nessun record con quel nome e le poche occorrenze online si riducono a un titolo di blog, una battuta su X e una pagina che la smentisce[^html2shell].
-
-Il nome è con ogni probabilità una storpiatura di **HTTP2Shell**, cioè della **CVE-2026-111497**: una scrittura fuori dai limiti nel decoder **Brotli** di Google (versioni dalla 1.0.3 alla 1.2.0), l'algoritmo di compressione usato tra l'altro per il `Content-Encoding: br` di HTTP. La stessa falla ha cambiato nome tre volte in pochi giorni:
+La stessa falla ha cambiato nome tre volte in pochi giorni:
 
 - **Node2Shell**, perché Node.js è stato il primo a correggerla (22.23.4, 24.22.1, 26.12.1);
 - **Python2Shell**, quando si è capito che colpiva anche i pacchetti `brotli` e `brotlicffi`;
-- **HTTP2Shell**, dal 23 ottobre, quando è emerso che qualsiasi stack che include una copia del decoder è esposto[^http2shell].
+- **HTTP2Shell**, dal 23 ottobre, quando è emerso che qualsiasi stack che include una copia del decoder è esposto: .NET, Ruby, DuckDB, ClickHouse, 7-Zip e, appunto, anche PHP[^http2shell].
 
-Nonostante il nome, **non è una falla del protocollo HTTP/2** e non riguarda l'HTML. Con PHP c'entra solo di striscio: il core non decomprime Brotli, ma estensioni e librerie che ne includono una copia possono essere esposte[^http2shell]. Chi usa estensioni Brotli su PHP deve verificare che siano state ricompilate con Brotli 1.0.10, 1.1.1 o 1.2.1.
+Nonostante il nome, **non è una falla del protocollo HTTP/2**: il problema è nella decompressione. Per PHP il core non è coinvolto, ma le estensioni e le librerie che includono una propria copia di Brotli sì[^http2shell]. Chi le usa deve verificare che siano state ricompilate con Brotli 1.0.10, 1.1.1 o 1.2.1, e ricordarsi che un client HTTP che accetta `br` decomprime dati scelti dal server remoto.
 
-Ne parlo perché il fenomeno è interessante quanto la falla: in una settimana di panico **i nomi commerciali delle vulnerabilità si moltiplicano, si mescolano e si storpiano**, e ogni storpiatura genera un nuovo giro di allarmi. Il nome che conta è sempre e solo il **CVE**.
+Il fenomeno è interessante quanto la falla: in una settimana di panico **i nomi commerciali delle vulnerabilità si moltiplicano e si mescolano**, PHP2Shell, Node2Shell, Python2Shell, HTTP2Shell, e ogni nuovo nome genera un nuovo giro di allarmi. Il nome che conta è sempre e solo il **CVE**.
 
 ## Il resto del 2026 nel mondo PHP
 
@@ -230,8 +228,6 @@ Per PHP, che si porta dietro trent'anni di codice C e milioni di installazioni d
 [^cloudflare]: Cloudflare, [Cloudflare deploys protections against php2shell vulnerability](https://blog.cloudflare.com/php-vulnerabilities-waf-protection/).
 
 [^cve115560]: The Hacker News, [PHP Warns of Another Unpatched RCE Risk Two Days After Emergency PHP2Shell Patches](https://thehackernews.com/2026/10/urgent-php-warns-of-another-unpatched.html); Red Hat, [RHSB-2026-013](https://access.redhat.com/security/vulnerabilities/RHSB-2026-013).
-
-[^html2shell]: Pasquale Pillitteri, [html2shell does not exist, the real flaw is in Brotli (CVE-2026-111497)](https://pasqualepillitteri.it/en/news/27064/html2shell-does-not-exist-real-flaw-brotli-cve-2026-111497).
 
 [^http2shell]: Strobes, [HTTP2Shell: Brotli RCE in Node.js and Python](https://strobes.co/blog/http2shell-brotli-rce-cve-2026-111497/); Brandefense, [HTTP2Shell: One Brotli Flaw, Many Stacks and Their Fixes](https://brandefense.io/blog/http2shell-brotli-cve-2026-111497/); Imperva, [Node2Shell: From Brotli Data to Remote Code Execution](https://www.imperva.com/blog/node2shell-from-brotli-data-to-remote-code-execution/).
 

@@ -159,9 +159,9 @@ Per onestà intellettuale, rileggiamo il vecchio articolo con gli occhi del 2026
 
 **Cosa avevo sbagliato:**
 
-- **Le prestazioni**: nel 2021 il passaggio dalla 5 alla 7 era percepito da molti come un salto nel buio, tra codice da riscrivere e benchmark contrastanti. Oggi la questione non si pone più: la serie 8, con OPcache sempre più maturo e il compilatore JIT, è nettamente più veloce sia della 5 sia della 7, e non c'è più nessuna scusa prestazionale per restare su una versione vecchia.
+- **Le prestazioni come scusa per non aggiornare**: nel 2021 la 7 aveva deluso molti, me compreso, e tanti erano rimasti sulla 5. Con la serie 8 la scusa non regge più: con OPcache ormai maturo e il compilatore JIT è la serie 8 a essere più veloce, e restare su una versione vecchia non ha più alcuna giustificazione prestazionale.
 - **"Linguaggio morto"**: decisamente no. PHP è ancora intorno al **70%** dei siti con tecnologia lato server nota[^w3techs] e il linguaggio è migliorato tantissimo: PHP 8.5, uscito il 20 novembre 2025, ha portato il **pipe operator** `|>`, un'estensione **URI** conforme a RFC 3986 e WHATWG, `clone with`, l'attributo `#[\NoDiscard]`, `array_first()` e `array_last()`[^php85]. Tipi, enum, readonly, attributi: scrivere PHP moderno è un'altra esperienza rispetto al 2015.
-- **Il deploy**: oggi tra container, FrankenPHP e piattaforme gestite il deploy di un'applicazione PHP non è più complicato di quello di un'app Node o Python.
+- **Il deploy**: oggi tra container, FrankenPHP e piattaforme gestite il deploy di un'applicazione PHP non è più complicato di quello di un'app Node o Python. Eppure tantissimi continuano a usare la VPS configurata a mano, con Apache, mod_php e i file caricati via FTP o `git pull`: esattamente le installazioni che PHP2Shell ha colpito di più.
 
 **Cosa avevo visto giusto:**
 

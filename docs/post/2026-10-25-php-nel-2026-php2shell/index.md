@@ -183,6 +183,30 @@ Un'ultima osservazione. Il sito ufficiale si intitola, non a caso, *"AI uncovers
 
 Questo cambia le regole: se un bug può essere trovato in modo semiautomatico da chiunque disponga di un buon modello, **l'embargo non regge più**, la finestra tra scoperta e sfruttamento si riduce a giorni (qui lo sfruttamento è iniziato *prima* della patch) e le installazioni non aggiornabili diventano un rischio immediato, non teorico.
 
+## Il vero problema: aggiornare in tempo, senza rompere tutto
+
+Come ho scritto [su LinkedIn](https://www.linkedin.com/feed/update/urn:li:activity:7520073426368294912/), il vero problema oggi non è solo scoprire le vulnerabilità, ma **riuscire a correggerle in tempo** e, al contempo, **validare ogni singolo aggiornamento**.
+
+PHP2Shell lo dimostra bene: le patch sono uscite il 21 ottobre, ma quattro giorni dopo in Italia l'81,9% dei servizi PHP di cui si conosce la versione era ancora vulnerabile. Non perché gli amministratori non sapessero della falla, ma perché aggiornare un sistema in produzione fa paura, e spesso a ragione. Il caso di una famosa banca italiana che nel 2024 ha subito giorni di disservizi in seguito a un aggiornamento tecnologico ci ricorda quanto sia delicato intervenire su sistemi IT critici.
+
+Con l'IA che accelera sia l'individuazione sia lo sfruttamento delle vulnerabilità, però, non possiamo più permetterci che l'aggiornamento di una dipendenza vulnerabile, o del runtime stesso, richieda giorni di verifiche manuali.
+
+La risposta è **automatizzare completamente la validazione delle release**:
+
+- pipeline **CI/CD** che ricostruiscono e ridistribuiscono l'applicazione a ogni aggiornamento;
+- **test automatici** di regressione e di integrazione;
+- **controlli di sicurezza** e **verifica delle dipendenze** (SBOM, scanner, lockfile);
+- **rollback automatici** quando qualcosa va storto.
+
+L'obiettivo non è eliminare il controllo umano, ma **evitare che diventi un collo di bottiglia**: i test devono essere automatizzati e affidabili al punto da consentire aggiornamenti frequenti, rapidi e sicuri, riservando l'intervento umano alle eccezioni e alle decisioni critiche.
+
+Perché oggi il rischio è duplice:
+
+- **aggiornare troppo lentamente** significa lasciare aperta una vulnerabilità, e con PHP2Shell la scelta è stata spegnere il sito;
+- **aggiornare senza validare** significa rischiare di compromettere la continuità del servizio.
+
+La sfida è trovare il giusto equilibrio attraverso l'automazione: **automatizzare i test per poter aggiornare in sicurezza, alla velocità richiesta dalle nuove minacce.** Chi aveva una pipeline del genere il 21 ottobre ha cambiato una riga nel Dockerfile, ha lasciato girare i test ed è andato a pranzo. Chi non l'aveva ha spento il sito.
+
 Per PHP, che si porta dietro trent'anni di codice C e milioni di installazioni dimenticate, PHP2Shell non sarà l'ultima. Ma se la prossima volta ci troverà con versioni supportate, pipeline di aggiornamento e default più prudenti, forse non sarà necessario spegnere mezzo internet per qualche giorno.
 
 ---

@@ -1,5 +1,5 @@
 import { defineConfig } from 'vitepress'
-import markdownItKatex from 'markdown-it-katex'
+import markdownItKatex from '@vscode/markdown-it-katex'
 import markdownItFootnote from 'markdown-it-footnote'
 import { withMermaid } from 'vitepress-plugin-mermaid'
 
@@ -12,12 +12,12 @@ const config = defineConfig({
   cleanUrls: true,
   
   head: [
-    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css', integrity: 'sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI+WdtXRGWt2kTvGFasHpSy3SV', crossorigin: 'anonymous' }]
+    ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css', integrity: 'sha384-WwGtaC6ywCHxA5cstpj/3+xIZvTez8dq2IcBQaXRkenHZ7FVVq1ZROtURwfbtTlG', crossorigin: 'anonymous' }]
   ],
 
   markdown: {
     config: (md) => {
-      md.use(markdownItKatex)
+      md.use(markdownItKatex.default ?? markdownItKatex)
       md.use(markdownItFootnote)
     }
   },

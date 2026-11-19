@@ -259,6 +259,28 @@ Un'analisi critica deve guardare anche l'altro lato.
 
 Resta il fatto che Peter Pon dimostra una cosa precisa: **si può modernizzare a fondo una piattaforma GPON esistente senza cambiare hardware**. Se lo può fare una piccola comunità su un chip in fine vita, senza documentazione ufficiale, il produttore del chip con i sorgenti in mano poteva farlo dieci anni fa.
 
+## Novembre 2026: e se l'aggiornamento rompe tutto?
+
+L'obiezione più forte a tutto questo discorso, chi lavora negli operatori la conosce bene: **aggiornare è rischioso**. E le ultime settimane sembrano dargli ragione. In sei giorni gli Stati Uniti, e con loro mezzo mondo, hanno visto cadere uno dopo l'altro alcuni dei sistemi più importanti che esistano[^nov2026]:
+
+- **12-14 novembre, Microsoft 365**: Outlook, Exchange Online e Teams fuori uso per circa un giorno, in oltre 70 paesi. La causa: un difetto nei server gateway di rete **introdotto con un aggiornamento di luglio**, rimasto latente per mesi e scatenato da un cambio nella distribuzione del traffico e da una manutenzione che aveva ridotto la capacità del 14%. Il rollback automatico non è servito, perché la modifica colpevole era di quattro mesi prima[^ms2026];
+- **13 novembre, FAA**: blocco totale dei decolli in tutti gli Stati Uniti. Secondo le prime ricostruzioni, durante la migrazione dal rame alla fibra un router appena installato ha iniziato a inondare gli altri di tentativi di connessione, e gli apparati più vecchi non hanno retto. La causa definitiva è ancora sotto indagine[^faa2026];
+- **16 novembre, JPMorgan Chase e United Airlines**: un bug software su un sistema on-premise ritarda le transazioni della banca, a cascata anche quelle di altri istituti; un problema software blocca le app degli equipaggi e la pianificazione dei voli della compagnia aerea;
+- **17 novembre, Apple e NSA**: iCloud, App Store, Apple Pay e persino le casse dei negozi Apple si fermano per un «aggiornamento interno»[^apple2026]; la rete interna della NSA cade, e i sospetti vanno su patch di routine o aggiornamenti di rete.
+
+Nessuno di questi è stato un attacco. Sono tutti, per quanto se ne sa, **aggiornamenti e modifiche andati storti**. Esattamente come CrowdStrike nel luglio 2024, quando un singolo aggiornamento difettoso mandò in crash 8,5 milioni di computer Windows in tutto il mondo[^crowdstrike].
+
+La conclusione sbagliata, però, è "allora meglio non toccare niente". Due dati dicono perché:
+
+- il Patch Tuesday di Microsoft di novembre, due giorni prima del blackout, ha corretto **1.094 vulnerabilità** in un solo mese, e Microsoft stessa attribuisce questo volume all'uso dell'IA nella ricerca dei bug[^ms2026];
+- nel repository del kernel le CVE con identificativo 2026 sono già **oltre 8.200**, più di quelle del 2024 e del 2025 messe insieme.
+
+Le vulnerabilità vengono trovate più in fretta che mai. Un dispositivo che non si aggiorna non è più stabile: è solo esposto a una lista che cresce ogni giorno. E il caso della FAA è istruttivo in un altro senso: non è crollato perché il sistema era stato aggiornato, ma perché **apparati nuovi e apparati vecchi di decenni non riuscivano a convivere**. È la stessa situazione delle reti di accesso, dove OLT moderne parlano con ONT ferme al 2014.
+
+Per le ONT il rischio è anche più concreto. Un aggiornamento difettoso spinto dall'operatore su migliaia di linee lascia gli utenti senza connessione, e **senza connessione la ONT non può nemmeno ricevere la correzione**. Non a caso lo standard OMCI prevede due slot per l'immagine del firmware, con un meccanismo per attivare la nuova versione e tornare alla precedente.
+
+La lezione di novembre, quindi, non è "non aggiornare". È **aggiornare con metodo**: rilasci graduali, rollback verificati, test contro il comportamento reale della rete, nessuna operazione irreversibile senza conferma. È esattamente quello che fa Peter Pon con le sessioni OLT registrate e riprodotte, e quello che nei firmware dei vendor non si vede da nessuna parte.
+
 ## CRA e RED: cosa cambia per le ONT
 
 Fino a oggi una ONT poteva restare sul mercato per un decennio con lo stesso kernel senza che nessuno ne rispondesse. Il quadro normativo europeo sta cambiando proprio questo.
@@ -349,5 +371,10 @@ Nel frattempo, la prossima volta che il vostro operatore vi installa una ONT per
 [^cve_2019_19824]: [NVD – CVE-2019-19824](https://nvd.nist.gov/vuln/detail/CVE-2019-19824)
 [^nist_vuln]: [NIST CSRC – Glossary: vulnerability](https://csrc.nist.gov/glossary/term/vulnerability)
 [^kernel_releases]: [kernel.org – Releases](https://www.kernel.org/category/releases.html)
+[^nov2026]: [Wikipedia – November 2026 technology outages](https://en.wikipedia.org/wiki/November_2026_technology_outages)
+[^ms2026]: [Wikipedia – 2026 Microsoft outage](https://en.wikipedia.org/wiki/2026_Microsoft_outage)
+[^faa2026]: [Wikipedia – 2026 FAA nationwide ground stop](https://en.wikipedia.org/wiki/2026_FAA_nationwide_ground_stop)
+[^apple2026]: [MacRumors – Apple Blames Internal Update for Outage, Says It Wasn't a Cyberattack](https://www.macrumors.com/2026/11/17/apple-outage-internal-update/)
+[^crowdstrike]: [Wikipedia – 2024 CrowdStrike-related IT outages](https://en.wikipedia.org/wiki/2024_CrowdStrike-related_IT_outages)
 [^kernel_cve]: [The Linux Kernel documentation – CVEs](https://docs.kernel.org/process/cve.html)
 [^kernel_vulns]: [kernel.org – linux/security/vulns.git](https://git.kernel.org/pub/scm/linux/security/vulns.git)

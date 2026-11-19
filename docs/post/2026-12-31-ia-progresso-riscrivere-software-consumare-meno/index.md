@@ -160,7 +160,7 @@ Qui l'IA c'entra meno direttamente. Ma la direzione è la stessa: dopo anni in c
 
 Per Microsoft, il ritorno al nativo è quasi una tradizione.
 
-Con **Windows 8**, nel 2012, le nuove app della piattaforma WinRT si potevano scrivere anche in **HTML e JavaScript**, eseguite dal motore di Internet Explorer: le antenate delle app in WebView di oggi[^win8_html]. Nell'aprile 2014, per le app C# dello stesso Store, arrivava la tecnologia opposta: **.NET Native**, che compilava le applicazioni direttamente in codice macchina, con avvii fino al **60%** più rapidi e un consumo di memoria molto più basso[^dotnet_native_preview].
+Con **Windows 8**, nel 2012, le nuove app della piattaforma WinRT si potevano scrivere anche in **HTML e JavaScript**, eseguite dal motore di Internet Explorer: le antenate delle app in WebView di oggi[^win8_html]. Le app in C# dello stesso Store giravano invece sul runtime .NET con il compilatore JIT, e Windows generava il codice nativo in background, nelle ore successive all'installazione[^win8_ngen]. Su Windows Phone 8 lo Store faceva già un passo in più: con il *Compiler in the Cloud* precompilava le app in codice ARM prima del download[^wp8_cloud]. Nell'aprile 2014 arrivava la tecnologia opposta al web: **.NET Native**, che compilava le applicazioni interamente in codice macchina prima della pubblicazione, con avvii fino al **60%** più rapidi e un consumo di memoria molto più basso[^dotnet_native_preview].
 
 Con Windows 10, nel 2015, .NET Native è diventato il compilatore delle app **UWP** pubblicate sullo Store, e si è fermato insieme a loro: oggi riceve solo correzioni di sicurezza e affidabilità, nessuna funzionalità nuova[^dotnet_native_docs].
 
@@ -222,6 +222,8 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 [^windows_quality]: [Windows Insider Blog – Windows quality: an update on the commitment we made in March](https://blogs.windows.com/windows-insider/2026/07/31/windows-quality-an-update-on-the-commitment-we-made-in-march/)
 [^winui_perf]: [microsoft-ui-xaml – WinUI 3 Performance: A Leap Forward](https://github.com/microsoft/microsoft-ui-xaml/discussions/11096)
 [^win8_html]: [Microsoft Learn – HTML, CSS, and JavaScript features and differences (app Windows 8)](https://learn.microsoft.com/en-us/previous-versions/windows/apps/hh465380(v=win.10))
+[^win8_ngen]: [Microsoft Learn – Migrate Your Windows 8.x App to .NET Native](https://learn.microsoft.com/en-us/windows/uwp/dotnet-native/migrating-your-windows-store-app-to-net-native)
+[^wp8_cloud]: [Microsoft – Announcing the release of the .NET Framework for Windows Phone 8](https://devblogs.microsoft.com/dotnet/announcing-the-release-of-the-net-framework-for-windows-phone-8/)
 [^dotnet_native_preview]: [Microsoft – Announcing .NET Native Preview](https://devblogs.microsoft.com/dotnet/announcing-net-native-preview/)
 [^dotnet_native_docs]: [Microsoft Learn – Compilare app con .NET Native](https://learn.microsoft.com/windows/uwp/dotnet-native/)
 [^net7]: [Microsoft – .NET 7 is Available Today](https://devblogs.microsoft.com/dotnet/announcing-dotnet-7/)

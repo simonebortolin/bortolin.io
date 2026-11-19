@@ -3,7 +3,7 @@ title: "L'IA è progresso solo se consuma meno: riscrivere il software invece di
 date: 2026-12-31
 math: false
 excerpt: >-
-    Nel 2025 per sviluppare software bastavano un PC e la testa. Nel 2026 serve
+    Nel 2024 per sviluppare software bastavano un PC e la testa. Nel 2026 serve
     anche un abbonamento il cui prezzo non decidi tu, a un modello che consuma
     l'elettricità di un Paese. Eppure c'è un uso dell'IA che va nella direzione
     opposta: riscrivere in Go e in Rust il codice TypeScript e Python che spreca
@@ -29,7 +29,7 @@ excerpt: >-
 >
 > 🧪 Nessuno di questi port starebbe in piedi senza **test end-to-end**: è il test, non il modello, a decidere se il nuovo codice fa la stessa cosa del vecchio.
 
-**2025.** Sviluppare software è una cosa meravigliosa: con poche risorse economiche, un PC e un po' di intelletto puoi creare qualsiasi cosa. Le aziende sanno quanto costerà, ogni anno, sviluppare un prodotto: stipendi, licenze, qualche server.
+**2024.** Sviluppare software è una cosa meravigliosa: con poche risorse economiche, un PC e un po' di intelletto puoi creare qualsiasi cosa. Le aziende sanno quanto costerà, ogni anno, sviluppare un prodotto: stipendi, licenze, qualche server.
 
 **2026.** Viva il progresso. Per sviluppare serve un budget di token, e un fornitore che cambia listino più spesso di quanto tu cambi framework. Le aziende non possono più calcolare quanto costerà lo sviluppo nel prossimo anno, perché quel numero non lo decidono loro. E gli sviluppatori junior, senza il modello acceso, fanno fatica a scrivere un ciclo `for`.
 

@@ -16,6 +16,8 @@ excerpt: >-
 >
 > 🧬 Nei firmware documentati su Hack GPON: **Linux 2.6** (Realtek), **3.10** (Lantiq), **4.4–5.10** (XGS-PON).
 >
+> 🐛 Secondo i dati del kernel stesso, un 3.10 ha **quasi 2.900 CVE mai corrette**, e aggiornarlo all'ultima 3.10 non ne toglie nessuna.
+>
 > 🧱 Il collo di bottiglia sono gli **SDK proprietari**: driver legati a un kernel e mai portati avanti.
 >
 > 🔑 Credenziali fisse, cifrari del 2000, una CVE di command injection: **la sicurezza segue il kernel**.
@@ -131,6 +133,28 @@ Tradotto:
 
 In altre parole: **nessuna delle ONT che ho analizzato gira oggi su un kernel con un supporto upstream che vada oltre il 2026**. Le XGS-PON, cioè la tecnologia "nuova", vengono distribuite dagli operatori nel 2026 con kernel che sono già fuori supporto o lo saranno tra poche settimane.
 
+### Quante CVE, in concreto
+
+Dal 2024 il kernel Linux è una CNA, cioè assegna da solo i CVE ai propri bug, e pubblica per ognuno la versione in cui il difetto è stato introdotto e quelle in cui è stato corretto[^kernel_cve]. Incrociando questi dati, scaricati dal repository ufficiale[^kernel_vulns] il 19 novembre 2026, con le versioni trovate nei firmware, si ottiene il numero di CVE che **affliggono quella versione e non sono mai state corrette su quel ramo**:
+
+| Kernel nel firmware | Dove si trova | CVE aperte | Ultima versione del ramo | CVE aperte sull'ultima |
+|---|---|---:|---|---:|
+| 2.6.30.9 | Realtek, Luna SDK 1.9 | **1.430** | ramo chiuso nel 2009 | – |
+| 3.10.49 | Lantiq FALC ON | **2.897** | 3.10.108 | 2.897 |
+| 3.18.21 *(esempio)* | Realtek, Luna SDK 3.3 | **3.545** | 3.18.140 | 3.544 |
+| 4.4.60 *(esempio)* | XGS-PON, Saturn SDK | **4.158** | 4.4.302 | 4.041 |
+| 4.14.275 | KAON PM1191 | **5.335** | 4.14.333 | 4.587 |
+| 5.10.70 | Comtrend GRG-4362 | **8.577** | 5.10.274 | 2.187 |
+| 6.18.55 | Peter Pon | **1.097** | 6.18.64 | 112 |
+
+Per 3.18 e 4.4 le pagine riportano solo la serie, quindi ho usato una versione intermedia come esempio: come mostra l'ultima colonna, il risultato cambia di poco. Questi numeri vanno letti con attenzione, perché sbagliano in entrambe le direzioni:
+
+- **contano troppo**: il calcolo considera tutto il codice del kernel, compresi driver e architetture che in una ONT MIPS non sono nemmeno compilati. Non sono 2.897 vulnerabilità sfruttabili su un FALC ON, sono 2.897 difetti noti nel codice da cui quel kernel deriva;
+- **contano troppo poco**: restano fuori tutte le CVE assegnate prima che il kernel diventasse CNA, da Dirty COW in giù, e tutto quello che sta fuori dal kernel: BusyBox, il server web, il demone OMCI;
+- **i kernel più vecchi sembrano migliori**: il 2.6 ha "solo" 1.430 CVE perché ha molto meno codice, e i bug introdotti dopo il 2009 non lo riguardano. Non per questo è più sicuro.
+
+Il confronto più onesto, allora, è **dentro lo stesso ramo**. Il 5.10.70 della Comtrend ha 8.577 CVE aperte; il 5.10.274, cioè lo stesso ramo semplicemente aggiornato, ne ha 2.187. **Oltre 6.000 correzioni già pubblicate e mai arrivate sul dispositivo.** Lo stesso vale per Peter Pon: il 6.18.55 ha 1.097 CVE note, ma 985 sono già corrette nelle versioni successive del ramo, che OpenWrt segue. Sui rami 3.10, 3.18 e 4.4, invece, aggiornare non serve più a niente: l'ultima versione ha di fatto le stesse CVE della prima, perché nessuno corregge più nulla.
+
 ### Il numero di versione non è tutto
 
 Prima che qualcuno lo faccia notare: no, il numero di versione da solo **non misura la sicurezza** di un dispositivo.
@@ -239,7 +263,7 @@ Resta il fatto che Peter Pon dimostra una cosa precisa: **si può modernizzare a
 
 Fino a oggi una ONT poteva restare sul mercato per un decennio con lo stesso kernel senza che nessuno ne rispondesse. Il quadro normativo europeo sta cambiando proprio questo.
 
-La **RED** riguarda solo le apparecchiature radio: uno stick SFP o un'ONT senza Wi-Fi non ci rientra, mentre un'ONT con router Wi-Fi integrato sì. Per le ONT "pure" la norma rilevante è il **Cyber Resilience Act**, che si applica a qualsiasi prodotto con elementi digitali. E le ONT non sono prodotti qualunque: come gli switch, rientrano tra i **prodotti importanti di Classe II** dell'Allegato III, con una valutazione di conformità più severa dell'autocertificazione. Ne ho parlato in dettaglio [nell'articolo dedicato](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/); qui basta ricordare tre obblighi:
+La **RED** riguarda solo le apparecchiature radio: uno stick SFP o un'ONT senza Wi-Fi non ci rientra, mentre un'ONT con router Wi-Fi integrato sì. Per le ONT "pure" la norma rilevante è il **Cyber Resilience Act**, che si applica a qualsiasi prodotto con elementi digitali. E le ONT non sono prodotti qualunque: come router, modem e switch, rientrano tra i **prodotti importanti di Classe I** dell'Allegato III. Non possono quindi fare la semplice autovalutazione dei prodotti "di default": servono le norme armonizzate o, in mancanza, un organismo notificato. Ne ho parlato in dettaglio [nell'articolo dedicato](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/); qui basta ricordare tre obblighi:
 
 - **niente vulnerabilità note sfruttabili** al momento dell'immissione sul mercato. Un kernel fuori supporto da anni, senza backport documentati, rende questa promessa molto difficile da mantenere;
 - **un periodo di supporto** dichiarato, di norma **almeno 5 anni**, con aggiornamenti di sicurezza gratuiti. Con un SDK abbandonato dal produttore del chip, chi li scrive?
@@ -312,3 +336,5 @@ Nel frattempo, la prossima volta che il vostro operatore vi installa una ONT per
 [^cve_2019_19824]: [NVD – CVE-2019-19824](https://nvd.nist.gov/vuln/detail/CVE-2019-19824)
 [^nist_vuln]: [NIST CSRC – Glossary: vulnerability](https://csrc.nist.gov/glossary/term/vulnerability)
 [^kernel_releases]: [kernel.org – Releases](https://www.kernel.org/category/releases.html)
+[^kernel_cve]: [The Linux Kernel documentation – CVEs](https://docs.kernel.org/process/cve.html)
+[^kernel_vulns]: [kernel.org – linux/security/vulns.git](https://git.kernel.org/pub/scm/linux/security/vulns.git)

@@ -19,7 +19,7 @@ excerpt: >-
 >
 > 🧠 In uno studio controllato chi ha imparato una libreria nuova con l'IA ha preso il **50%** al quiz finale, contro il **67%** di chi ha scritto il codice a mano.
 >
-> 🐍 Nel benchmark più citato sul tema, a parità di problema **Python consuma circa 76 volte** l'energia del C, **Rust 1,03 volte**.
+> 🐍 Nel benchmark più citato **Python consuma circa 76 volte** l'energia del C. Ma il linguaggio sta **tre o quattro livelli** sopra le scelte che decidono davvero i consumi: conta quanto lavoro fa il programma, e come.
 >
 > 🚀 **TypeScript 7**, riscritto in Go, compila il codice di VS Code in **10,6 secondi** invece di 125,7.
 >
@@ -87,7 +87,18 @@ E il linguaggio conta. Lo studio più citato sul tema, *Energy Efficiency across
 
 Il dato di TypeScript va preso con le pinze: TypeScript viene compilato in JavaScript e gira sullo stesso motore. Uno studio del 2025 (van Kempen et al.) ha mostrato che la differenza dipendeva dal fatto che quasi tutti i benchmark TypeScript erano scritti per un solo core, mentre quelli JavaScript ne usavano molti. Più in generale, secondo quello studio **l'energia è sostanzialmente proporzionale al tempo di esecuzione**: conta quanto lavoro fa il programma, non il nome del linguaggio[^vankempen].
 
-Il punto però resta: un runtime interpretato o JIT, con il suo garbage collector, la sua memoria di base e il suo tempo di avvio, costa di più di un binario compilato. A volte poco, a volte decine di volte tanto.
+Qualche mese fa ne ho discusso sotto un post su LinkedIn che rilanciava proprio questa classifica, e la mia opinione non è cambiata: **confrontare Python e Rust sui consumi è quasi un errore di categoria**. Il linguaggio sta tre o quattro livelli di astrazione sopra le scelte che spostano davvero i consumi.
+
+Qualche esempio:
+- **i suggerimenti alla CPU**: i processori moderni hanno istruzioni pensate per risparmiare energia mentre si aspetta, come `PAUSE` nei cicli di attesa attiva, `MONITOR`/`MWAIT` per gli stati di attesa a basso consumo e `HLT` per i core inattivi. I compilatori le usano di rado, e un ciclo critico scritto a mano con le istruzioni giuste può consumare meno del codice "equivalente" generato dal compilatore, in qualunque linguaggio;
+- **frequenza e tensione**: con il DVFS (*Dynamic Voltage and Frequency Scaling*) la CPU scambia velocità con tensione, e la potenza dinamica cresce con il **quadrato della tensione**: piccole riduzioni di frequenza danno risparmi sproporzionati. Al contrario, il Turbo Boost finisce prima a tensione più alta, e a seconda del carico può consumare meno o più di un core rallentato che lavora più a lungo;
+- **le istruzioni vettoriali**: le SIMD assorbono più potenza, ma possono evitare centinaia o migliaia di istruzioni ripetitive.
+
+Nessuno dei due studi entra a questo livello di dettaglio.
+
+C'è però una cosa che il linguaggio decide davvero: **il runtime che si porta dietro**. Un processo Node.js o un interprete Python, con il suo garbage collector, la sua memoria di base e il suo tempo di avvio, costa di più di un binario compilato che fa lo stesso lavoro. A volte poco, a volte decine di volte tanto. Ed è esattamente questo il costo che sparisce nei port che seguono.
+
+Un'ultima cosa che gli studi non misurano: **la compilazione**. In un progetto con una pipeline CI/CD il compilatore gira a ogni commit, su ogni ramo, su ogni macchina degli sviluppatori. Il runtime moltiplicato per milioni di utenti resta la voce più grossa, ma anche la build ha il suo peso, ed è proprio il caso del prossimo esempio.
 
 ## Ristrutturare, non demolire
 
@@ -164,6 +175,8 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 - **la responsabilità non si delega al modello**: con il [Cyber Resilience Act](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/) chi mette sul mercato il software ne risponde, che le righe le abbia scritte una persona o un agente.
 
 ## Fraintendimenti comuni
+
+- ❌ **Rust consuma come il C e Python 76 volte tanto: è una proprietà del linguaggio** → **Non necessariamente**. Sono le misure di un insieme di benchmark su una macchina. L'implementazione, l'algoritmo, il parallelismo e il modo in cui il programma usa la CPU contano più del nome del linguaggio.
 
 - ❌ **Riscrivere in Rust rende il software automaticamente efficiente** → **Falso**. L'energia segue il tempo di esecuzione e la memoria usata: un algoritmo inefficiente resta inefficiente in qualunque linguaggio. Il port elimina il costo del runtime, non quello degli algoritmi.
 

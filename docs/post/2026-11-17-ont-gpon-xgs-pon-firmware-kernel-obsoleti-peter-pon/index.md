@@ -20,7 +20,7 @@ excerpt: >-
 >
 > 🧱 Il collo di bottiglia sono gli **SDK proprietari**: driver legati a un kernel e mai portati avanti.
 >
-> 🔑 Credenziali fisse, cifrari del 2000, una CVE di command injection: **la sicurezza segue il kernel**.
+> 🔑 Credenziali fisse, segreti derivati dal MAC, cifrari del 2000: **la sicurezza segue il kernel**.
 >
 > 🛠️ **Peter Pon** porta una ONT Lantiq del 2014 su OpenWrt moderno e Linux 6.18, **senza cambiare hardware**.
 >
@@ -30,9 +30,9 @@ Negli ultimi anni la fibra in Italia ha fatto passi enormi. Il GPON, con i suoi 
 
 Poi apri il terminale ottico, l'ONT, e trovi un kernel Linux che non riceve patch da prima della pandemia. In alcuni casi da prima che esistesse l'iPhone 4.
 
-Ne ho parlato a lungo nell'articolo su [modem, router e ONT liberi](/post/2023-11-16-modem-router-e-ont-liberi/): l'ONT è il primo apparato della rete di casa, quello che parla con la OLT dell'operatore. In teoria la si può scegliere e sostituire con uno stick SFP da infilare nel router. In pratica lo fanno in pochissimi, proprio perché la ONT libera non è un diritto ed è difficile da ottenere. Ed è proprio per questo che vale la pena guardarci dentro.
+Ne ho parlato a lungo nell'articolo su [modem, router e ONT liberi](/post/2023-11-16-modem-router-e-ont-liberi/): l'ONT è l'apparato che parla con la OLT dell'operatore. In teoria è l'ultimo pezzo della rete dell'ISP, un convertitore ottico e poco più. Ma sta dentro casa dell'utente, e sostituirlo non è un diritto ed è difficile da ottenere. Ed è proprio per questo che vale la pena guardarci dentro.
 
-Io l'ho fatto. Il risultato è che **ho tolto le ONT con firmware originale** dalla mia rete di casa e da quella dei miei genitori. Non perché volevo fare modding, ma perché quello che ci girava sotto non mi dava nessuna fiducia. Per lavoro adeguo software ai requisiti europei di cybersicurezza: tenere in casa un dispositivo Linux esposto con un kernel di quindici anni fa e un'interfaccia web uscita dagli anni '90 mi dava parecchio fastidio.
+Io l'ho fatto. Il risultato è che **ho tolto le ONT con firmware originale** dalla mia rete di casa e da quella dei miei genitori. Non per passione del modding: ci avevo provato tempo fa, e poi ne avevo perso il gusto. L'ho fatto perché quello che ci girava sotto non mi dava nessuna fiducia. Tecnicamente quelle ONT non erano nemmeno raggiungibili dalla mia LAN, invisibili a livello 2. Ma se una vulnerabilità colpisse il router, la ONT subito dietro diventerebbe il passo successivo di un attacco. Per lavoro adeguo software ai requisiti europei di cybersicurezza: sapere di avere in casa un kernel di quindici anni fa, e un'interfaccia web che è un vero obbrobrio, mi dava parecchio fastidio. Non si sa mai.
 
 ## L'ONT è un computer Linux che nessuno guarda
 
@@ -44,7 +44,7 @@ Una ONT, che sia un box da muro o uno stick SFP, non è un semplice convertitore
 - un demone **OMCI**, il protocollo con cui la OLT configura la ONT;
 - un **userspace** con BusyBox, un server web, SSH o Telnet, qualche script di configurazione.
 
-Sul Huawei MA5671A, lo stick da modding che non tramonta mai, anche se non è il più adatto ai profili da 2,5 Gbit/s, il SoC è un Lantiq FALC ON con un core MIPS 34Kc, 64 MB di RAM e 16 MB di flash[^peterpon_c1]. Un computer vero, insomma, con un IP di gestione raggiungibile dalla rete locale.
+Sul Huawei MA5671A, lo stick da modding che non tramonta mai, anche se con il firmware di serie non è il più adatto ai profili da 2,5 Gbit/s, il SoC è un Lantiq FALC ON con un core MIPS 34Kc, 64 MB di RAM e 16 MB di flash[^peterpon_c1]. Un computer vero, insomma, con un IP di gestione raggiungibile dalla rete locale.
 
 E come ogni computer, il suo livello di sicurezza dipende dal software che ci gira. Che è il punto dolente.
 
@@ -52,7 +52,7 @@ E come ogni computer, il suo livello di sicurezza dipende dal software che ci gi
 
 Le schede tecniche dei produttori, quando dicono qualcosa sul software, parlano di "Linux" e basta. Per sapere cosa gira davvero bisogna aprire i firmware.
 
-È quello che facciamo su Hack GPON[^hg_repo], il wiki sulle ONT che ho creato: le versioni dei kernel vengono estratte **direttamente dai binari** dei firmware, non dalle schede commerciali. Raggruppate per piattaforma:
+È quello che si fa su Hack GPON[^hg_repo], il wiki sulle ONT di cui seguo, nel tempo libero, le attività di "product care": le versioni dei kernel vengono estratte **direttamente dai binari** dei firmware, non dalle schede commerciali. Raggruppate per piattaforma:
 
 | Piattaforma | SoC | SDK | Kernel rilevato nei binari |
 |---|---|---|---|
@@ -104,6 +104,17 @@ pie showData
 
 La tecnologia più nuova, quella da 10 Gbit/s, gira per lo più su un kernel del 2016.
 
+### Kernel vecchi, firmware nuovi
+
+C'è un dato che i grafici non mostrano: **quando sono stati compilati quei firmware**. Un kernel 2.6 in un firmware del 2010 è una cosa, in un firmware dell'anno scorso è un'altra. Hack GPON lo riporta solo per pochi modelli, ma quei pochi bastano:
+
+- sulla **FS ONU1710-1G** il log di avvio mostra un **Linux 2.6.30.9 compilato il 20 marzo 2025**, con gcc 4.4.6, un compilatore del 2011[^hg_onu1710];
+- la **Zyxel PMG3000-D20B** ha ricevuto build della linea V1.00(ABVJ.1), quella su **OpenWrt 12.09 e kernel 3.10.12**, a luglio 2023, **febbraio 2026 e maggio 2026**[^hg_zyxel];
+- la **LEOX LXT-010S-H**, con Luna SDK 3.3 e kernel 3.18, ha firmware compilati tra febbraio 2024 e **maggio 2025**[^hg_leox];
+- la **FS XGS-ONU-25-20NI**, su kernel 4.4, ha un firmware compilato ad aprile 2023, oltre un anno dopo la fine del supporto del 4.4[^hg_fs_xgs].
+
+Non sono quindi dispositivi dimenticati. **I produttori rilasciano ancora firmware nuovi**, con correzioni e funzioni nuove, ma ricompilano sempre lo stesso kernel del 2009 o del 2013.
+
 ### Quanto sono vecchi, in concreto
 
 Una versione di kernel, da sola, dice poco. Messa su una linea del tempo dice molto di più. Questi sono i periodi di supporto ufficiale delle serie trovate nei binari, secondo kernel.org[^kernel_releases]:
@@ -133,35 +144,31 @@ Tradotto:
 
 In altre parole: **nessuna delle ONT che ho analizzato gira oggi su un kernel con un supporto upstream che vada oltre il 2026**. Le XGS-PON, cioè la tecnologia "nuova", vengono distribuite dagli operatori nel 2026 con kernel che sono già fuori supporto o lo saranno tra poche settimane.
 
+Esistono società e progetti che di mestiere portano le correzioni di sicurezza sui kernel fuori supporto: il progetto CIP della Linux Foundation, per esempio, mantiene per l'industria un 4.4 fino al 2027, e le distribuzioni enterprise fanno lo stesso da sempre. **Nessun produttore di ONT, però, ha mai preso in considerazione questa strada.**
+
 ### Quante CVE, in concreto
 
 Dal 2024 il kernel Linux è una CNA, cioè assegna da solo i CVE ai propri bug, e pubblica per ognuno la versione in cui il difetto è stato introdotto e quelle in cui è stato corretto[^kernel_cve]. Incrociando questi dati, scaricati dal repository ufficiale[^kernel_vulns] il 19 novembre 2026, con le versioni trovate nei firmware, si ottiene il numero di CVE che **affliggono quella versione e non sono mai state corrette su quel ramo**:
 
-| Kernel nel firmware | Dove si trova | CVE aperte | Ultima versione del ramo | CVE aperte sull'ultima |
-|---|---|---:|---|---:|
-| 2.6.30.9 | Realtek, Luna SDK 1.9 | **1.430** | ramo chiuso nel 2009 | – |
-| 3.10.49 | Lantiq FALC ON | **2.897** | 3.10.108 | 2.897 |
-| 3.18.21 *(esempio)* | Realtek, Luna SDK 3.3 | **3.545** | 3.18.140 | 3.544 |
-| 4.4.60 *(esempio)* | XGS-PON, Saturn SDK | **4.158** | 4.4.302 | 4.041 |
-| 4.14.275 | KAON PM1191 | **5.335** | 4.14.333 | 4.587 |
-| 5.10.70 | Comtrend GRG-4362 | **8.577** | 5.10.274 | 2.187 |
-| 6.18.55 | Peter Pon | **1.097** | 6.18.64 | 112 |
+| Kernel | Dove si trova | CVE aperte |
+|---|---|---:|
+| 2.6.30 | Realtek, Luna SDK 1.9 | **1.430** |
+| 3.10 | Lantiq FALC ON | **2.897** |
+| 3.18 | Realtek, Luna SDK 3.3 | **3.544** |
+| 4.4 | XGS-PON, Saturn SDK | **4.041** |
+| 4.14 | KAON PM1191 | **4.587** |
+| 5.10 | Comtrend GRG-4362 | **2.187** |
+| 6.18 | Peter Pon | **112** |
 
-Per 3.18 e 4.4 le pagine riportano solo la serie, quindi ho usato una versione intermedia come esempio: come mostra l'ultima colonna, il risultato cambia di poco. Questi numeri vanno letti con attenzione, perché sbagliano in entrambe le direzioni:
+I numeri sono calcolati sull'ultima versione di ogni ramo, cioè nel caso migliore: le versioni realmente presenti nei firmware stanno peggio. La Comtrend, per esempio, gira su un 5.10.70, che di CVE aperte ne ha 8.577.
 
-- **contano troppo**: il calcolo considera tutto il codice del kernel, compresi driver e architetture che in una ONT MIPS non sono nemmeno compilati. Non sono 2.897 vulnerabilità sfruttabili su un FALC ON, sono 2.897 difetti noti nel codice da cui quel kernel deriva;
-- **contano troppo poco**: restano fuori tutte le CVE assegnate prima che il kernel diventasse CNA, da Dirty COW in giù, e tutto quello che sta fuori dal kernel: BusyBox, il server web, il demone OMCI;
-- **i kernel più vecchi sembrano migliori**: il 2.6 ha "solo" 1.430 CVE perché ha molto meno codice, e i bug introdotti dopo il 2009 non lo riguardano. Non per questo è più sicuro.
+Due avvertenze. Il conteggio include anche codice che in una ONT non è nemmeno compilato, e non include le CVE precedenti al 2024 né tutto quello che sta fuori dal kernel. E i kernel più vecchi sembrano messi meglio solo perché hanno meno codice.
 
-Il confronto più onesto, allora, è **dentro lo stesso ramo**. Il 5.10.70 della Comtrend ha 8.577 CVE aperte; il 5.10.274, cioè lo stesso ramo semplicemente aggiornato, ne ha 2.187. **Oltre 6.000 correzioni già pubblicate e mai arrivate sul dispositivo.** Lo stesso vale per Peter Pon: il 6.18.55 ha 1.097 CVE note, ma 985 sono già corrette nelle versioni successive del ramo, che OpenWrt segue. Sui rami 3.10, 3.18 e 4.4, invece, aggiornare non serve più a niente: l'ultima versione ha di fatto le stesse CVE della prima, perché nessuno corregge più nulla.
+Il dato che conta davvero è un altro: **sui rami 3.10, 3.18, 4.4 e 4.14 aggiornare non serve più a niente**, perché nessuno corregge più nulla. Sul 5.10 e sul 6.18, invece, le correzioni continuano ad arrivare.
 
 ### Il numero di versione non è tutto
 
-Prima che qualcuno lo faccia notare: no, il numero di versione da solo **non misura la sicurezza** di un dispositivo.
-
-Un vendor serio può prendere un 4.4 e fare il backport delle correzioni per anni: è esattamente quello che fa il progetto CIP della Linux Foundation per l'industria, ed è quello che fanno le distribuzioni enterprise. Contano anche la **configurazione** del kernel (un servizio che non è compilato non può essere attaccato), i **driver proprietari** caricati sopra, e soprattutto lo **userspace**: BusyBox, il server web, il demone OMCI, gli script CGI.
-
-Il problema è che nelle ONT non c'è nessun segnale che questo lavoro venga fatto. Un kernel 3.10 compilato con OpenWrt 14.07, con BusyBox 1.22.1 e uClibc 0.9.33[^peterpon_c3], non è un LTS curato: è **una fotografia del 2014 rimasta sullo scaffale**. E il contorno, come vedremo tra poco, lo conferma.
+Da solo, il numero di versione **non misura la sicurezza**: contano anche la configurazione del kernel, i driver e soprattutto lo userspace. Ma nelle ONT non c'è nessun segnale di cura. Un kernel 3.10 compilato con OpenWrt 14.07, con BusyBox 1.22.1 e uClibc 0.9.33[^peterpon_c3], non è un LTS curato: è **una fotografia del 2014 rimasta sullo scaffale**. E il contorno, come vedremo tra poco, lo conferma.
 
 ## Perché sono rimaste indietro: gli SDK
 
@@ -178,13 +185,14 @@ flowchart TD
     A -. "fine vita del chip:<br/>niente più SDK" .-> X["Kernel congelato<br/>per tutta la vita del prodotto"]
 ```
 
-Il produttore del SoC fornisce un **SDK**: un kernel già patchato, i driver del MAC PON, dell'ottica e dello switch (spesso solo come moduli binari o come sorgenti scritte per *quel* kernel), uno stack OMCI e qualche strumento. L'ODM ci costruisce sopra il firmware, il marchio lo personalizza, l'operatore ci mette la sua configurazione.
+Il produttore del SoC fornisce un **SDK**: un kernel già patchato, i driver del MAC PON, dell'ottica e dello switch (spesso solo come moduli binari o come sorgenti scritte per *quel* kernel), uno stack OMCI e qualche strumento. L'ODM, spesso, non fa altro che compilarlo, magari sul PC di qualcuno, senza nessuna pipeline di CI/CD. Il marchio lo personalizza, l'operatore ci mette la sua configurazione.
 
 In tutta questa catena **nessuno ha l'incentivo, né spesso la possibilità, di aggiornare il kernel**:
 
 - i driver PON sono **out-of-tree**: non sono nel kernel Linux ufficiale, e funzionano solo con la versione per cui sono stati scritti. Cambiare kernel significa portare i driver, e senza sorgenti non si può;
 - **OpenWrt ufficiale avvia il FALC ON, ma non ha i driver GPON**. È per questo, scrive il progetto Peter Pon, che i firmware sono rimasti sul vecchio kernel[^peterpon_c3];
 - il produttore del SoC **abbandona la piattaforma**: la parte GPON di Lantiq, dopo i passaggi di proprietà, è finita in un binario morto e il FALC ON è segnato come fine vita; Realtek ha annunciato il fine vita di RTL9601C e RTL9601CI per la fine di novembre 2026[^hg_ont];
+- chi distribuisce le ONT, cioè **l'operatore, non ha nessun interesse** ad aggiornare: preferisce lavorare su versioni fisse, validate una volta e lasciate lì per anni;
 - quando l'SDK si aggiorna, **l'aggiornamento può fare danni**: sulla Zyxel PMG3000-D20B il passaggio dall'SDK Lantiq 6.4.2 al 7.5.1 ha peggiorato le prestazioni in upload[^hg_zyxel].
 
 C'è infine la questione dei **sorgenti**. Il kernel Linux è GPLv2, e chi lo distribuisce deve fornire il codice corrispondente. Nel mondo delle ONT questo obbligo, semplicemente, non viene rispettato: i produttori **non pubblicano i sorgenti GPL**, e non li forniscono nemmeno quando vengono richiesti esplicitamente. I repository linkati su Hack GPON sono tutti strumenti della community, ricostruiti a partire dai binari: di codice dei vendor non ce n'è.
@@ -196,12 +204,11 @@ Se il kernel è fermo, il resto del firmware non sta meglio. Basta scorrere le p
 - **credenziali predefinite e fisse**: `admin/admin` sulla ODI DFP-34X-2C2 e sulla ZTE F6005, `ubnt/ubnt` sulla UF-Instant, password di root fisse e uguali per tutti gli esemplari su MA5671A, G-010S-P e FS GPON-ONU-34-20BI[^hg_odi][^hg_zte][^hg_ufi][^hg_ma5671a];
 - **segreti derivati da dati pubblici**: sulla ODI la chiave legata al MAC si ottiene con l'MD5 di una stringa fissa seguita dal MAC address; sulla Nokia XS-010X-Q la password di *enable* si genera dal numero di serie GPON; sulla KAON PM1191 le password di configurazione sono cifrate con una chiave derivata dal MAC[^hg_odi][^hg_nokia_xgs][^hg_kaon];
 - **accesso fisico senza autenticazione**: sulla FS XGS-ONU-25-20NI la seriale UART dà una shell di root senza chiedere password[^hg_fs_xgs];
-- **crittografia da museo**: l'SSH della ODI richiede 3DES e il gruppo Diffie-Hellman 1, la Zyxel PM7300-T0 presenta solo chiavi host SHA1 e ha anche FTP aperto[^hg_odi][^hg_pm7300];
-- **command injection**: sulla LEOX LXT-010S-H un handler del server web passa un parametro direttamente a `system()`, lo stesso schema della CVE-2019-19824[^hg_leox][^cve_2019_19824].
+- **crittografia da museo**: l'SSH del MA5671A accetta solo il gruppo Diffie-Hellman 1 e chiavi `ssh-dss`, che i client moderni rifiutano se non le si riabilita a mano; quello della ODI richiede 3DES e lo stesso gruppo Diffie-Hellman 1; la Zyxel PM7300-T0 presenta solo chiavi host SHA1 e ha anche FTP aperto[^hg_ma5671a][^hg_odi][^hg_pm7300].
 
 Sono esattamente le cose che la [Direttiva RED](/post/2025-08-02-red-direttiva-europea-futuro-modding-firmware/) e la EN 303 645 cercano di far sparire dal mercato: password predefinite, servizi esposti, interfacce di debug aperte.
 
-Su uno stick SFP, si dirà, l'interfaccia di gestione è raggiungibile solo dalla LAN. Vero, nella maggior parte delle configurazioni. Ma "solo dalla LAN" significa da qualunque dispositivo compromesso della rete di casa. Altre ONT, come quelle Sercomm, non espongono nulla verso la LAN e sono gestibili solo dal lato della OLT: meglio per l'utente, ma l'interfaccia resta, e la superficie d'attacco si sposta verso la rete dell'operatore. E tutte, comunque, hanno un demone OMCI che parla con la OLT, scritto anni fa e mai rivisto da nessuno fuori dal vendor.
+Su uno stick SFP, si dirà, l'interfaccia di gestione sta sul lato LAN della ONT, cioè sulla porta WAN del router, e la grande maggioranza dei router domestici, a mia stima circa il 70%, non è nemmeno in grado di raggiungerla da lì. Vero. Ma basta un router compromesso per arrivarci, ed è proprio il router il dispositivo più esposto della rete di casa. Altre ONT, come quelle Sercomm, non espongono nulla verso la LAN e sono gestibili solo dal lato della OLT: meglio per l'utente, ma l'interfaccia resta, e la superficie d'attacco si sposta verso la rete dell'operatore. E tutte, comunque, hanno un demone OMCI che parla con la OLT, scritto anni fa e mai rivisto da nessuno fuori dal vendor.
 
 Il NIST definisce una vulnerabilità come una debolezza in un sistema informativo, nelle procedure di sicurezza, nei controlli interni o nell'implementazione, che può essere sfruttata o attivata da una fonte di minaccia[^nist_vuln]. Una password di root uguale su milioni di dispositivi, pubblicata su un wiki, rientra perfettamente nella definizione.
 
@@ -221,7 +228,7 @@ E il firmware non lo sceglie l'utente: le ONT arrivano dall'operatore, con il fi
 
 Ed è qui che entra in gioco **Peter Pon**[^peterpon]: un firmware basato su OpenWrt per il Huawei MA5671A e i suoi "fratelli" con SoC FALC ON. Il sottotitolo che darei al progetto è: *from legacy GPON firmware to modern, open-source optical network terminals*.
 
-Le schede supportate sono tre progetti hardware e cinque modelli: Huawei MA5671A, Nokia G-010S-P, FS GPON-ONU-34-20BI, Zyxel PMG3000-D20B e Nokia G-010S-A, quest'ultima ancora sperimentale e mai provata su un modulo reale[^peterpon_c1].
+Le schede supportate sono tre progetti hardware e cinque modelli: Huawei MA5671A, Nokia G-010S-P, FS GPON-ONU-34-20BI, Zyxel PMG3000-D20B e Nokia G-010S-A[^peterpon_c1].
 
 Il confronto con il firmware di serie è quello che rende il progetto interessante[^peterpon_c3]:
 
@@ -229,7 +236,8 @@ Il confronto con il firmware di serie è quello che rende il progetto interessan
 |---|---|---|
 | OpenWrt | 14.07 | main |
 | Linux | 3.10.49 | 6.18.55 |
-| Libreria C | uClibc 0.9.33 | musl |
+| Libreria C | uClibc 0.9.33, non più mantenuta, con vulnerabilità note[^cve_2022_30295] | musl, mantenuta |
+| SSH | Diffie-Hellman group 1, chiavi `ssh-dss` | algoritmi moderni |
 | Driver GPON | scritti per Linux 3.10 | aggiornati per Linux 6.18 |
 | Demone OMCI | quello di serie | sviluppato dal progetto |
 | CPU usate da Linux | 1 | 2 |
@@ -244,7 +252,7 @@ Lo stesso chip, lo stesso hardware del 2014. Eppure:
 - il tempo di avvio fino alla prima risposta sulla LAN scende da circa **53 a 31 secondi**, e la lettura della flash diventa quasi sei volte più veloce[^peterpon_c7];
 - dopo un reset del watchdog resta un registro del crash in 64 KiB di RAM, invece del nulla.
 
-Quello che però mi interessa di più non sono le prestazioni. È il **metodo**. Il progetto dichiara circa 330 controlli automatici, 857 specifiche scritte, 37 sessioni reali con la OLT registrate e riprodotte, e la regola che nessuna immagine esce se un controllo non passa o non può essere eseguito[^peterpon_c11]. Ogni differenza di comportamento rispetto all'originale ha un motivo scritto. Le operazioni irreversibili (calibrazione del laser, bootloader, scelta dello slot di avvio) sono rifiutate o richiedono una conferma esplicita[^peterpon_c8][^peterpon_c9]. E soprattutto, il repository e la pipeline di CI/CD sono pubblici[^peterpon_repo]: non bisogna fidarsi della pagina del progetto, si può guardare ogni build e ogni test.
+Quello che però mi interessa di più non sono le prestazioni. È il **metodo**. Il progetto dichiara circa 330 controlli automatici, 857 specifiche scritte, 37 sessioni reali con la OLT registrate e riprodotte, e la regola che nessuna immagine esce se un controllo non passa o non può essere eseguito[^peterpon_c11]. Ogni differenza di comportamento rispetto all'originale ha un motivo scritto. Le operazioni irreversibili (calibrazione del laser, bootloader, scelta dello slot di avvio) sono rifiutate o richiedono una conferma esplicita[^peterpon_c8][^peterpon_c9]. E soprattutto, il repository e la pipeline di CI/CD sono pubblici[^peterpon_repo]: non bisogna fidarsi della pagina del progetto, si può guardare ogni build e ogni test. Ne ho già scritto a proposito di [PHP2Shell](/post/2026-10-25-php-nel-2026-php2shell/): senza test automatici, aggiornare in fretta significa rompere tutto.
 
 È esattamente quello che manca nei firmware dei vendor: **la tracciabilità di cosa c'è e del perché**.
 
@@ -255,7 +263,7 @@ Un'analisi critica deve guardare anche l'altro lato.
 - **I driver GPON restano quelli originali**, aggiornati per girare su Linux 6.18, non riscritti. Sono stati pensati per una sola CPU, e infatti girano solo sulla CPU0, con controlli in fase di build e a runtime per impedire che qualcuno li sposti[^peterpon_c5]. Il debito tecnico dell'SDK è contenuto, non eliminato.
 - **Un kernel moderno costa di più**: il progetto stesso misura chiamate di sistema, `fork` ed `exec` da 1,7 a 2 volte più lente rispetto al 3.10[^peterpon_c7]. Su un SoC con 64 MB di RAM non è un dettaglio.
 - **Il codice è scritto con l'IA**: nei crediti il progetto ringrazia Anthropic per Claude, «the AI that built this firmware together with us»[^peterpon]. Chi ha letto il mio [articolo sul CRA](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/) sa che non mi fido del codice che nessuno ha davvero letto prima del commit. Ma qui il punto è un altro: un firmware generato con l'IA **e** coperto da centinaia di test, specifiche e sessioni reali riprodotte offre molte più garanzie di un firmware scritto a mano nel 2014 e mai più guardato. Non conta chi ha scritto il codice: conta cosa si può verificare.
-- **La frammentazione**: intorno a questi stick sono nati molti fork e progetti paralleli, spesso con lo stesso obiettivo. Ne esiste anche almeno uno indipendente che offre un feed OpenWrt con driver GPL per il MA5671A[^ma5671a_openwrt]. Sul fronte Realtek la situazione è la stessa: la community ha prodotto firmware modificati e strumenti per gli stick RTL960x[^rtl960x], ma ognuno lavora sul proprio modello, sempre sopra il Luna SDK originale. Venti fork mantenuti da una persona ciascuno non sono un'alternativa sostenibile a un SDK abbandonato: sono venti SDK abbandonati in potenza.
+- **La frammentazione**: intorno a questi stick sono nati molti fork e progetti paralleli, spesso con lo stesso obiettivo. Ne esiste anche almeno uno indipendente che offre un feed OpenWrt con driver GPL per il MA5671A[^ma5671a_openwrt]. Sul fronte Realtek la situazione è la stessa: la community ha prodotto firmware modificati e strumenti per gli stick RTL960x[^rtl960x], ma ognuno lavora sul proprio modello, sempre sopra il Luna SDK originale. Venti fork mantenuti da una persona ciascuno non sono un'alternativa sostenibile a un SDK abbandonato: sono venti SDK abbandonati in potenza. La speranza è che Peter Pon diventi il punto su cui convergere.
 
 Resta il fatto che Peter Pon dimostra una cosa precisa: **si può modernizzare a fondo una piattaforma GPON esistente senza cambiare hardware**. Se lo può fare una piccola comunità su un chip in fine vita, senza documentazione ufficiale, il produttore del chip con i sorgenti in mano poteva farlo dieci anni fa.
 
@@ -320,7 +328,7 @@ Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per 
 
 - ❌ **L'ONT è solo un convertitore ottico, non serve aggiornarla** → **Falso**. È un computer Linux con un IP di gestione, un server web, SSH o Telnet e un demone OMCI che parla con la rete dell'operatore.
 
-- ❌ **Un kernel vecchio è per forza vulnerabile** → **Non necessariamente**. Contano i backport, la configurazione, i driver e lo userspace. Ma nelle ONT non c'è nessuna evidenza di backport, e lo userspace (credenziali fisse, cifrari obsoleti, command injection) dice il resto.
+- ❌ **Un kernel vecchio è per forza vulnerabile** → **Non necessariamente**. Contano i backport, la configurazione, i driver e lo userspace. Ma nelle ONT non c'è nessuna evidenza di backport, e lo userspace (credenziali fisse, segreti derivati dal MAC, cifrari obsoleti) dice il resto.
 
 - ❌ **Le ONT XGS-PON sono più moderne, quindi più sicure** → **Falso**. Sono più veloci. I kernel che ho trovato vanno dal 4.4 al 5.10, tutti fuori supporto upstream o in scadenza a dicembre 2026.
 
@@ -331,16 +339,6 @@ Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per 
 - ❌ **Per avere un software moderno bisogna cambiare hardware** → **Falso**. Peter Pon porta Linux 6.18 su un SoC del 2014 con 64 MB di RAM.
 
 - ❌ **Il CRA obbligherà a rifare tutte le ONT già vendute** → **Falso**. I requisiti di progettazione valgono per i prodotti immessi sul mercato dal dicembre 2027. Gli obblighi di segnalazione delle vulnerabilità sfruttate, però, valgono già oggi anche per quelli in commercio.
-
-## Conclusione
-
-Negli ultimi dieci anni l'infrastruttura FTTH ha fatto un salto enorme: banda quadruplicata, linee simmetriche, profili da 10 Gbit/s. Il software delle ONT, invece, è rimasto dov'era: kernel 2.6 e 3.10 sulle GPON, 4.4 e 4.14 sulle XGS-PON, SDK proprietari che nessuno porta avanti, credenziali scritte nel firmware.
-
-Non è un problema tecnico. È un problema di **ciclo di vita del software**: nella catena SoC, ODM, marchio, operatore, nessuno è responsabile di aggiornare il kernel, e il produttore del chip smette di farlo il giorno in cui smette di vendere il chip.
-
-Peter Pon dimostra che si può fare diversamente, sullo stesso hardware, con meno risorse di qualunque vendor. Il CRA dirà presto chi deve farlo.
-
-Nel frattempo, la prossima volta che il vostro operatore vi installa una ONT per la fibra da 10 Gbit/s, chiedete che kernel ci gira sopra. Probabilmente nessuno saprà rispondervi.
 
 📚 **Fonti e approfondimenti**
 [^peterpon]: [Peter Pon – OpenWrt firmware for the Huawei MA5671A GPON SFP stick and its sister modules](https://metal-stress.github.io/peter-pon-falcon/)
@@ -356,6 +354,7 @@ Nel frattempo, la prossima volta che il vostro operatore vi installa una ONT per
 [^rtl960x]: [Anime4000/RTL960x su GitHub](https://github.com/Anime4000/RTL960x)
 [^hg_ont]: [Hack GPON – ONT, panoramica dei chipset](https://hack-gpon.org/ont/)
 [^hg_fs]: [Hack GPON – FS.com GPON-ONU-34-20BI](https://hack-gpon.org/ont-fs-com-gpon-onu-stick-with-mac/)
+[^hg_onu1710]: [Hack GPON – FS.com ONU1710-1G](https://hack-gpon.org/ont-fs-com-onu1710-1g/)
 [^hg_zyxel]: [Hack GPON – Zyxel PMG3000-D20B](https://hack-gpon.org/ont-zyxel-pmg3000-d20b/)
 [^hg_ma5671a]: [Hack GPON – Huawei MA5671A](https://hack-gpon.org/ont-huawei-ma5671a/)
 [^hg_odi]: [Hack GPON – ODI Realtek DFP-34X-2C2](https://hack-gpon.org/ont-odi-realtek-dfp-34x-2c2/)
@@ -368,7 +367,6 @@ Nel frattempo, la prossima volta che il vostro operatore vi installa una ONT per
 [^hg_grg4362]: [Hack GPON – Comtrend GRG-4362](https://hack-gpon.org/xgs/ont-comtrend-grg-4362/)
 [^hg_repo]: [hack-gpon/hack-gpon.github.io su GitHub](https://github.com/hack-gpon/hack-gpon.github.io)
 [^hg_pm7300]: [Hack GPON – Zyxel PM7300-T0](https://hack-gpon.org/xgs/ont-zyxel-pm7300-t0/)
-[^cve_2019_19824]: [NVD – CVE-2019-19824](https://nvd.nist.gov/vuln/detail/CVE-2019-19824)
 [^nist_vuln]: [NIST CSRC – Glossary: vulnerability](https://csrc.nist.gov/glossary/term/vulnerability)
 [^kernel_releases]: [kernel.org – Releases](https://www.kernel.org/category/releases.html)
 [^nov2026]: [Wikipedia – November 2026 technology outages](https://en.wikipedia.org/wiki/November_2026_technology_outages)
@@ -376,5 +374,6 @@ Nel frattempo, la prossima volta che il vostro operatore vi installa una ONT per
 [^faa2026]: [Wikipedia – 2026 FAA nationwide ground stop](https://en.wikipedia.org/wiki/2026_FAA_nationwide_ground_stop)
 [^apple2026]: [MacRumors – Apple Blames Internal Update for Outage, Says It Wasn't a Cyberattack](https://www.macrumors.com/2026/11/17/apple-outage-internal-update/)
 [^crowdstrike]: [Wikipedia – 2024 CrowdStrike-related IT outages](https://en.wikipedia.org/wiki/2024_CrowdStrike-related_IT_outages)
+[^cve_2022_30295]: [NVD – CVE-2022-30295](https://nvd.nist.gov/vuln/detail/CVE-2022-30295)
 [^kernel_cve]: [The Linux Kernel documentation – CVEs](https://docs.kernel.org/process/cve.html)
 [^kernel_vulns]: [kernel.org – linux/security/vulns.git](https://git.kernel.org/pub/scm/linux/security/vulns.git)

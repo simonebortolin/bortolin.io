@@ -25,7 +25,7 @@ excerpt: >-
 >
 > 💶 `(decimal)1.23` oggi vale `1.229999999999999982236431606`, e **non c'è un interruttore** per tornare al comportamento precedente.
 >
-> 🔐 La sicurezza segue la stessa direzione: `BinaryFormatter` rimosso in .NET 9, crittografia **post-quantistica** in .NET 10, X25519 e HPKE in .NET 11.
+> 🔐 Sulla sicurezza .NET ha fatto la scelta opposta: da .NET 9 `BinaryFormatter` non è stato reso "prevedibile", **lancia sempre un'eccezione**. L'errore si vede subito, invece di diventare un valore plausibile.
 >
 > 📅 .NET 8 e .NET 9 sono **fuori supporto dal 10 novembre 2026**: chi aggiorna adesso eredita tutte queste modifiche in un colpo solo.
 

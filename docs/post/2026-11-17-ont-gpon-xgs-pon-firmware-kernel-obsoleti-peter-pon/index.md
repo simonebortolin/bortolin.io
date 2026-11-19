@@ -144,7 +144,7 @@ Tradotto:
 
 In altre parole: **nessuna delle ONT che ho analizzato gira oggi su un kernel con un supporto upstream che vada oltre il 2026**. Le XGS-PON, cioè la tecnologia "nuova", vengono distribuite dagli operatori nel 2026 con kernel che sono già fuori supporto o lo saranno tra poche settimane.
 
-Esistono società e progetti che di mestiere portano le correzioni di sicurezza sui kernel fuori supporto: il progetto CIP della Linux Foundation, per esempio, mantiene per l'industria un 4.4 fino al 2027, e le distribuzioni enterprise fanno lo stesso da sempre. **Nessun produttore di ONT, però, ha mai preso in considerazione questa strada.**
+Esistono società e progetti che di mestiere portano le correzioni di sicurezza sui kernel fuori supporto: il progetto CIP della Linux Foundation, per esempio, mantiene per l'industria kernel con un supporto di dieci anni, e il suo 4.4 riceve ancora correzioni: l'ultimo rilascio è del 17 novembre 2026[^cip], e le distribuzioni enterprise fanno lo stesso da sempre. **Nessun produttore di ONT, però, ha mai preso in considerazione questa strada.**
 
 ### Quante CVE, in concreto
 
@@ -375,5 +375,6 @@ Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per 
 [^apple2026]: [MacRumors – Apple Blames Internal Update for Outage, Says It Wasn't a Cyberattack](https://www.macrumors.com/2026/11/17/apple-outage-internal-update/)
 [^crowdstrike]: [Wikipedia – 2024 CrowdStrike-related IT outages](https://en.wikipedia.org/wiki/2024_CrowdStrike-related_IT_outages)
 [^cve_2022_30295]: [NVD – CVE-2022-30295](https://nvd.nist.gov/vuln/detail/CVE-2022-30295)
+[^cip]: [CIP – Linux Kernel & Core Packages](https://www.cip-project.org/about/linux-kernel-core-packages)
 [^kernel_cve]: [The Linux Kernel documentation – CVEs](https://docs.kernel.org/process/cve.html)
 [^kernel_vulns]: [kernel.org – linux/security/vulns.git](https://git.kernel.org/pub/scm/linux/security/vulns.git)

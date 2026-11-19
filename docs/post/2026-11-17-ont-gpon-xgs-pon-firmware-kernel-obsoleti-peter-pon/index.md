@@ -263,7 +263,20 @@ Resta il fatto che Peter Pon dimostra una cosa precisa: **si può modernizzare a
 
 Fino a oggi una ONT poteva restare sul mercato per un decennio con lo stesso kernel senza che nessuno ne rispondesse. Il quadro normativo europeo sta cambiando proprio questo.
 
-La **RED** riguarda solo le apparecchiature radio: uno stick SFP o un'ONT senza Wi-Fi non ci rientra, mentre un'ONT con router Wi-Fi integrato sì. Per le ONT "pure" la norma rilevante è il **Cyber Resilience Act**, che si applica a qualsiasi prodotto con elementi digitali. E le ONT non sono prodotti qualunque: come router, modem e switch, rientrano tra i **prodotti importanti di Classe I** dell'Allegato III. Non possono quindi fare la semplice autovalutazione dei prodotti "di default": servono le norme armonizzate o, in mancanza, un organismo notificato. Ne ho parlato in dettaglio [nell'articolo dedicato](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/); qui basta ricordare tre obblighi:
+La **RED** riguarda solo le apparecchiature radio: uno stick SFP o un'ONT senza Wi-Fi non ci rientra, mentre un'ONT con router Wi-Fi integrato sì. Per le ONT "pure" la norma rilevante è il **Cyber Resilience Act**, che si applica a qualsiasi prodotto con elementi digitali.
+
+Il CRA divide i prodotti in quattro livelli di rischio. Più un prodotto è critico per la sicurezza di ciò che gli sta intorno, più la verifica della conformità si sposta dal produttore a un soggetto esterno:
+
+| Categoria | Cosa ci rientra | Esempi | Chi verifica la conformità |
+|---|---|---|---|
+| **Default** | tutto ciò che non è elencato negli allegati: la stragrande maggioranza dei prodotti | app, giochi, stampanti, smart TV | il produttore, con un'autovalutazione |
+| **Importanti – Classe I** (Allegato III) | prodotti con funzioni di sicurezza o di rete, la cui compromissione si propaga ad altri dispositivi | **router, modem, switch**, VPN, password manager, sistemi operativi, smart lock | il produttore, ma solo applicando le norme armonizzate; altrimenti un organismo notificato |
+| **Importanti – Classe II** (Allegato III) | prodotti che *sono* la difesa, o che isolano altri sistemi | firewall, IDS/IPS, hypervisor, container runtime | sempre un organismo notificato |
+| **Critici** (Allegato IV) | prodotti da cui dipendono infrastrutture essenziali | smart card, HSM, gateway dei contatori intelligenti | certificazione europea di cybersicurezza |
+
+Una ONT, che sia un box o uno stick, è a tutti gli effetti un modem: sta tra la rete dell'operatore e la rete di casa, e se viene compromessa espone tutto quello che c'è dietro. Rientra quindi tra i **prodotti importanti di Classe I**, insieme a router e switch. Non può fare la semplice autovalutazione dei prodotti di default: o il produttore dimostra la conformità alle norme armonizzate, o deve passare da un organismo notificato.
+
+Ne ho parlato in dettaglio [nell'articolo dedicato](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/); qui basta ricordare tre obblighi:
 
 - **niente vulnerabilità note sfruttabili** al momento dell'immissione sul mercato. Un kernel fuori supporto da anni, senza backport documentati, rende questa promessa molto difficile da mantenere;
 - **un periodo di supporto** dichiarato, di norma **almeno 5 anni**, con aggiornamenti di sicurezza gratuiti. Con un SDK abbandonato dal produttore del chip, chi li scrive?

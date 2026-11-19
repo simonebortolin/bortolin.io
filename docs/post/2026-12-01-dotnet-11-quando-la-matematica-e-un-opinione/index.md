@@ -5,16 +5,19 @@ math: false
 excerpt: >-
     La matematica non è un'opinione, ma per anni in .NET il risultato di una
     conversione lo è stato: dipendeva dal processore. Da .NET 9 le conversioni
-    saturano, in .NET 11 arrotondamenti e decimal diventano corretti, e alcuni
-    conti cambiano risultato. Perché è una buona notizia e come aggiornare
-    senza farsi sorprendere, ora che .NET 8 e 9 sono fuori supporto.
+    saturano ovunque, e .NET 11 corregge arrotondamenti e decimal. Il risultato
+    è prevedibile, ma non sempre giusto: la saturazione non elimina l'errore,
+    lo rende plausibile. Cosa è cambiato e come aggiornare senza farsi
+    sorprendere, ora che .NET 8 e 9 sono fuori supporto.
 ---
 
-> In .NET la matematica è sempre stata la stessa. Erano i risultati a cambiare da un processore all'altro, e ora, in nome della correttezza, cambiano tra una versione e l'altra. In breve:
+> In .NET la matematica è sempre stata la stessa. Erano i risultati a cambiare da un processore all'altro. Ora sono uguali ovunque, ma non sempre giusti. In breve:
 >
 > 🧮 In C# lo stesso overflow ha **tre comportamenti diversi**: `int` ricomincia dal minimo, `double` arriva a **infinito**, `decimal` lancia **un'eccezione**.
 >
 > 🎯 Fino a .NET 8 convertire in `int` un `double` fuori intervallo dava `int.MinValue` su x86/x64 e un risultato diverso su ARM. Da **.NET 9** le conversioni **saturano** ovunque.
+>
+> 🙈 Saturare **non corregge l'errore, lo nasconde**: un valore assurdo diventa un valore plausibile, e `NaN` diventa **0**.
 >
 > 📏 **.NET 11** estende la saturazione a `byte`, `short` e `char`: `(short)65578.0` passa da **42** a **32.767**.
 >
@@ -30,9 +33,9 @@ La matematica non è un'opinione. Il calcolo in virgola mobile, invece, un po' s
 
 Il 10 novembre 2026 è uscito **.NET 11**, e lo stesso giorno .NET 8 e .NET 9 sono arrivati a fine supporto[^support_policy]. Chi aveva scelto .NET 8 perché era LTS adesso deve fare il salto, e molti scopriranno che alcuni conti non tornano più come prima.
 
-Non perché .NET abbia iniziato a sbagliare. Perché ha smesso.
+In parte perché .NET ha smesso di sbagliare. In parte perché ha scelto un modo nuovo, più educato, di sbagliare.
 
-Negli ultimi tre rilasci Microsoft ha preso una serie di decisioni che vanno tutte nella stessa direzione: meno comportamenti "dipende dall'hardware", più risultati **deterministici e corretti**, anche se costano qualche ciclo di CPU e qualche breaking change. È la stessa direzione che il runtime ha preso sulla sicurezza.
+Negli ultimi tre rilasci Microsoft ha preso una serie di decisioni con un obiettivo dichiarato: meno comportamenti "dipende dall'hardware", più risultati **deterministici**, anche a costo di qualche ciclo di CPU e di qualche breaking change. Su arrotondamenti e conversioni `decimal` il risultato è anche **più corretto**. Sulle conversioni da virgola mobile a intero, invece, la scelta è stata la **saturazione**, e a me la saturazione non piace: rende prevedibile un bug invece di farlo emergere.
 
 Proviamo allora a capire, con un po' di ordine:
 
@@ -83,7 +86,17 @@ Da .NET 9, quindi, su qualunque architettura:
 - un valore **troppo piccolo** diventa il **minimo** (0 per i tipi senza segno);
 - **`NaN`** diventa **0**.
 
-La correttezza ha un prezzo. Secondo le stime dell'issue originale, su un processore Skylake una conversione semplice passava da circa **7** a **19-24 cicli**[^issue_61885], perché x86 non ha un'istruzione che saturi da sola e il JIT deve aggiungere dei controlli. Per chi ha davvero bisogno di quei cicli esiste una via d'uscita esplicita, `double.ConvertToIntegerNative<TInteger>()`, che fa *"quello che è più efficiente per la piattaforma"* e non garantisce nulla fuori intervallo[^fp_to_int_net9]. Il punto è che ora la scorciatoia **va chiesta per nome**, non arriva di default.
+Il determinismo ha un prezzo. Secondo le stime dell'issue originale, su un processore Skylake una conversione semplice passava da circa **7** a **19-24 cicli**[^issue_61885], perché x86 non ha un'istruzione che saturi da sola e il JIT deve aggiungere dei controlli. Per chi ha davvero bisogno di quei cicli esiste una via d'uscita esplicita, `double.ConvertToIntegerNative<TInteger>()`, che fa *"quello che è più efficiente per la piattaforma"* e non garantisce nulla fuori intervallo[^fp_to_int_net9].
+
+### Prevedibile non vuol dire giusto
+
+Avere un solo risultato su ogni processore è un passo avanti. Che quel risultato sia un valore **saturato**, secondo me, no.
+
+Torniamo al cruscotto. Saturare è come un tachimetro con la lancetta bloccata a fondo scala: se vai a 300 all'ora e la lancetta si ferma a 260, leggi 260. Un valore sbagliato, ma **credibile**, e nessuno ci fa caso. Il vecchio comportamento di x86 era brutto, ma almeno era evidente: dieci miliardi che diventano **-2.147.483.648** saltano all'occhio in un log, in un report o in un test. **2.147.483.647** sembra solo un numero grande.
+
+Con `NaN` è anche peggio. `NaN` esiste proprio per dire "qui qualcosa è andato storto": per costruzione si propaga in tutti i conti successivi, così l'errore arriva fino a chi guarda il risultato. Convertirlo in **0** cancella quell'informazione e la sostituisce con il valore più plausibile di tutti. È un sensore guasto che, invece di mostrare `---`, mostra **0 km/h**: l'auto sembra ferma. Uno zero passa ogni controllo, è un prezzo, una quantità, una coordinata, un indice valido.
+
+Microsoft non è sola in questa scelta: l'issue cita esplicitamente la coerenza con ARM64, Rust e WebAssembly[^issue_61885]. Ma che lo facciano anche altri non la rende meno discutibile. Un errore che produce un risultato plausibile è **più difficile da trovare** di uno che produce un risultato assurdo, ed è questo che conta quando si cerca un bug in produzione.
 
 ## .NET 11 chiude il cerchio
 
@@ -99,7 +112,7 @@ static short ConvertValue(double value) => unchecked((short)value);
 ConvertValue(65578.0); // prima: 42, da .NET 11: 32767
 ```
 
-Prima il valore passava da un `int` intermedio, `65578` (`0x0001002A`), di cui si tenevano i 16 bit bassi: `0x002A`, cioè **42**[^fp_small_int_net11]. Un numero di sessantacinquemila e rotti diventava la risposta alla domanda fondamentale sulla vita, l'universo e tutto quanto. Ora diventa **32.767**, il massimo di uno `short`.
+Prima il valore passava da un `int` intermedio, `65578` (`0x0001002A`), di cui si tenevano i 16 bit bassi: `0x002A`, cioè **42**[^fp_small_int_net11]. Un numero di sessantacinquemila e rotti diventava la risposta alla domanda fondamentale sulla vita, l'universo e tutto quanto. Ora diventa **32.767**, il massimo di uno `short`. Il 42 era assurdo, ma almeno sembrava sbagliato. Il 32.767 è altrettanto sbagliato, ma sembra un numero vero.
 
 La modifica vale per CoreCLR (interprete compreso) e Native AOT, ma **non per Mono**[^fp_small_int_net11]: chi distribuisce lo stesso codice su runtime diversi deve tenerne conto.
 
@@ -142,30 +155,31 @@ Le altre novità numeriche vanno nella stessa direzione:
 - formattazione e parsing in **esadecimale** dei numeri in virgola mobile (`Math.PI.ToString("X")` produce `0X1.921FB54442D18P+1`), utile proprio quando si vuole vedere il valore esatto di un `double` invece della sua versione abbellita[^net11_libraries];
 - aritmetica su `Half` accelerata in hardware con **AVX10.1** su x64 e con le istruzioni FP16 su Arm64, senza modifiche al codice[^net11_runtime].
 
-## Il filo rosso: niente "dipende"
+## Il filo rosso, e dove si spezza
 
-Messe in fila, queste modifiche raccontano una scelta di campo. Per vent'anni la filosofia era: **il runtime fa quello che fa l'hardware**, e se l'hardware dà risultati diversi pazienza, tanto la specifica dice "non specificato". Da .NET 9 la filosofia è diventata: **il risultato deve essere uno solo**, su ogni processore, e deve essere quello matematicamente corretto, anche se costa.
+Messe in fila, queste modifiche raccontano una scelta di campo. Per vent'anni la filosofia era: **il runtime fa quello che fa l'hardware**, e se l'hardware dà risultati diversi pazienza, tanto la specifica dice "non specificato". Da .NET 9 la filosofia è diventata: **il risultato deve essere uno solo**, su ogni processore.
 
-Non è pignoleria. Un risultato che dipende dall'architettura è un risultato **non testabile**: i test che passano sul portatile non dimostrano nulla sul server. E un valore "non specificato" che finisce in una dimensione, in un indice o in un controllo di limite è esattamente il tipo di comportamento imprevisto da cui nascono molti bug, e una parte delle vulnerabilità.
+Su questo sono d'accordo. Un risultato che dipende dall'architettura è un risultato **non testabile**: i test che passano sul portatile non dimostrano nulla sul server. Ma un valore saturato che finisce in una dimensione, in un indice o in un controllo di limite è pericoloso quanto uno "non specificato": anzi di più, perché ha l'aria di essere giusto e passa i controlli.
 
-La stessa filosofia si vede, in modo ancora più evidente, sulla sicurezza:
+La stessa spinta si vede, in modo ancora più evidente, sulla sicurezza:
 
 - **.NET 8**: supporto a **SHA-3** e, con `Vector512`, alle istruzioni AVX-512[^net8_runtime];
 - **.NET 9**: **`BinaryFormatter` rimosso** dal runtime (le API restano, ma lanciano sempre un'eccezione), **KMAC** secondo NIST SP 800-185, **CET** (*Control-flow Enforcement Technology*, la protezione hardware contro il dirottamento del flusso di esecuzione) attivo di default su Windows[^net9_libraries][^net9_runtime];
 - **.NET 10**: crittografia **post-quantistica** con **ML-KEM** (FIPS 203), **ML-DSA** (FIPS 204) e **SLH-DSA** (FIPS 205)[^net10_libraries];
 - **.NET 11**: **X25519**, AES Key Wrap, una versione ibrida di ML-KEM e **HPKE** (*Hybrid Public Key Encryption*, ancora sperimentali), un limite di profondità di default per il parser CBOR e al massimo due download di certificati intermedi per catena su Linux[^net11_libraries][^breaking_net11].
 
-È lo stesso movimento: togliere ciò che è comodo ma pericoloso (`BinaryFormatter` come le conversioni "non specificate"), mettere limiti di default dove prima non c'erano, e pretendere che ciò che il programmatore scrive faccia **una cosa sola**. In fondo è quello che il [Cyber Resilience Act](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/) chiede a chi produce software: prodotti sicuri **per impostazione predefinita**, non perché qualcuno si è ricordato di attivare l'opzione giusta.
+Qui però c'è una differenza che conta. Quando Microsoft ha tolto `BinaryFormatter`, non l'ha fatto "funzionare in modo prevedibile": l'ha fatto **fallire sempre**, con un'eccezione. Chi lo usava se ne accorge subito, al primo test. È la stessa logica di `decimal`, che in caso di overflow si ferma invece di inventare un risultato. Sulla sicurezza .NET ha scelto di **fallire rumorosamente**; sulle conversioni numeriche ha scelto di **sbagliare in silenzio**, ma in modo ordinato.
+
+Il [Cyber Resilience Act](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/) chiede a chi produce software prodotti sicuri **per impostazione predefinita**, non perché qualcuno si è ricordato di attivare l'opzione giusta. Un default che trasforma un errore in un numero plausibile va nella direzione opposta: il problema non sparisce, si sposta più avanti, dove costa di più trovarlo.
 
 Anche il codice gestito, del resto, non è immune da quello che succede sotto: nell'ottobre 2026 HTTP2Shell ha colpito anche .NET, attraverso la sua copia del decoder Brotli, come avevo raccontato parlando di [PHP2Shell](/post/2026-10-25-php-nel-2026-php2shell/).
 
 ## I limiti, detti chiaramente
 
-Mi piace la direzione presa da .NET, ma ha dei costi che non vanno nascosti.
+Oltre alla saturazione, anche le altre modifiche hanno dei costi che non vanno nascosti, comprese quelle che correggono errori veri.
 
 - **Le breaking change senza ritorno.** Per le conversioni `decimal` e per i numeri complessi non esiste un interruttore di compatibilità. È una scelta coerente, ma chi ha dati storici calcolati con il vecchio algoritmo (fatture, report, tabelle salvate) può ritrovarsi con differenze all'ultima cifra tra il prima e il dopo.
 - **Il determinismo non è totale.** Mono resta fuori dalla saturazione dei tipi piccoli, e `ConvertToIntegerNative` è dichiaratamente dipendente dalla piattaforma. Chi lo usa per recuperare prestazioni si riporta in casa il problema originale.
-- **Saturare non vuol dire avere ragione.** Dieci miliardi convertiti in `int` diventano 2.147.483.647: un numero prevedibile, ma **sbagliato** lo stesso. La saturazione rende il bug riproducibile, non lo corregge.
 - **L'hardware.** .NET 11 alza il requisito minimo su x86/x64 al livello **x86-64-v2** (SSE4.2, POPCNT e affini) e sui processori più vecchi semplicemente non parte[^net11_hw]. Sono requisiti che Windows 11 chiede già, ma è comunque un altro pezzo di hardware funzionante che esce dal perimetro degli aggiornamenti.
 
 ## Aggiornare senza farsi sorprendere
@@ -188,7 +202,7 @@ gantt
 Chi passa da .NET 8 a .NET 11 attraversa in un colpo solo la saturazione di .NET 9 e le correzioni di .NET 11. Qualche consiglio pratico:
 
 - **cercare nel codice** i cast da `float`/`double` a interi, le chiamate a `Math.Round` con il numero di cifre e i `(decimal)` applicati a un `double`: sono i punti in cui il risultato può cambiare;
-- **rendere esplicita l'intenzione**: `checked(...)` se un valore fuori intervallo è un errore, `double.ConvertToInteger<T>()` se la saturazione è voluta, letterali `m` per gli importi;
+- **non affidarsi alla saturazione**: controllare `double.IsFinite()` prima di convertire, usare `checked(...)` dove un valore fuori intervallo è un errore e `double.ConvertToInteger<T>()` solo dove la saturazione è davvero voluta, così chi legge il codice lo capisce; letterali `m` per gli importi;
 - **test di regressione sui valori calcolati**: i casi limite (`NaN`, infiniti, valori a cavallo del punto medio, importi con molti decimali) vanno scritti come test, non lasciati al caso;
 - **far girare la CI su più architetture**, almeno x64 e ARM64, se il software verrà eseguito su entrambe;
 - **leggere la pagina delle breaking change** prima di aggiornare, non dopo: Microsoft le documenta bene, con il comportamento precedente, quello nuovo e la contromisura[^breaking_net11].
@@ -201,7 +215,9 @@ E se il software lo vendete, ricordate che il CRA chiede, salvo prodotti con una
 
 - ❌ **`decimal` è esatto** → **Non necessariamente**. È esatto per i numeri decimali che rientrano nella sua precisione, come gli importi in euro. `1m / 3m` va comunque arrotondato.
 
-- ❌ **La saturazione corregge l'overflow** → **Falso**. Lo rende prevedibile e uguale su ogni processore. Se un valore fuori intervallo è un errore, serve `checked`.
+- ❌ **La saturazione corregge l'overflow** → **Falso**. Lo rende prevedibile e uguale su ogni processore, ma il risultato resta sbagliato, e in più sembra giusto. Se un valore fuori intervallo è un errore, serve `checked`.
+
+- ❌ **`NaN` convertito in intero vale 0, quindi è innocuo** → **Falso**. Lo zero è un valore valido che passa ogni controllo: l'informazione "qui il calcolo è fallito" è andata persa. Va intercettato prima, con `double.IsNaN()` o `double.IsFinite()`.
 
 - ❌ **Se il test passa sul mio portatile, passa ovunque** → **Non necessariamente**. Con `ConvertToIntegerNative`, gli intrinsics hardware o Mono il risultato può ancora dipendere dalla piattaforma.
 

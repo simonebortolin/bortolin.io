@@ -85,18 +85,23 @@ E il linguaggio conta. Lo studio più citato sul tema, *Energy Efficiency across
 | PHP | 29,30 |
 | Python | 75,88 |
 
-Il dato di TypeScript va preso con le pinze: TypeScript viene compilato in JavaScript e gira sullo stesso motore. Uno studio del 2025 (van Kempen et al.) ha mostrato che la differenza dipendeva dal fatto che quasi tutti i benchmark TypeScript erano scritti per un solo core, mentre quelli JavaScript ne usavano molti. Più in generale, secondo quello studio **l'energia è sostanzialmente proporzionale al tempo di esecuzione**: conta quanto lavoro fa il programma, non il nome del linguaggio[^vankempen].
+Prima di trarne conclusioni, però, conviene guardare come sono stati ottenuti quei numeri. Qualche mese fa ne ho discusso sotto un post su LinkedIn che usava proprio questa classifica per sostenere che conviene investire in Rust, e la mia opinione non è cambiata: lo studio del 2017 ha ricevuto critiche serie, e anche la critica ha i suoi buchi.
 
-Qualche mese fa ne ho discusso sotto un post su LinkedIn che rilanciava proprio questa classifica, e la mia opinione non è cambiata: **confrontare Python e Rust sui consumi è quasi un errore di categoria**. Il linguaggio sta tre o quattro livelli di astrazione sopra le scelte che spostano davvero i consumi.
+La più nota è *It's Not Easy Being Green* (van Kempen et al., pubblicato su arXiv nel 2024), che ha rifatto le misure con versioni aggiornate di compilatori e runtime. La sua conclusione è netta: **l'energia è sostanzialmente proporzionale al tempo di esecuzione**, e il linguaggio conta solo attraverso l'implementazione, il parallelismo e le librerie che usa[^vankempen]. Guardando i singoli linguaggi:
+- **TypeScript e JavaScript**: girano sullo stesso motore, eppure nel 2017 TypeScript risultava circa **7 volte più lento**. Il motivo è banale: quasi tutti i benchmark TypeScript erano sequenziali, mentre quelli JavaScript usavano molti core. Corretti quattro programmi, le prestazioni coincidono[^vankempen];
+- **C#**: nel 2017 girava su **.NET Core 1.1**, un runtime di quasi dieci anni fa[^energy_languages]. La critica usa **.NET 8**, ma non dice se con il normale compilatore JIT, con ReadyToRun o con **NativeAOT**, che elimina del tutto il riscaldamento del JIT: proprio il fattore che la stessa critica contesta per Java;
+- **C e C++**: il paper del 2017 non elenca compilatori e flag nel testo e rimanda alla configurazione del *Benchmarks Game* (nei Makefile si trova `gcc -O3 -march=native`)[^energy_languages]. La critica indica Clang 19, ma non i livelli di ottimizzazione;
+- **Python**: quel **75×** è CPython su cicli di calcolo puro. Il Python che si usa davvero per i calcoli pesanti delega a librerie scritte in C: nella stessa critica, una moltiplicazione tra matrici 10.000 × 10.000 con **NumPy** è **84 volte più veloce** di un'implementazione C++ ingenua a tre cicli, e consuma **44 volte meno energia**[^vankempen].
 
-Qualche esempio:
+E poi c'è il livello sotto, che nessuno dei due studi tocca davvero. Il linguaggio sta tre o quattro livelli di astrazione sopra le scelte che spostano i consumi:
 - **i suggerimenti alla CPU**: i processori moderni hanno istruzioni pensate per risparmiare energia mentre si aspetta, come `PAUSE` nei cicli di attesa attiva, `MONITOR`/`MWAIT` per gli stati di attesa a basso consumo e `HLT` per i core inattivi. I compilatori le usano di rado, e un ciclo critico scritto a mano con le istruzioni giuste può consumare meno del codice "equivalente" generato dal compilatore, in qualunque linguaggio;
-- **frequenza e tensione**: con il DVFS (*Dynamic Voltage and Frequency Scaling*) la CPU scambia velocità con tensione, e la potenza dinamica cresce con il **quadrato della tensione**: piccole riduzioni di frequenza danno risparmi sproporzionati. Al contrario, il Turbo Boost finisce prima a tensione più alta, e a seconda del carico può consumare meno o più di un core rallentato che lavora più a lungo;
-- **le istruzioni vettoriali**: le SIMD assorbono più potenza, ma possono evitare centinaia o migliaia di istruzioni ripetitive.
+- **frequenza e tensione**: con il DVFS (*Dynamic Voltage and Frequency Scaling*) la CPU scambia velocità con tensione, e la potenza dinamica cresce con il **quadrato della tensione**: piccole riduzioni di frequenza danno risparmi sproporzionati. Al contrario, il Turbo Boost finisce prima a tensione più alta, e a seconda del carico può consumare meno o più di un core rallentato che lavora più a lungo. La critica del 2024 lo sa bene, tanto che per isolare il linguaggio **blocca la CPU alla frequenza minima con il turbo spento**[^vankempen]: corretto per un esperimento, ma non è la condizione in cui gira un server vero;
+- **le istruzioni vettoriali**: le SIMD assorbono più potenza, ma possono evitare centinaia o migliaia di istruzioni ripetitive;
+- **le GPU**: per il calcolo massicciamente parallelo il lavoro si sposta su **CUDA** e sulle GPU, che nessuno dei due studi misura (la critica lo indica come lavoro futuro)[^vankempen]. Ed è un dettaglio ironico: l'IA che consuma tanta energia si scrive soprattutto in Python, il linguaggio in fondo alla classifica, ma i suoi calcoli girano quasi tutti in kernel CUDA.
 
-Nessuno dei due studi entra a questo livello di dettaglio.
+A questo livello, **confrontare Python e Rust sui consumi è quasi un errore di categoria**.
 
-C'è però una cosa che il linguaggio decide davvero: **il runtime che si porta dietro**. Un processo Node.js o un interprete Python, con il suo garbage collector, la sua memoria di base e il suo tempo di avvio, costa di più di un binario compilato che fa lo stesso lavoro. A volte poco, a volte decine di volte tanto. Ed è esattamente questo il costo che sparisce nei port che seguono.
+C'è però una cosa che il linguaggio decide davvero: **il runtime che si porta dietro**. Un processo Node.js o un interprete Python, con il suo garbage collector, la sua memoria di base e il suo tempo di avvio, costa di più di un binario compilato che fa lo stesso lavoro, quando quel lavoro non è già delegato a una libreria nativa. A volte poco, a volte decine di volte tanto. Ed è esattamente questo il costo che sparisce nei port che seguono.
 
 Un'ultima cosa che gli studi non misurano: **la compilazione**. In un progetto con una pipeline CI/CD il compilatore gira a ogni commit, su ogni ramo, su ogni macchina degli sviluppatori. Il runtime moltiplicato per milioni di utenti resta la voce più grossa, ma anche la build ha il suo peso, ed è proprio il caso del prossimo esempio.
 
@@ -186,6 +191,8 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 
 - ❌ **TypeScript consuma quasi 5 volte più di JavaScript** → **Falso**. È un artefatto dei benchmark: TypeScript gira sullo stesso motore di JavaScript, e la differenza misurata nel 2017 dipendeva dal parallelismo dei programmi di test.
 
+- ❌ **Python è sempre il linguaggio più sprecone** → **Non necessariamente**. Lo è CPython sui cicli di calcolo puro. Con NumPy, o con CUDA sotto, il lavoro pesante lo fanno librerie native, e una moltiplicazione tra matrici può consumare meno di un C++ scritto in modo ingenuo.
+
 - ❌ **L'IA rende sempre più veloci** → **Non necessariamente**. Nello studio di METR gli sviluppatori esperti sono stati più lenti del 19% pur credendosi più veloci, e nello studio di Anthropic il tempo risparmiato non era significativo.
 
 📚 **Fonti e approfondimenti**
@@ -195,6 +202,7 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 [^anthropic_skills]: [Anthropic – How AI assistance impacts the formation of coding skills](https://www.anthropic.com/research/AI-assistance-coding-skills)
 [^metr]: [METR – Measuring the Impact of Early-2025 AI on Experienced Open-Source Developer Productivity](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/)
 [^pereira]: [Pereira et al. – Energy Efficiency across Programming Languages (SLE 2017)](https://greenlab.di.uminho.pt/wp-content/uploads/2017/10/sleFinal.pdf)
+[^energy_languages]: [greensoftwarelab/Energy-Languages – codice e Makefile dello studio del 2017](https://github.com/greensoftwarelab/Energy-Languages)
 [^vankempen]: [van Kempen et al. – It's Not Easy Being Green: On the Energy Efficiency of Programming Languages](https://arxiv.org/abs/2410.05460)
 [^ts_native]: [Microsoft – A 10x Faster TypeScript](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 [^ts7]: [Microsoft – Announcing TypeScript 7.0](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/)

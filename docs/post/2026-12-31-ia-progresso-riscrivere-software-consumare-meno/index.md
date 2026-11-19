@@ -19,7 +19,7 @@ excerpt: >-
 >
 > 🧠 In uno studio controllato chi ha imparato una libreria nuova con l'IA ha preso il **50%** al quiz finale, contro il **67%** di chi ha scritto il codice a mano.
 >
-> 🐍 Nel benchmark più citato **Python consuma circa 76 volte** l'energia del C. Ma il linguaggio sta **tre o quattro livelli** sopra le scelte che decidono davvero i consumi: conta quanto lavoro fa il programma, e come.
+> 🐍 Nel benchmark più citato **Python consuma circa 76 volte** l'energia del C. Ma l'hardware dedicato sposta i consumi molto di più: un decoder video hardware consuma **meno del 9%** di uno software ottimizzato.
 >
 > 🚀 **TypeScript 7**, riscritto in Go, compila il codice di VS Code in **10,6 secondi** invece di 125,7.
 >
@@ -97,13 +97,26 @@ E poi c'è il livello sotto, che nessuno dei due studi tocca davvero. Il linguag
 - **i suggerimenti alla CPU**: i processori moderni hanno istruzioni pensate per risparmiare energia mentre si aspetta, come `PAUSE` nei cicli di attesa attiva, `MONITOR`/`MWAIT` per gli stati di attesa a basso consumo e `HLT` per i core inattivi. I compilatori le usano di rado, e un ciclo critico scritto a mano con le istruzioni giuste può consumare meno del codice "equivalente" generato dal compilatore, in qualunque linguaggio;
 - **frequenza e tensione**: con il DVFS (*Dynamic Voltage and Frequency Scaling*) la CPU scambia velocità con tensione, e la potenza dinamica cresce con il **quadrato della tensione**: piccole riduzioni di frequenza danno risparmi sproporzionati. Al contrario, il Turbo Boost finisce prima a tensione più alta, e a seconda del carico può consumare meno o più di un core rallentato che lavora più a lungo. La critica del 2024 lo sa bene, tanto che per isolare il linguaggio **blocca la CPU alla frequenza minima con il turbo spento**[^vankempen]: corretto per un esperimento, ma non è la condizione in cui gira un server vero;
 - **le istruzioni vettoriali**: le SIMD assorbono più potenza, ma possono evitare centinaia o migliaia di istruzioni ripetitive;
-- **le GPU**: per il calcolo massicciamente parallelo il lavoro si sposta su **CUDA** e sulle GPU, che nessuno dei due studi misura (la critica lo indica come lavoro futuro)[^vankempen]. Ed è un dettaglio ironico: l'IA che consuma tanta energia si scrive soprattutto in Python, il linguaggio in fondo alla classifica, ma i suoi calcoli girano quasi tutti in kernel CUDA.
+- **l'hardware dedicato**: GPU, decoder video, acceleratori. Nessuno dei due studi lo misura (la critica indica le GPU come lavoro futuro)[^vankempen], ed è il punto su cui torno tra poco.
 
 A questo livello, **confrontare Python e Rust sui consumi è quasi un errore di categoria**.
 
 C'è però una cosa che il linguaggio decide davvero: **il runtime che si porta dietro**. Un processo Node.js o un interprete Python, con il suo garbage collector, la sua memoria di base e il suo tempo di avvio, costa di più di un binario compilato che fa lo stesso lavoro, quando quel lavoro non è già delegato a una libreria nativa. A volte poco, a volte decine di volte tanto. Ed è esattamente questo il costo che sparisce nei port che seguono.
 
-Un'ultima cosa che gli studi non misurano: **la compilazione**. In un progetto con una pipeline CI/CD il compilatore gira a ogni commit, su ogni ramo, su ogni macchina degli sviluppatori. Il runtime moltiplicato per milioni di utenti resta la voce più grossa, ma anche la build ha il suo peso, ed è proprio il caso del prossimo esempio.
+Un'ultima cosa che gli studi non misurano: **la compilazione**. In un progetto con una pipeline CI/CD il compilatore gira a ogni commit, su ogni ramo, su ogni macchina degli sviluppatori. Il runtime moltiplicato per milioni di utenti resta la voce più grossa, ma anche la build ha il suo peso. Ci tornerò con TypeScript.
+
+## Il salto vero lo fa l'hardware
+
+Se cambiare linguaggio sposta i consumi di qualche volta, spostare il lavoro su **hardware dedicato** li sposta di ordini di grandezza. È la stessa logica del port, un livello più in basso: invece di riscrivere il codice in un linguaggio più efficiente, si affida il calcolo a un circuito progettato apposta per quel calcolo.
+
+Qualche esempio:
+- **la decodifica video**: uno studio del 2024 su sei formati, da AVC ad AV1, ha misurato che i decoder hardware consumano **meno del 9%** dell'energia dei migliori decoder software[^video_decoders]. Per questo, a batteria, conta che il formato del video sia supportato in hardware;
+- **le GPU e CUDA**: nella classifica Green500 di novembre 2026 il supercomputer più efficiente al mondo, KAIROS a Tolosa, arriva a **73,28 GFlops per watt**, e i primi tre usano tutti lo stesso superchip **NVIDIA Grace Hopper**, CPU e GPU nello stesso modulo[^green500];
+- **Python senza riscrivere Python**: con NumPy le moltiplicazioni tra matrici girano in librerie native, e NVIDIA dichiara fino a **150 volte** più velocità su un benchmark di analisi dati con cuDF, che esegue il codice pandas sulla GPU senza modificarlo[^cudf]. È un numero del produttore, misurato su un caso favorevole, ma la direzione è chiara.
+
+Ed è qui che il discorso si chiude su sé stesso. L'IA che consuma tanta energia si scrive soprattutto in Python, il linguaggio in fondo alla classifica del 2017. Eppure i suoi calcoli non girano in Python: Python si limita a orchestrare, e il lavoro pesante lo fanno in gran parte kernel CUDA scritti e ottimizzati per quell'hardware.
+
+Anche qui, però, l'efficienza ha un prezzo che conosciamo già. **CUDA è di NVIDIA**, funziona solo sulle sue GPU, e chi ci costruisce sopra un prodotto dipende da un solo fornitore, esattamente come chi sviluppa con un solo modello. E un acceleratore è hardware in più da produrre, alimentare e smaltire: conviene solo se viene usato davvero, non se resta acceso ad aspettare.
 
 ## Ristrutturare, non demolire
 
@@ -203,6 +216,8 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 
 - ❌ **TypeScript consuma quasi 5 volte più di JavaScript** → **Falso**. È un artefatto dei benchmark: TypeScript gira sullo stesso motore di JavaScript, e la differenza misurata nel 2017 dipendeva dal parallelismo dei programmi di test.
 
+- ❌ **Le GPU consumano tantissimo, quindi sono inefficienti** → **Falso**. Consumano molto in assoluto, ma per calcoli paralleli fanno molto più lavoro per watt: in testa alla Green500 ci sono sistemi accelerati da GPU. Il problema è usarle per lavoro che non serve, non usarle.
+
 - ❌ **Python è sempre il linguaggio più sprecone** → **Non necessariamente**. Lo è CPython sui cicli di calcolo puro. Con NumPy, o con CUDA sotto, il lavoro pesante lo fanno librerie native, e una moltiplicazione tra matrici può consumare meno di un C++ scritto in modo ingenuo.
 
 - ❌ **L'IA rende sempre più veloci** → **Non necessariamente**. Nello studio di METR gli sviluppatori esperti sono stati più lenti del 19% pur credendosi più veloci, e nello studio di Anthropic il tempo risparmiato non era significativo.
@@ -216,6 +231,9 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 [^pereira]: [Pereira et al. – Energy Efficiency across Programming Languages (SLE 2017)](https://greenlab.di.uminho.pt/wp-content/uploads/2017/10/sleFinal.pdf)
 [^energy_languages]: [greensoftwarelab/Energy-Languages – codice e Makefile dello studio del 2017](https://github.com/greensoftwarelab/Energy-Languages)
 [^vankempen]: [van Kempen et al. – It's Not Easy Being Green: On the Energy Efficiency of Programming Languages](https://arxiv.org/abs/2410.05460)
+[^video_decoders]: [Kränzler et al. – A Comprehensive Review of Software and Hardware Energy Efficiency of Video Decoders](https://arxiv.org/abs/2402.09001)
+[^green500]: [TOP500 – Green500, novembre 2026](https://top500.org/lists/green500/2026/11/)
+[^cudf]: [NVIDIA – RAPIDS cuDF Accelerates pandas Nearly 150x with Zero Code Changes](https://developer.nvidia.com/blog/rapids-cudf-accelerates-pandas-nearly-150x-with-zero-code-changes/)
 [^ts_native]: [Microsoft – A 10x Faster TypeScript](https://devblogs.microsoft.com/typescript/typescript-native-port/)
 [^ts7]: [Microsoft – Announcing TypeScript 7.0](https://devblogs.microsoft.com/typescript/announcing-typescript-7-0/)
 [^copilot_rust]: [GitHub – Migrating the GitHub Copilot runtime to Rust using Copilot](https://github.blog/ai-and-ml/generative-ai/migrating-the-github-copilot-runtime-to-rust-using-copilot/)

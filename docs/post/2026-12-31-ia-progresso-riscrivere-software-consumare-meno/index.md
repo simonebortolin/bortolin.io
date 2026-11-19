@@ -156,6 +156,18 @@ Le testate specializzate si sono spinte oltre, parlando di una riscrittura della
 
 Qui l'IA c'entra meno direttamente. Ma la direzione è la stessa: dopo anni in cui "tanto c'è un browser dentro" sembrava una scorciatoia gratuita, anche Microsoft sta pagando per **tornare al nativo**, perché la RAM non è infinita e gli utenti se ne accorgono.
 
+### Non è la prima volta
+
+Per Microsoft, il ritorno al nativo è quasi una tradizione.
+
+Con **Windows 8**, nel 2012, le nuove app della piattaforma WinRT si potevano scrivere anche in **HTML e JavaScript**, eseguite dal motore di Internet Explorer: le antenate delle app in WebView di oggi[^win8_html]. Nell'aprile 2014, per le app C# dello stesso Store, arrivava la tecnologia opposta: **.NET Native**, che compilava le applicazioni direttamente in codice macchina, con avvii fino al **60%** più rapidi e un consumo di memoria molto più basso[^dotnet_native_preview].
+
+Con Windows 10 .NET Native è diventato il compilatore delle app **UWP** pubblicate sullo Store, e si è fermato insieme a loro: oggi riceve solo correzioni di sicurezza e affidabilità, nessuna funzionalità nuova[^dotnet_native_docs].
+
+L'idea è rinata, slegata da Windows, con **.NET 7** a novembre 2022[^net7]: si chiama **Native AOT**, e all'inizio era pensata per applicazioni console e librerie native[^net7_aot]. Dal 2024 Microsoft indica proprio .NET con Native AOT come strada per modernizzare le vecchie app UWP[^uwp_net9].
+
+Stessa idea, tre nomi, dieci anni. L'efficienza è un tema che va e viene: quando l'hardware cresce più in fretta del software ci si concede la comodità del web, e il nativo torna ogni volta che qualcuno guarda il conto della memoria.
+
 ## Il metodo conta più del modello
 
 Tre storie diverse, un filo comune: in nessuna l'IA è stata lasciata da sola a "tradurre il codice".
@@ -209,4 +221,10 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 [^copilot_rust]: [GitHub – Migrating the GitHub Copilot runtime to Rust using Copilot](https://github.blog/ai-and-ml/generative-ai/migrating-the-github-copilot-runtime-to-rust-using-copilot/)
 [^windows_quality]: [Windows Insider Blog – Windows quality: an update on the commitment we made in March](https://blogs.windows.com/windows-insider/2026/07/31/windows-quality-an-update-on-the-commitment-we-made-in-march/)
 [^winui_perf]: [microsoft-ui-xaml – WinUI 3 Performance: A Leap Forward](https://github.com/microsoft/microsoft-ui-xaml/discussions/11096)
+[^win8_html]: [Microsoft Learn – HTML, CSS, and JavaScript features and differences (app Windows 8)](https://learn.microsoft.com/en-us/previous-versions/windows/apps/hh465380(v=win.10))
+[^dotnet_native_preview]: [Microsoft – Announcing .NET Native Preview](https://devblogs.microsoft.com/dotnet/announcing-net-native-preview/)
+[^dotnet_native_docs]: [Microsoft Learn – Compilare app con .NET Native](https://learn.microsoft.com/windows/uwp/dotnet-native/)
+[^net7]: [Microsoft – .NET 7 is Available Today](https://devblogs.microsoft.com/dotnet/announcing-dotnet-7/)
+[^net7_aot]: [Microsoft – Announcing .NET 7 Preview 3](https://devblogs.microsoft.com/dotnet/announcing-dotnet-7-preview-3/)
+[^uwp_net9]: [Microsoft – Preview UWP support for .NET 9 and Native AOT](https://devblogs.microsoft.com/ifdef-windows/preview-uwp-support-for-dotnet-9-native-aot/)
 [^rust_anything]: [rust-anything su GitHub](https://github.com/erkamyaman/rust-anything)

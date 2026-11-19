@@ -179,7 +179,7 @@ Con Windows 10, nel 2015, .NET Native è diventato il compilatore delle app **UW
 
 L'idea è rinata, slegata da Windows, con **.NET 7** a novembre 2022[^net7]: si chiama **Native AOT**, e all'inizio era pensata per applicazioni console e librerie native[^net7_aot]. Dal 2024 Microsoft indica proprio .NET con Native AOT come strada per modernizzare le vecchie app UWP[^uwp_net9].
 
-E il consolidamento continua. Con **.NET 11**, uscito il 10 novembre 2026, le app per Android, iOS, tvOS e Mac Catalyst girano su **CoreCLR**, lo stesso runtime di server e desktop, al posto di **Mono**, che le accompagnava dai tempi di Xamarin: chi ha ancora bisogno di Mono deve restare su .NET 10[^coreclr_mobile]. Resta fuori WebAssembly: Blazor continua a usare Mono anche in .NET 11[^mono_timeline], ma CoreCLR su WebAssembly esegue già da capo a fondo la suite di test delle librerie[^net11_runtime], e secondo la stampa specializzata la migrazione dovrebbe concludersi con .NET 12[^infoworld_net11].
+E il consolidamento continua. Con **.NET 11**, uscito il 10 novembre 2026, le app per Android, iOS, tvOS e Mac Catalyst girano su **CoreCLR**, lo stesso runtime di server e desktop, al posto di **Mono**, che le accompagnava dai tempi di Xamarin: chi ha ancora bisogno di Mono deve restare su .NET 10[^coreclr_mobile]. Resta fuori WebAssembly: Blazor continua a usare Mono anche in .NET 11[^mono_timeline], ma il team di .NET sta già migrando anche WebAssembly da Mono a CoreCLR: la prima anteprima è in .NET 11, e CoreCLR su WebAssembly esegue già da capo a fondo la suite di test delle librerie[^net11_runtime]. Per .NET 12 il piano è concentrarsi su stabilità, prestazioni e una transizione senza intoppi[^wasm_coreclr].
 
 Nello stesso rilascio arriva, ancora in anteprima, **Runtime Async**: `async` e `await` non vengono più tradotti dal compilatore in macchine a stati, ma gestiti dal runtime stesso, con meno overhead, meno allocazioni e stack trace più leggibili. Le librerie di .NET 11 sono già compilate così; per il codice delle applicazioni è una scelta da attivare[^net11_runtime].
 
@@ -253,6 +253,6 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 [^coreclr_mobile]: [dotnet/docs – Breaking change: CoreCLR replaces Mono runtime for .NET mobile apps](https://github.com/dotnet/docs/issues/56476)
 [^mono_timeline]: [Microsoft – CoreCLR Progress and the Mono Timeline for .NET MAUI](https://devblogs.microsoft.com/dotnet/coreclr-progress-and-mono-timeline-dotnet-maui/)
 [^net11_runtime]: [Microsoft Learn – What's new in the .NET 11 runtime](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/runtime)
-[^infoworld_net11]: [InfoWorld – Under the hood with .NET 11 Preview 1](https://www.infoworld.com/article/4138881/under-the-hood-with-net-11-preview-1.html)
+[^wasm_coreclr]: [dotnet/runtime – .NET WebAssembly on CoreCLR interpreter](https://github.com/dotnet/runtime/issues/121511)
 [^uwp_net9]: [Microsoft – Preview UWP support for .NET 9 and Native AOT](https://devblogs.microsoft.com/ifdef-windows/preview-uwp-support-for-dotnet-9-native-aot/)
 [^rust_anything]: [rust-anything su GitHub](https://github.com/erkamyaman/rust-anything)

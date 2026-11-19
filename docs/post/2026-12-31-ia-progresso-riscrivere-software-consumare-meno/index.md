@@ -162,7 +162,7 @@ Per Microsoft, il ritorno al nativo è quasi una tradizione.
 
 Con **Windows 8**, nel 2012, le nuove app della piattaforma WinRT si potevano scrivere anche in **HTML e JavaScript**, eseguite dal motore di Internet Explorer: le antenate delle app in WebView di oggi[^win8_html]. Nell'aprile 2014, per le app C# dello stesso Store, arrivava la tecnologia opposta: **.NET Native**, che compilava le applicazioni direttamente in codice macchina, con avvii fino al **60%** più rapidi e un consumo di memoria molto più basso[^dotnet_native_preview].
 
-Con Windows 10 .NET Native è diventato il compilatore delle app **UWP** pubblicate sullo Store, e si è fermato insieme a loro: oggi riceve solo correzioni di sicurezza e affidabilità, nessuna funzionalità nuova[^dotnet_native_docs].
+Con Windows 10, nel 2015, .NET Native è diventato il compilatore delle app **UWP** pubblicate sullo Store, e si è fermato insieme a loro: oggi riceve solo correzioni di sicurezza e affidabilità, nessuna funzionalità nuova[^dotnet_native_docs].
 
 L'idea è rinata, slegata da Windows, con **.NET 7** a novembre 2022[^net7]: si chiama **Native AOT**, e all'inizio era pensata per applicazioni console e librerie native[^net7_aot]. Dal 2024 Microsoft indica proprio .NET con Native AOT come strada per modernizzare le vecchie app UWP[^uwp_net9].
 

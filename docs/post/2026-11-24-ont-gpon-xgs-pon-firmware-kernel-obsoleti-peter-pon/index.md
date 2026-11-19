@@ -1,6 +1,6 @@
 ---
 title: "ONT GPON e XGS-PON: fibra del 2026, kernel del 2009"
-date: 2026-11-17
+date: 2026-11-24
 math: false
 excerpt: >-
     La fibra è passata da GPON a XGS-PON, ma il software delle ONT è rimasto

@@ -191,6 +191,10 @@ Tre storie diverse, un filo comune: in nessuna l'IA è stata lasciata da sola a 
 
 Lo dice chiaramente anche **rust-anything**, un progetto open source da circa 5.000 stelle che promette di aiutare a riscrivere un'applicazione in Rust un pezzo alla volta. Il README lo mette subito in chiaro: lo strumento **non traduce il codice**. Il Rust lo scrive un agente (Claude Code, Codex, Cursor...) o una persona; rust-anything **registra il comportamento** del programma originale su casi limite e input reali, poi controlla che ogni pezzo riscritto restituisca gli stessi risultati prima di passare al successivo[^rust_anything]. Tra gli esempi dichiarati dall'autore, Prettier su 2.360 file passa da 128,6 a 6,9 secondi e json-server da 74 a 3,5 MB di memoria a riposo. Sono misure dell'autore su un Mac con M4: interessanti, non indipendenti.
 
+**fast-anything**, un progetto più piccolo, parte dall'idea opposta e la riassume già nello slogan: *"Don't rewrite it in Rust. Rewrite the 5% that's slow."* Invece di riscrivere tutta l'applicazione, profila il programma (Python, TypeScript, Ruby, Java, Go, PHP, C o C++), trova le funzioni che pesano di più e fa portare in Rust da un agente solo quelle. Prima di attivare il nuovo codice registra fino a **500 chiamate reali** e le rigioca tutte: finché anche un solo caso dà un risultato diverso, la versione Rust resta spenta[^fast_anything]. Nel README l'autore racconta proprio un port sbagliato, che confrontava i byte invece dei caratteri, scoperto così su 148 chiamate su 500. Tra i benchmark dichiarati, una deduplicazione di nomi in Python passa da 4,91 secondi a 42 millisecondi; in Java il guadagno complessivo si ferma a 3 volte, perché il resto del tempo è l'avvio della JVM. Anche qui sono misure dell'autore sul proprio hardware.
+
+È la ristrutturazione portata all'estremo: si cambia solo la trave che cede, non tutto l'edificio.
+
 Nel port di Copilot il principio è lo stesso: ogni pull request sostituiva un pezzo di TypeScript con una chiamata al nuovo codice Rust, e **tutti i test end-to-end** di CLI e SDK dovevano passare a ogni passo. Se un test falliva, la modifica non entrava. Toub lo scrive senza mezzi termini: i test end-to-end sono "assolutamente, inequivocabilmente critici"[^copilot_rust]. E una volta un agente aveva eliminato un metodo pubblico e si era autorizzato da solo la rottura di compatibilità con un'etichetta: è stata la revisione umana a fermarlo.
 
 È la stessa lezione di [PHP2Shell](/post/2026-10-25-php-nel-2026-php2shell/): **si può aggiornare, e persino riscrivere, senza rompere**, ma solo se hai test automatici che dicono cosa deve continuare a funzionare. Il modello scrive il codice; il test decide se quel codice è giusto.
@@ -216,7 +220,7 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 
 - ❌ **TypeScript 7 l'ha scritto l'IA** → **Non necessariamente**. Microsoft descrive un port fedele del codice originale in Go, ma non dice se e quanto abbia usato l'IA.
 
-- ❌ **Con l'IA il port si fa da solo** → **Falso**. Sia rust-anything sia il port di Copilot si reggono sui test e sulla verifica del comportamento; l'agente scrive, ma serve qualcuno che decida l'architettura e respinga le scorciatoie.
+- ❌ **Con l'IA il port si fa da solo** → **Falso**. rust-anything, fast-anything e il port di Copilot si reggono sui test e sulla verifica del comportamento; l'agente scrive, ma serve qualcuno che decida l'architettura e respinga le scorciatoie.
 
 - ❌ **TypeScript consuma quasi 5 volte più di JavaScript** → **Falso**. È un artefatto dei benchmark: TypeScript gira sullo stesso motore di JavaScript, e la differenza misurata nel 2017 dipendeva dal parallelismo dei programmi di test.
 
@@ -255,4 +259,5 @@ Sarebbe facile trasformare tutto questo in un inno all'IA. Non lo è, per divers
 [^net11_runtime]: [Microsoft Learn – What's new in the .NET 11 runtime](https://learn.microsoft.com/en-us/dotnet/core/whats-new/dotnet-11/runtime)
 [^wasm_coreclr]: [dotnet/runtime – .NET WebAssembly on CoreCLR interpreter](https://github.com/dotnet/runtime/issues/121511)
 [^uwp_net9]: [Microsoft – Preview UWP support for .NET 9 and Native AOT](https://devblogs.microsoft.com/ifdef-windows/preview-uwp-support-for-dotnet-9-native-aot/)
+[^fast_anything]: [fast-anything su GitHub](https://github.com/EL4CTEO/fast-anything)
 [^rust_anything]: [rust-anything su GitHub](https://github.com/erkamyaman/rust-anything)

@@ -115,6 +115,8 @@ C'è un dato che i grafici non mostrano: **quando sono stati compilati quei firm
 
 Non sono quindi dispositivi dimenticati. **I produttori rilasciano ancora firmware nuovi**, con correzioni e funzioni nuove, ma ricompilano sempre lo stesso kernel del 2009 o del 2013.
 
+E non è un problema solo delle ONT. Proprio in questi giorni Ahmet Göker di CSINT Research ha aperto il firmware europeo di un router Wi-Fi diffusissimo, il **TP-Link TL-WR841N v14**[^csint_wr841n]. Dentro c'è un **Linux 2.6.36**, la cui versione è uscita a ottobre 2010, compilato il **18 maggio 2026** con gcc 4.6.3, Buildroot 2012.11 e la stessa uClibc 0.9.33 delle ONT. La release successiva, pubblicata ad agosto, corregge quattro vulnerabilità segnalate da TP-Link: cambiano otto file, tutti fuori dal kernel. Il kernel viene ricompilato il 21 agosto 2026, e resta un 2.6.36. Un router Wi-Fi, per di più, ricade anche nella [Direttiva RED](/post/2025-08-02-red-direttiva-europea-futuro-modding-firmware/).
+
 ### Quanto sono vecchi, in concreto
 
 Una versione di kernel, da sola, dice poco. Messa su una linea del tempo dice molto di più. Questi sono i periodi di supporto ufficiale delle serie trovate nei binari, secondo kernel.org[^kernel_releases]:
@@ -363,6 +365,7 @@ Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per 
 [^hg_leox]: [Hack GPON – LEOX LXT-010S-H](https://hack-gpon.org/ont-leox-lxt-010s-h/)
 [^hg_nokia_xgs]: [Hack GPON – Nokia XS-010X-Q](https://hack-gpon.org/xgs/ont-nokia-xs-010x-q/)
 [^hg_fs_xgs]: [Hack GPON – FS.com XGS-ONU-25-20NI](https://hack-gpon.org/xgs/ont-fs-XGS-ONU-25-20NI/)
+[^csint_wr841n]: [CSINT Research – Opening a router firmware image and the 2010 kernel release inside](https://en.csintresearch.org/research/tl-wr841n-firmware-part-1)
 [^hg_kaon]: [Hack GPON – KAON PM1191](https://hack-gpon.org/xgs/ont-kaon-pm1191/)
 [^hg_grg4362]: [Hack GPON – Comtrend GRG-4362](https://hack-gpon.org/xgs/ont-comtrend-grg-4362/)
 [^hg_repo]: [hack-gpon/hack-gpon.github.io su GitHub](https://github.com/hack-gpon/hack-gpon.github.io)

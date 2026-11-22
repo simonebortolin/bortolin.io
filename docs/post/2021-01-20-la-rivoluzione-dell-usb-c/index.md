@@ -15,14 +15,16 @@ excerpt: >-
 
 Il principale vantaggio dell'USB Type-C è che il connettore è reversibile, quindi non c'è bisogno di provare a girarlo 2 o 3 volte prima di riuscire ad inserirlo, poiché entra sempre alla prima volta, ma non è finita quà, vediamo in dettaglio le principali novità:
 
+[![Infografica: USB-C, un connettore e tanti mestieri. Dati: USB 3.2 Gen 1 a 5 Gbps, Gen 2 a 10 Gbps, Gen 2×2 a 20 Gbps su due linee, USB4 fino a 80 Gbps con cavi certificati. Energia: USB Power Delivery fino a 100 W (20 V per 5 A) e fino a 240 W dalla revisione 3.1 del 2021. Modalità alternative: DisplayPort, Thunderbolt, più monitor in cascata. Caricatore unico, Direttiva (UE) 2022/2380: obbligo dal 28 dicembre 2024 per telefoni, tablet, fotocamere, cuffie, console portatili, altoparlanti portatili, e-reader, tastiere, mouse, navigatori portatili e auricolari, dal 28 aprile 2026 per i laptop](usb-c-mestieri.svg)](/post/2021-01-20-la-rivoluzione-dell-usb-c/usb-c-mestieri.png)
+
 ## 5, 10 e 20 Gbps
 
 Il connettore USB Type-C, grazie ai suoi 24 pin, più del doppio rispetto ai 9/10 pin dei precedenti form factor garantisce due linee indipendenti USB SuperSpeed garantendo quindi una velocità massima di 20 Gbps (due linee da 10 Gbps), attualmente, l'attuale standard USB3.2 esistono 5 possibili configurazioni di velocità, all'interno di un cavo USB Type-C:
 - USB2.0: usa solo la linea HighSpeed, con una velocità massima 480 Mbps
 - USB3.2 Gen 1×1 (ex USB 3.0, USB 3.1 Gen 1): usa una linea SuperSpeed, con una velocità massima di 5 Gbps
-- USB3.2 Gen 1×2: usa una linea SuperSpeed, con una velocità massima di 10 Gbps
-- USB3.2 Gen 2×1 (ex USB 3.1 Gen 2): usa due linee SuperSpeed, con una velocità massima di 10 Gbps
-- USB3.2 Gen 2×2: usa due linee SuperSpeed, con una velocità massima di 10 Gbps
+- USB3.2 Gen 1×2: usa due linee SuperSpeed, con una velocità massima di 10 Gbps
+- USB3.2 Gen 2×1 (ex USB 3.1 Gen 2): usa una linea SuperSpeed, con una velocità massima di 10 Gbps
+- USB3.2 Gen 2×2: usa due linee SuperSpeed, con una velocità massima di 20 Gbps
 
 Per comprendere meglio questa lista è bene ricordare che l'USB3.0 ha deciso di introdurre nuovi PIN dedicati alle linee SuperSpeed, in aggiunta alla linea HighSpeed, infatti in quasi tutti i connettori è possibile notare una sorta di "depandance" dedicata ad ospitare le nuove linee SuperSpeed, questo fa si che un cavo USB3.0 è dotato di una linea SuperSpeed (caratterizzata da 4 fili RX+, RX-, TX+, TX-) ed una linea HighSpeed (caratterizzata da 2 fili D+ e D-). Questo è stato fatto principalmente per garantire una maggiore compatibilità con i dispositivi legacy, una interessante conseguenza di questa scelta è che buonaparte degli Hub USB hanno due chip separati, uno per le linee HighSpeed e uno per le linee SuperSpeed.
 
@@ -73,6 +75,11 @@ La mia prima esperienza con il Sunix UPD2018 ed i monitor DELL P2421DC è stato 
 ### 15 Giugno 2023
 
 - Aggiunte spiegazioni su USB ALT DP High Speed e USB ALT DP High Resolution
+
+### 22 Novembre 2026
+
+- Corretti il numero di linee e la velocità di USB 3.2 Gen 1×2, Gen 2×1 e Gen 2×2
+- Aggiunta un'infografica su velocità, potenza, modalità alternative e caricatore unico europeo
 
 
 [^AN1953]: [AN1953: Introduction to USB Type-C](https://ww1.microchip.com/downloads/en/appnotes/00001953a.pdf)

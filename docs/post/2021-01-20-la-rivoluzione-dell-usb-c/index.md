@@ -15,7 +15,7 @@ excerpt: >-
 
 Il principale vantaggio dell'USB Type-C è che il connettore è reversibile, quindi non c'è bisogno di provare a girarlo 2 o 3 volte prima di riuscire ad inserirlo, poiché entra sempre alla prima volta, ma non è finita quà, vediamo in dettaglio le principali novità:
 
-[![Infografica: USB-C, un connettore e tanti mestieri. Dati: USB 3.2 Gen 1 a 5 Gbps, Gen 2 a 10 Gbps, Gen 2×2 a 20 Gbps su due linee, USB4 fino a 80 Gbps con cavi certificati. Energia: USB Power Delivery fino a 100 W (20 V per 5 A) e fino a 240 W dalla revisione 3.1 del 2021. Modalità alternative: DisplayPort, Thunderbolt, più monitor in cascata. Caricatore unico, Direttiva (UE) 2022/2380: obbligo dal 28 dicembre 2024 per telefoni, tablet, fotocamere, cuffie, console portatili, altoparlanti portatili, e-reader, tastiere, mouse, navigatori portatili e auricolari, dal 28 aprile 2026 per i laptop](usb-c-mestieri.svg)](/post/2021-01-20-la-rivoluzione-dell-usb-c/usb-c-mestieri.png)
+[![Infografica: USB-C, un connettore e tanti mestieri. Dati: USB 3.2 Gen 1 a 5 Gbps, Gen 2 a 10 Gbps, Gen 2×2 a 20 Gbps su due linee, USB4 fino a 80 Gbps con cavi certificati. Energia: USB Power Delivery fino a 100 W (20 V per 5 A) e fino a 240 W dalla revisione 3.1 del 2021. Modalità alternative: DisplayPort, Thunderbolt, più monitor in cascata. Caricatore unico, Direttiva (UE) 2022/2380: obbligo dal 28 dicembre 2024 per telefoni, tablet, fotocamere, cuffie, console portatili, altoparlanti portatili, e-reader, tastiere, mouse, navigatori portatili e auricolari, dal 28 aprile 2026 per i laptop](/post/2021-01-20-la-rivoluzione-dell-usb-c/usb-c-mestieri.svg)](/post/2021-01-20-la-rivoluzione-dell-usb-c/usb-c-mestieri.png)
 
 ## 5, 10 e 20 Gbps
 

@@ -5,8 +5,8 @@
     python3 scripts/infographics/build.py cards [slug ...]
     python3 scripts/infographics/build.py all
 
-Outputs:
-  docs/post/<slug>/<name>.svg           infographic shown in the article
+Outputs (generated files, not committed; the site build creates them):
+  docs/public/post/<slug>/<name>.svg    infographic shown in the article
   docs/public/post/<slug>/<name>.png    1600 px PNG of it, for sharing
   docs/public/og/<slug>.png             1200x630 card used as og:image
 
@@ -68,13 +68,13 @@ def build_infographics(names):
     jobs = []
     for name in names or sorted(available):
         slug, build = available[name]
-        svg_path = os.path.join(POSTS, slug, f"{name}.svg")
+        out_dir = os.path.join(PUBLIC, "post", slug)
+        os.makedirs(out_dir, exist_ok=True)
+        svg_path = os.path.join(out_dir, f"{name}.svg")
         with open(svg_path, "w", encoding="utf-8") as f:
             f.write(build())
-        png_dir = os.path.join(PUBLIC, "post", slug)
-        os.makedirs(png_dir, exist_ok=True)
-        jobs.append((svg_path, os.path.join(png_dir, f"{name}.png")))
-        print(f"infographic  {slug}/{name}.svg")
+        jobs.append((svg_path, os.path.join(out_dir, f"{name}.png")))
+        print(f"infographic  post/{slug}/{name}.svg")
     render_png(jobs, 800, 2)
 
 

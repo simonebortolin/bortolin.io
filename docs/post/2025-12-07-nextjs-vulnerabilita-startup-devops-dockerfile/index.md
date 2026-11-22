@@ -18,7 +18,7 @@ Una vulnerabilità nella supply chain di un framework così diffuso può generar
 - 📦 SBOM, analisi delle dipendenze e aggiornamenti regolari devono diventare obbligatori, non consigliati.  
 - 🛡️ DevOps non è optional: serve cultura, non solo strumenti.
 
-[![Infografica: secondo NVD CVE-2025-55182 è una esecuzione di codice remota senza autenticazione nei React Server Components, con CVSS 3.1 di 10,0; CVE-2025-66478, assegnata a Next.js, è stata respinta come doppione di CVE-2025-55182. Le versioni correttive di Next.js, pubblicate su npm il 3 dicembre 2025, sono 15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7 e 16.0.7](nextjs-react2shell-cve.svg)](/post/2025-12-07-nextjs-vulnerabilita-startup-devops-dockerfile/nextjs-react2shell-cve.png)
+[![Infografica: secondo NVD CVE-2025-55182 è una esecuzione di codice remota senza autenticazione nei React Server Components, con CVSS 3.1 di 10,0; CVE-2025-66478, assegnata a Next.js, è stata respinta come doppione di CVE-2025-55182. Le versioni correttive di Next.js, pubblicate su npm il 3 dicembre 2025, sono 15.0.5, 15.1.9, 15.2.6, 15.3.6, 15.4.8, 15.5.7 e 16.0.7](/post/2025-12-07-nextjs-vulnerabilita-startup-devops-dockerfile/nextjs-react2shell-cve.svg)](/post/2025-12-07-nextjs-vulnerabilita-startup-devops-dockerfile/nextjs-react2shell-cve.png)
 
 ![Ecosistema Next.js e Docker](https://github.com/user-attachments/assets/f466f7bd-1695-4f14-bf31-f40d1c6e84a1)
 

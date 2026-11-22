@@ -7,9 +7,21 @@ link previews on social networks.
 
 | Output | Where | Used for |
 |---|---|---|
-| Infographic, SVG | `docs/post/<slug>/<name>.svg` | shown in the article |
+| Infographic, SVG | `docs/public/post/<slug>/<name>.svg` | shown in the article |
 | Infographic, PNG (1600 px) | `docs/public/post/<slug>/<name>.png` | sharing; the SVG in the article links to it |
 | Preview card, PNG (1200×630) | `docs/public/og/<slug>.png` | `og:image` / `twitter:image` |
+
+These files are **generated, not committed**: `docs/public/post/` and
+`docs/public/og/` are in `.gitignore`, and the deploy workflow
+(`.github/workflows/vitepress.yml`) runs `npm run infographics` before
+`vitepress build`. Only the data in `pages/` and the scripts live in git.
+
+In an article, reference an infographic by its absolute public path, linked
+to its PNG:
+
+```md
+[![Alt text describing the data](/post/<slug>/<name>.svg)](/post/<slug>/<name>.png)
+```
 
 The site picks up `docs/public/og/<slug>.png` automatically for every post that
 does not set `image` in its frontmatter (see `transformHead` in
@@ -19,10 +31,17 @@ does not set `image` in its frontmatter (see `transformHead` in
 
 - Python 3.10+ with the packages in `requirements.txt`:
   `pip install -r scripts/infographics/requirements.txt`
-- Node.js with Playwright and its Chromium, used to render SVG to PNG:
-  `npm install --no-save playwright && npx playwright install chromium`
+- Node.js with Playwright and its Chromium, used to render SVG to PNG; the
+  workflow pins the version:
+  `npm install --no-save playwright@1.63.0 && npx playwright install chromium`
 
 ## Usage
+
+For a local preview with the images, generate them first, then start VitePress:
+
+```sh
+npm run infographics && npm run docs:dev
+```
 
 Run from the repository root:
 
@@ -34,7 +53,7 @@ python3 scripts/infographics/build.py cards                   # all cards
 python3 scripts/infographics/build.py cards 2026-10-25-php-nel-2026-php2shell
 ```
 
-After writing a new post, run `build.py cards <slug>` to give it a preview card.
+New posts get their preview card automatically at the next deploy.
 
 ## Adding an infographic
 

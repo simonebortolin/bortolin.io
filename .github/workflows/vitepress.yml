@@ -46,6 +46,22 @@ jobs:
       
       - name: Install dependencies
         run: npm ci
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: scripts/infographics/requirements.txt
+
+      - name: Install infographics dependencies
+        run: |
+          pip install -r scripts/infographics/requirements.txt
+          npm install --no-save playwright@1.63.0
+          npx playwright install --with-deps chromium
+
+      - name: Build infographics and social cards
+        run: npm run infographics
       
       - name: Build with VitePress
         run: npm run docs:build

@@ -1,0 +1,51 @@
+# Builds the whole site, infographics and social cards included, for every
+# pull request, and attaches it to the run as a downloadable zip.
+name: Build site preview for pull requests
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+
+# A new push to the same pull request cancels the build still running.
+concurrency:
+  group: pr-preview-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build site
+        uses: ./.github/actions/build-site
+
+      - name: Upload site as zip
+        id: upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-pr-${{ github.event.pull_request.number }}
+          path: docs/.vitepress/dist
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Write job summary
+        env:
+          ARTIFACT_URL: ${{ steps.upload.outputs.artifact-url }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          {
+            echo "## Site preview for #${PR_NUMBER}"
+            echo
+            echo "Built from \`${HEAD_SHA:0:7}\`: [download site-pr-${PR_NUMBER}.zip](${ARTIFACT_URL}) (kept for 14 days)."
+            echo
+            echo "The site uses absolute paths and clean URLs, so serve it instead of opening the files:"
+            echo
+            echo '```sh'
+            echo "unzip site-pr-${PR_NUMBER}.zip -d site && npx serve site"
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

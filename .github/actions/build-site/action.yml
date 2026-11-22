@@ -1,0 +1,45 @@
+name: Build site
+description: >-
+  Installs the dependencies, generates the infographics and social cards, and
+  builds the VitePress site into docs/.vitepress/dist.
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 20
+        cache: npm
+
+    - name: Install dependencies
+      shell: bash
+      run: npm ci
+
+    - name: Setup Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: pip
+        cache-dependency-path: scripts/infographics/requirements.txt
+
+    - name: Install infographics dependencies
+      shell: bash
+      run: |
+        pip install -r scripts/infographics/requirements.txt
+        npm install --no-save playwright@1.63.0
+        npx playwright install --with-deps chromium
+
+    - name: Build infographics and social cards
+      shell: bash
+      run: npm run infographics
+
+    - name: Build with VitePress
+      shell: bash
+      run: npm run docs:build
+      env:
+        NODE_ENV: production
+
+    - name: Copy CNAME to dist
+      shell: bash
+      run: cp CNAME docs/.vitepress/dist/ || echo "CNAME file not found, skipping"

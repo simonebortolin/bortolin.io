@@ -22,10 +22,10 @@ const config = defineConfig({
     ['link', { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/katex@0.19.1/dist/katex.min.css', integrity: 'sha384-WwGtaC6ywCHxA5cstpj/3+xIZvTez8dq2IcBQaXRkenHZ7FVVq1ZROtURwfbtTlG', crossorigin: 'anonymous' }]
   ],
 
-  // Meta tag Open Graph e Twitter per l'anteprima dei link sui social.
-  // Immagine di anteprima: `image` (percorso da docs/public o URL assoluto) e
-  // `imageAlt` nel frontmatter; in mancanza, per gli articoli, la card
-  // docs/public/og/<slug>.png se esiste.
+  // Open Graph and Twitter meta tags for link previews on social networks.
+  // Preview image: `image` (a path under docs/public or an absolute URL) and
+  // `imageAlt` in the frontmatter; otherwise, for posts, the card
+  // docs/public/og/<slug>.png if it exists (see scripts/infographics).
   transformHead({ pageData, siteData, siteConfig }) {
     const fm = pageData.frontmatter
     const isPost = pageData.relativePath.startsWith('post/')

@@ -26,6 +26,8 @@ excerpt: >-
 >
 > 🇪🇺 Con il **CRA**, «funziona, non toccare» smette di essere una politica di aggiornamento accettabile.
 
+![Infografica: nel log di avvio della FS ONU1710-1G c'è un Linux 2.6.30.9 compilato con gcc 4.4.6 il 20 marzo 2025; la Zyxel PMG3000-D20B, su OpenWrt 12.09 e kernel 3.10.12, ha firmware compilati il 6 febbraio e il 27 maggio 2026](ont-kernel-2009.svg)
+
 Negli ultimi anni la fibra in Italia ha fatto passi enormi. Il GPON, con i suoi 2,5 Gbit/s in download e 1,25 in upload condivisi tra gli utenti di un albero ottico, sta lasciando spazio all'XGS-PON, simmetrico a 10 Gbit/s. Gli operatori vendono profili da 2,5, 5 e 10 Gbit/s, le OLT vengono sostituite, i router hanno porte SFP+.
 
 Poi apri il terminale ottico, l'ONT, e trovi un kernel Linux che non riceve patch da prima della pandemia. In alcuni casi da prima che esistesse l'iPhone 4.
@@ -115,6 +117,10 @@ C'è un dato che i grafici non mostrano: **quando sono stati compilati quei firm
 
 Non sono quindi dispositivi dimenticati. **I produttori rilasciano ancora firmware nuovi**, con correzioni e funzioni nuove, ma ricompilano sempre lo stesso kernel del 2009 o del 2013.
 
+Lo stesso vale per le ONT che gli operatori hanno messo nelle case degli italiani. Ho estratto i rootfs di due varianti della **Vantiva AFM0003**, uno stick GPON Realtek: una delle ONT che TIM distribuiva ai clienti e la versione di Iliad. Il firmware di TIM è del **1° febbraio 2022**, quello di Iliad del **18 gennaio 2023**. Dentro entrambi ci sono lo stesso kernel 2.6.30.9, una BusyBox del dicembre 2008, una uClibc del 2010 e un server telnet avviato come root.
+
+![Infografica: la Vantiva AFM0003 nelle varianti di TIM (firmware V1_7_8_220201 del 1° febbraio 2022) e di Iliad (V1.7.6_230105 del 18 gennaio 2023) ha in entrambi i casi kernel 2.6.30.9, BusyBox 1.12.4, uClibc 0.9.30.3 e telnetd avviato come root da inetd](ont-tim-iliad-afm0003.svg)
+
 E non è un problema solo delle ONT. Proprio in questi giorni Ahmet Göker di CSINT Research ha aperto il firmware europeo di un router Wi-Fi diffusissimo, il **TP-Link TL-WR841N v14**[^csint_wr841n]. Dentro c'è un **Linux 2.6.36**, la cui versione è uscita a ottobre 2010, compilato il **18 maggio 2026** con gcc 4.6.3, Buildroot 2012.11 e la stessa uClibc 0.9.33 delle ONT. La release successiva, pubblicata ad agosto, corregge quattro vulnerabilità segnalate da TP-Link: cambiano otto file, tutti fuori dal kernel. Il kernel viene ricompilato il 21 agosto 2026, e resta un 2.6.36. Un router Wi-Fi, per di più, ricade anche nella [Direttiva RED](/post/2025-08-02-red-direttiva-europea-futuro-modding-firmware/).
 
 ### Quanto sono vecchi, in concreto
@@ -152,15 +158,7 @@ Esistono società e progetti che di mestiere portano le correzioni di sicurezza 
 
 Dal 2024 il kernel Linux è una CNA, cioè assegna da solo i CVE ai propri bug, e pubblica per ognuno la versione in cui il difetto è stato introdotto e quelle in cui è stato corretto[^kernel_cve]. Incrociando questi dati, scaricati dal repository ufficiale[^kernel_vulns] il 19 novembre 2026, con le versioni trovate nei firmware, si ottiene il numero di CVE che **affliggono quella versione e non sono mai state corrette su quel ramo**:
 
-| Kernel | Dove si trova | CVE aperte |
-|---|---|---:|
-| 2.6.30 | Realtek, Luna SDK 1.9 | **1.430** |
-| 3.10 | Lantiq FALC ON | **2.897** |
-| 3.18 | Realtek, Luna SDK 3.3 | **3.544** |
-| 4.4 | XGS-PON, Saturn SDK | **4.041** |
-| 4.14 | KAON PM1191 | **4.587** |
-| 5.10 | Comtrend GRG-4362 | **2.187** |
-| 6.18 | Peter Pon | **112** |
+![Infografica: CVE del kernel ancora aperte sull'ultima versione di ogni ramo. 2.6.30.9 (Luna SDK 1.9): 1.430; 3.10.108 (FALC ON): 2.897; 3.18.140 (Luna SDK 3.3): 3.544; 4.4.302 (Saturn SDK, XGS-PON): 4.041; 4.14.333 (XGS-PON): 4.587; 5.10.274 (XGS-PON, supportato fino a dicembre 2026): 2.187; 6.18.64 (Peter Pon): 112](ont-cve-rami.svg)
 
 I numeri sono calcolati sull'ultima versione di ogni ramo, cioè nel caso migliore: le versioni realmente presenti nei firmware stanno peggio. La Comtrend, per esempio, gira su un 5.10.70, che di CVE aperte ne ha 8.577.
 
@@ -246,6 +244,10 @@ Il confronto con il firmware di serie è quello che rende il progetto interessan
 | Cache istruzioni per Linux | 8 KiB | 32 KiB |
 | Lettura della flash | 50 MHz, 4 byte per comando | 100 MHz, quattro linee, memory-mapped |
 | Dopo un crash | nessuna traccia | console e oops conservati in RAM |
+
+La colonna del firmware di serie l'ho verificata su un dump reale della partizione `image0` di un MA5671A. Il server SSH, Dropbear 2016.73, offre ancora Diffie-Hellman group 1, chiavi `ssh-dss` e 3DES:
+
+![Infografica: il firmware di serie del Huawei MA5671A (immagine SFP_7.5.3) ha kernel 3.10.49 compilato il 25 ottobre 2016 con OpenWrt 14.07, BusyBox 1.22.1 del gennaio 2014, uClibc 0.9.33.2 del maggio 2012 e Dropbear 2016.73 con diffie-hellman-group1-sha1, ssh-dss e 3des-cbc](ont-ma5671a-stock.svg)
 
 Lo stesso chip, lo stesso hardware del 2014. Eppure:
 

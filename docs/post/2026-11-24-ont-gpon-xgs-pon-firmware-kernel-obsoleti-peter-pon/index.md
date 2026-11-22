@@ -2,6 +2,8 @@
 title: "ONT GPON e XGS-PON: fibra del 2026, kernel del 2009"
 date: 2026-11-24
 math: false
+image: /post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-kernel-2009.png
+imageAlt: "Dentro i firmware delle ONT in fibra c'è un kernel del 2009: Linux 2.6.30.9 compilato nel 2025, kernel 3.10.12 ricompilato nel 2026"
 excerpt: >-
     La fibra è passata da GPON a XGS-PON, ma il software delle ONT è rimasto
     indietro di dieci anni: kernel Linux 2.6 e 3.10, SDK proprietari, driver

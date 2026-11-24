@@ -1,6 +1,6 @@
 ---
 title: "ONT GPON e XGS-PON: fibra del 2026, kernel del 2009"
-date: 2026-11-24
+date: 2026-12-01
 math: false
 excerpt: >-
     La fibra è passata da GPON a XGS-PON, ma il software delle ONT è rimasto
@@ -26,7 +26,7 @@ excerpt: >-
 >
 > 🇪🇺 Con il **CRA**, «funziona, non toccare» smette di essere una politica di aggiornamento accettabile.
 
-[![Infografica: nel log di avvio della FS ONU1710-1G c'è un Linux 2.6.30.9 compilato con gcc 4.4.6 il 20 marzo 2025; la Zyxel PMG3000-D20B, su OpenWrt 12.09 e kernel 3.10.12, ha firmware compilati il 6 febbraio e il 27 maggio 2026](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-kernel-2009.svg)](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-kernel-2009.png)
+[![Infografica: nel log di avvio della FS ONU1710-1G c'è un Linux 2.6.30.9 compilato con gcc 4.4.6 il 20 marzo 2025; la Zyxel PMG3000-D20B, su OpenWrt 12.09 e kernel 3.10.12, ha firmware compilati il 6 febbraio e il 27 maggio 2026](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-kernel-2009.svg)](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-kernel-2009.png)
 
 Negli ultimi anni la fibra in Italia ha fatto passi enormi. Il GPON, con i suoi 2,5 Gbit/s in download e 1,25 in upload condivisi tra gli utenti di un albero ottico, sta lasciando spazio all'XGS-PON, simmetrico a 10 Gbit/s. Gli operatori vendono profili da 2,5, 5 e 10 Gbit/s, le OLT vengono sostituite, i router hanno porte SFP+.
 
@@ -119,9 +119,9 @@ Non sono quindi dispositivi dimenticati. **I produttori rilasciano ancora firmwa
 
 Lo stesso vale per le ONT che gli operatori hanno messo nelle case degli italiani. Ho estratto i rootfs di due varianti della **Vantiva AFM0003**, uno stick GPON Realtek: una delle ONT che TIM distribuiva ai clienti e la versione di Iliad. Il firmware di TIM è del **1° febbraio 2022**, quello di Iliad del **18 gennaio 2023**. Dentro entrambi ci sono lo stesso kernel 2.6.30.9, una BusyBox del dicembre 2008, una uClibc del 2010 e un server telnet avviato come root.
 
-[![Infografica: la Vantiva AFM0003 nelle varianti di TIM (firmware V1_7_8_220201 del 1° febbraio 2022) e di Iliad (V1.7.6_230105 del 18 gennaio 2023) ha in entrambi i casi kernel 2.6.30.9, BusyBox 1.12.4, uClibc 0.9.30.3 e telnetd avviato come root da inetd](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-tim-iliad-afm0003.svg)](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-tim-iliad-afm0003.png)
+[![Infografica: la Vantiva AFM0003 nelle varianti di TIM (firmware V1_7_8_220201 del 1° febbraio 2022) e di Iliad (V1.7.6_230105 del 18 gennaio 2023) ha in entrambi i casi kernel 2.6.30.9, BusyBox 1.12.4, uClibc 0.9.30.3 e telnetd avviato come root da inetd](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-tim-iliad-afm0003.svg)](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-tim-iliad-afm0003.png)
 
-E non è un problema solo delle ONT. Proprio in questi giorni Ahmet Göker di CSINT Research ha aperto il firmware europeo di un router Wi-Fi diffusissimo, il **TP-Link TL-WR841N v14**[^csint_wr841n]. Dentro c'è un **Linux 2.6.36**, la cui versione è uscita a ottobre 2010, compilato il **18 maggio 2026** con gcc 4.6.3, Buildroot 2012.11 e la stessa uClibc 0.9.33 delle ONT. La release successiva, pubblicata ad agosto, corregge quattro vulnerabilità segnalate da TP-Link: cambiano otto file, tutti fuori dal kernel. Il kernel viene ricompilato il 21 agosto 2026, e resta un 2.6.36. Un router Wi-Fi, per di più, ricade anche nella [Direttiva RED](/post/2025-08-02-red-direttiva-europea-futuro-modding-firmware/).
+E non è un problema solo delle ONT. A fine novembre Ahmet Göker di CSINT Research ha aperto il firmware europeo di un router Wi-Fi diffusissimo, il **TP-Link TL-WR841N v14**[^csint_wr841n]. Dentro c'è un **Linux 2.6.36**, la cui versione è uscita a ottobre 2010, compilato il **18 maggio 2026** con gcc 4.6.3, Buildroot 2012.11 e la stessa uClibc 0.9.33 delle ONT. La release successiva, pubblicata ad agosto, corregge quattro vulnerabilità segnalate da TP-Link: cambiano otto file, tutti fuori dal kernel. Il kernel viene ricompilato il 21 agosto 2026, e resta un 2.6.36. Un router Wi-Fi, per di più, ricade anche nella [Direttiva RED](/post/2025-08-02-red-direttiva-europea-futuro-modding-firmware/).
 
 ### Quanto sono vecchi, in concreto
 
@@ -148,7 +148,7 @@ Tradotto:
 - la serie **2.6** si è chiusa nel 2011, con la 2.6.39. Dopo è arrivata la 3.0;
 - la **3.10** è stata un kernel LTS, e il suo supporto upstream è finito nel **novembre 2017**;
 - la **4.4** ha chiuso nel **2022**, la **4.14** a **gennaio 2024**;
-- la **5.10**, la più recente che ho trovato, arriva a fine supporto upstream a **dicembre 2026**. Cioè il mese prossimo.
+- la **5.10**, la più recente che ho trovato, arriva a fine supporto upstream a **dicembre 2026**. Cioè questo mese.
 
 In altre parole: **nessuna delle ONT che ho analizzato gira oggi su un kernel con un supporto upstream che vada oltre il 2026**. Le XGS-PON, cioè la tecnologia "nuova", vengono distribuite dagli operatori nel 2026 con kernel che sono già fuori supporto o lo saranno tra poche settimane.
 
@@ -158,7 +158,7 @@ Esistono società e progetti che di mestiere portano le correzioni di sicurezza 
 
 Dal 2024 il kernel Linux è una CNA, cioè assegna da solo i CVE ai propri bug, e pubblica per ognuno la versione in cui il difetto è stato introdotto e quelle in cui è stato corretto[^kernel_cve]. Incrociando questi dati, scaricati dal repository ufficiale[^kernel_vulns] il 19 novembre 2026, con le versioni trovate nei firmware, si ottiene il numero di CVE che **affliggono quella versione e non sono mai state corrette su quel ramo**:
 
-[![Infografica: CVE del kernel ancora aperte sull'ultima versione di ogni ramo. 2.6.30.9 (Luna SDK 1.9): 1.430; 3.10.108 (FALC ON): 2.897; 3.18.140 (Luna SDK 3.3): 3.544; 4.4.302 (Saturn SDK, XGS-PON): 4.041; 4.14.333 (XGS-PON): 4.587; 5.10.274 (XGS-PON, supportato fino a dicembre 2026): 2.187; 6.18.64 (Peter Pon): 112](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-cve-rami.svg)](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-cve-rami.png)
+[![Infografica: CVE del kernel ancora aperte sull'ultima versione di ogni ramo. 2.6.30.9 (Luna SDK 1.9): 1.430; 3.10.108 (FALC ON): 2.897; 3.18.140 (Luna SDK 3.3): 3.544; 4.4.302 (Saturn SDK, XGS-PON): 4.041; 4.14.333 (XGS-PON): 4.587; 5.10.274 (XGS-PON, supportato fino a dicembre 2026): 2.187; 6.18.64 (Peter Pon): 112](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-cve-rami.svg)](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-cve-rami.png)
 
 I numeri sono calcolati sull'ultima versione di ogni ramo, cioè nel caso migliore: le versioni realmente presenti nei firmware stanno peggio. La Comtrend, per esempio, gira su un 5.10.70, che di CVE aperte ne ha 8.577.
 
@@ -247,7 +247,7 @@ Il confronto con il firmware di serie è quello che rende il progetto interessan
 
 La colonna del firmware di serie l'ho verificata su un dump reale della partizione `image0` di un MA5671A. Il server SSH, Dropbear 2016.73, offre ancora Diffie-Hellman group 1, chiavi `ssh-dss` e 3DES:
 
-[![Infografica: il firmware di serie del Huawei MA5671A (immagine SFP_7.5.3) ha kernel 3.10.49 compilato il 25 ottobre 2016 con OpenWrt 14.07, BusyBox 1.22.1 del gennaio 2014, uClibc 0.9.33.2 del maggio 2012 e Dropbear 2016.73 con diffie-hellman-group1-sha1, ssh-dss e 3des-cbc](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-ma5671a-stock.svg)](/post/2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-ma5671a-stock.png)
+[![Infografica: il firmware di serie del Huawei MA5671A (immagine SFP_7.5.3) ha kernel 3.10.49 compilato il 25 ottobre 2016 con OpenWrt 14.07, BusyBox 1.22.1 del gennaio 2014, uClibc 0.9.33.2 del maggio 2012 e Dropbear 2016.73 con diffie-hellman-group1-sha1, ssh-dss e 3des-cbc](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-ma5671a-stock.svg)](/post/2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon/ont-ma5671a-stock.png)
 
 Lo stesso chip, lo stesso hardware del 2014. Eppure:
 

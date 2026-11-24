@@ -5,7 +5,7 @@ from the Hack GPON wiki, the kernel's vulns.git repository and firmware
 dumps of the devices. Text is in Italian, like the article.
 """
 
-POST = "2026-11-24-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon"
+POST = "2026-12-01-ont-gpon-xgs-pon-firmware-kernel-obsoleti-peter-pon"
 
 INFOGRAPHICS = [
     dict(

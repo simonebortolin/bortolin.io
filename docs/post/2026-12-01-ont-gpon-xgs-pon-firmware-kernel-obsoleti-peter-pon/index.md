@@ -6,8 +6,8 @@ excerpt: >-
     La fibra è passata da GPON a XGS-PON, ma il software delle ONT è rimasto
     indietro di dieci anni: kernel Linux 2.6 e 3.10, SDK proprietari, driver
     che non si possono aggiornare, credenziali scritte nel firmware. I dati di
-    Hack GPON, estratti dai binari, lo mostrano, e Peter Pon dimostra che
-    sullo stesso hardware si può fare molto meglio.
+    Hack GPON, estratti dai binari, lo mostrano, e Peter Pon e odi-oss
+    dimostrano che sullo stesso hardware si può fare molto meglio.
 ---
 
 > La rete in fibra va a 10 Gbit/s. Il software che la termina gira su Linux 2.6. In breve:
@@ -22,7 +22,7 @@ excerpt: >-
 >
 > 🔑 Credenziali fisse, segreti derivati dal MAC, cifrari del 2000: **la sicurezza segue il kernel**.
 >
-> 🛠️ **Peter Pon** porta una ONT Lantiq del 2014 su OpenWrt moderno e Linux 6.18, **senza cambiare hardware**.
+> 🛠️ **Peter Pon** porta una ONT Lantiq del 2014 su OpenWrt moderno e Linux 6.18, **odi-oss** fa lo stesso su uno stick Realtek con driver riscritti da zero: **senza cambiare hardware**.
 >
 > 🇪🇺 Con il **CRA**, «funziona, non toccare» smette di essere una politica di aggiornamento accettabile.
 
@@ -267,9 +267,25 @@ Un'analisi critica deve guardare anche l'altro lato.
 - **I driver GPON restano quelli originali**, aggiornati per girare su Linux 6.18, non riscritti. Sono stati pensati per una sola CPU, e infatti girano solo sulla CPU0, con controlli in fase di build e a runtime per impedire che qualcuno li sposti[^peterpon_c5]. Il debito tecnico dell'SDK è contenuto, non eliminato.
 - **Un kernel moderno costa di più**: il progetto stesso misura chiamate di sistema, `fork` ed `exec` da 1,7 a 2 volte più lente rispetto al 3.10[^peterpon_c7]. Su un SoC con 64 MB di RAM non è un dettaglio.
 - **Il codice è scritto con l'IA**: nei crediti il progetto ringrazia Anthropic per Claude, «the AI that built this firmware together with us»[^peterpon]. Chi ha letto il mio [articolo sul CRA](/post/2026-10-11-cyber-resilience-act-responsabilita-software-open-source/) sa che non mi fido del codice che nessuno ha davvero letto prima del commit. Ma qui il punto è un altro: un firmware generato con l'IA **e** coperto da centinaia di test, specifiche e sessioni reali riprodotte offre molte più garanzie di un firmware scritto a mano nel 2014 e mai più guardato. Non conta chi ha scritto il codice: conta cosa si può verificare.
-- **La frammentazione**: intorno a questi stick sono nati molti fork e progetti paralleli, spesso con lo stesso obiettivo. Ne esiste anche almeno uno indipendente che offre un feed OpenWrt con driver GPL per il MA5671A[^ma5671a_openwrt]. Sul fronte Realtek la situazione è la stessa: la community ha prodotto firmware modificati e strumenti per gli stick RTL960x[^rtl960x], ma ognuno lavora sul proprio modello, sempre sopra il Luna SDK originale. Venti fork mantenuti da una persona ciascuno non sono un'alternativa sostenibile a un SDK abbandonato: sono venti SDK abbandonati in potenza. La speranza è che Peter Pon diventi il punto su cui convergere.
+- **La frammentazione**: intorno a questi stick sono nati molti fork e progetti paralleli, spesso con lo stesso obiettivo. Ne esiste anche almeno uno indipendente che offre un feed OpenWrt con driver GPL per il MA5671A[^ma5671a_openwrt]. Sul fronte Realtek la situazione è stata a lungo la stessa: la community ha prodotto firmware modificati e strumenti per gli stick RTL960x[^rtl960x], ognuno sul proprio modello e sempre sopra il Luna SDK originale. odi-oss, di cui parlo tra poco, ne fa finalmente a meno. Venti fork mantenuti da una persona ciascuno non sono un'alternativa sostenibile a un SDK abbandonato: sono venti SDK abbandonati in potenza. La speranza è che progetti come Peter Pon e odi-oss diventino i punti su cui convergere.
 
 Resta il fatto che Peter Pon dimostra una cosa precisa: **si può modernizzare a fondo una piattaforma GPON esistente senza cambiare hardware**. Se lo può fare una piccola comunità su un chip in fine vita, senza documentazione ufficiale, il produttore del chip con i sorgenti in mano poteva farlo dieci anni fa.
+
+### Anche sul fronte Realtek: odi-oss
+
+Peter Pon non è un caso isolato. Sul fronte Realtek c'è **odi-oss**[^odioss]: un firmware aperto per l'**ODI DFP-34X-2C2**, lo stick con SoC RTL9602C, 32 MB di RAM e 8 MB di flash, il cui firmware di serie gira su Linux 2.6.30.
+
+Su un punto il progetto va persino oltre Peter Pon: **non riusa i driver del vendor**. Il driver dello switch e del MAC GPON e il demone OMCI sono scritti da zero e rilasciati sotto GPL, e il kernel è un Linux 6.18 LTS ufficiale, con 19 righe modificate in sei file. Secondo il progetto, nell'immagine non c'è codice proprietario[^odioss].
+
+Anche le scelte di sicurezza sono l'opposto di quelle di serie:
+
+- **niente telnet**, e le immagini di release accettano SSH solo con chiavi, dove il firmware originale apriva telnet con `admin/admin`;
+- un **aggiornamento del firmware inviato dalla OLT** viene accettato e scartato, mai scritto in flash, e una richiesta di riavvio dalla OLT è rifiutata di default;
+- un'**immagine nuova parte in prova** dallo slot inattivo, e se si blocca o non si fa raggiungere entro 300 secondi torna da sola a quella precedente.
+
+Il metodo è lo stesso di Peter Pon: codice scritto con l'assistenza dell'IA, dichiarata apertamente, test sull'host, il demone OMCI riprodotto in un emulatore contro catture reali di due operatori, CI a ogni pull request e due stick in servizio su due linee GPON diverse. Anche il limite è dichiarato con chiarezza: il firmware è scritto per una sola scheda, e gli altri stick con lo stesso SoC sono segnalati dagli utenti ma non provati in laboratorio.
+
+Due progetti indipendenti, su due piattaforme diverse, arrivano allo stesso risultato.
 
 ## Novembre 2026: e se l'aggiornamento rompe tutto?
 
@@ -326,7 +342,7 @@ C'è un ultimo aspetto, che di solito resta fuori da queste discussioni: **la so
 
 Le ONT GPON non diventano inutili perché l'ottica si rompe o perché il SoC non regge il carico. Diventano inutili, o pericolose, perché il software non viene più aggiornato. Il passaggio a XGS-PON è una buona ragione per cambiare hardware; un kernel abbandonato non lo è.
 
-Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per anni sulle linee GPON. Un firmware moderno e mantenuto, come Peter Pon per il FALC ON, è l'unico modo per tenerli in rete senza trasformarli in un rischio. E il modello giusto sarebbe quello che OpenWrt ha già dimostrato sui router: **un sistema comune**, con un motore OMCI e uno userspace condivisi tra le varie piattaforme e solo i driver specifici per ciascun SoC. Con le guide di Hack GPON per installarlo.
+Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per anni sulle linee GPON. Un firmware moderno e mantenuto, come Peter Pon per il FALC ON e odi-oss per lo stick ODI, è l'unico modo per tenerli in rete senza trasformarli in un rischio. E il modello giusto sarebbe quello che OpenWrt ha già dimostrato sui router: **un sistema comune**, con un motore OMCI e uno userspace condivisi tra le varie piattaforme e solo i driver specifici per ciascun SoC. Con le guide di Hack GPON per installarlo.
 
 ## Fraintendimenti comuni
 
@@ -338,9 +354,9 @@ Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per 
 
 - ❌ **Basta installare un firmware modificato per risolvere** → **Falso**. La maggior parte dei firmware modificati cambia identità, interfaccia o configurazione, ma lascia lo stesso kernel e lo stesso SDK.
 
-- ❌ **Peter Pon elimina il codice proprietario** → **Falso**. I driver GPON sono quelli originali aggiornati per Linux 6.18. Cambia tutto il resto: kernel, libreria C, OMCI, toolchain, test.
+- ❌ **Peter Pon elimina il codice proprietario** → **Falso**. I driver GPON sono quelli originali aggiornati per Linux 6.18. Cambia tutto il resto: kernel, libreria C, OMCI, toolchain, test. odi-oss, sullo stick ODI, i driver invece li ha riscritti da zero.
 
-- ❌ **Per avere un software moderno bisogna cambiare hardware** → **Falso**. Peter Pon porta Linux 6.18 su un SoC del 2014 con 64 MB di RAM.
+- ❌ **Per avere un software moderno bisogna cambiare hardware** → **Falso**. Peter Pon porta Linux 6.18 su un SoC del 2014 con 64 MB di RAM, odi-oss su uno stick Realtek con 32 MB.
 
 - ❌ **Il CRA obbligherà a rifare tutte le ONT già vendute** → **Falso**. I requisiti di progettazione valgono per i prodotti immessi sul mercato dal dicembre 2027. Gli obblighi di segnalazione delle vulnerabilità sfruttate, però, valgono già oggi anche per quelli in commercio.
 
@@ -356,6 +372,7 @@ Milioni di stick FALC ON e Realtek sono ancora in servizio, e lo resteranno per 
 [^peterpon_repo]: [metal-stress/peter-pon-openwrt-falcon su GitHub](https://github.com/metal-stress/peter-pon-openwrt-falcon)
 [^ma5671a_openwrt]: [juanmreyesa/ma5671a-openwrt su GitHub](https://github.com/juanmreyesa/ma5671a-openwrt)
 [^rtl960x]: [Anime4000/RTL960x su GitHub](https://github.com/Anime4000/RTL960x)
+[^odioss]: [AndreZiviani/odi-oss su GitHub](https://github.com/AndreZiviani/odi-oss)
 [^hg_ont]: [Hack GPON – ONT, panoramica dei chipset](https://hack-gpon.org/ont/)
 [^hg_fs]: [Hack GPON – FS.com GPON-ONU-34-20BI](https://hack-gpon.org/ont-fs-com-gpon-onu-stick-with-mac/)
 [^hg_onu1710]: [Hack GPON – FS.com ONU1710-1G](https://hack-gpon.org/ont-fs-com-onu1710-1g/)

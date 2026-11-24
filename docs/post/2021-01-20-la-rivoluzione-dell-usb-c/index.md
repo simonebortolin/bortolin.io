@@ -8,7 +8,7 @@ excerpt: >-
 ![](usb-c-kv.jpg)
 
 
-È da 5/6 anni che si sente parlare di USB Type-C, il connettore del futuro che sta conquistando il mondo, il cavo USB Type-C è un cavo a 24 pin reversibile creato dall'USB-IF, la prima specifica è stata rilasciata nell'agosto 2004. Il cavo USB Type-C è un connettore universale che soddisfa le esigenze di una vasta gamma di applicazioni di elaborazione, visualizzazione e ricarica. L'obiettivo a lungo termine del cavo USB Type-C è quello di sostituire tutte le precedenti versioni del connettore USB, ampliando notevolmente le capacità complessive[^AN1953].
+È da 5/6 anni che si sente parlare di USB Type-C, il connettore del futuro che sta conquistando il mondo, il cavo USB Type-C è un cavo a 24 pin reversibile creato dall'USB-IF, la prima specifica è stata rilasciata nell'agosto 2014. Il cavo USB Type-C è un connettore universale che soddisfa le esigenze di una vasta gamma di applicazioni di elaborazione, visualizzazione e ricarica. L'obiettivo a lungo termine del cavo USB Type-C è quello di sostituire tutte le precedenti versioni del connettore USB, ampliando notevolmente le capacità complessive[^AN1953].
 
 ![USB Connector](usb_connector.svg)
 
@@ -79,6 +79,7 @@ La mia prima esperienza con il Sunix UPD2018 ed i monitor DELL P2421DC è stato 
 ### 22 Novembre 2026
 
 - Corretti il numero di linee e la velocità di USB 3.2 Gen 1×2, Gen 2×1 e Gen 2×2
+- Corretta la data della prima specifica USB Type-C: agosto 2014, non 2004
 - Aggiunta un'infografica su velocità, potenza, modalità alternative e caricatore unico europeo
 
 

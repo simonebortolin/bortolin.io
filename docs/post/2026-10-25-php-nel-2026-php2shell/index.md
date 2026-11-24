@@ -56,6 +56,8 @@ La cronologia, ricostruita da più fonti (che non sono sempre d'accordo tra loro
 
 Le versioni corrette sono **8.5.12**, **8.4.27**, **8.3.36** e **8.2.35**[^recordedfuture]. PHP 8.1 e precedenti sono fuori supporto e **non ricevono patch ufficiali**: esistono backport dei sorgenti per 8.1, 8.0 e 7.4, ma vanno compilati a mano. watchTowr ha confermato che sono vulnerabili anche rami antichissimi, **PHP 5 compreso**[^watchtowr].
 
+[![Infografica: PHP2Shell secondo i dati ufficiali. Su NVD CVE-2026-109618 e CVE-2026-109619 risultano pubblicate il 21 ottobre 2026 con CVSS 4.0 di 9,2 assegnato da security@php.net. Su php.net le versioni rilasciate il 21 ottobre 2026 sono 8.5.12, 8.4.27, 8.3.36 e 8.2.35; PHP 8.1 e precedenti non hanno patch ufficiali](/post/2026-10-25-php-nel-2026-php2shell/php2shell-cve.svg)](/post/2026-10-25-php-nel-2026-php2shell/php2shell-cve.png)
+
 ### Come funzionano (a grandi linee)
 
 Non entro nei dettagli dello sfruttamento: ci sono già PoC pubblici e non serve aggiungerne. Il meccanismo generale però è istruttivo.

@@ -6,7 +6,7 @@ math: false
 
 Negli ultimi anni abbiamo assistito a una proliferazione di framework "full-stack" progettati per ridurre al minimo la complessità percepita dagli sviluppatori. Next.js è il re indiscusso di questa generazione: semplice, elegante, potente, con un ecosistema che promette di risolvere tutto — routing, rendering, API, streaming, edge computing, deployment.
 
-Ed è proprio per questo che la recente vulnerabilità critica di Next.js ([CVE-2025-55182](https://www.cve.org/CVERecord?id=CVE-2025-55182) / [CVE-2025-66478](https://nextjs.org/blog/CVE-2025-66478)) è stata così rischiosa.  
+Ed è proprio per questo che la recente vulnerabilità critica di Next.js ([CVE-2025-55182](https://www.cve.org/CVERecord?id=CVE-2025-55182), annunciata da Next.js anche come [CVE-2025-66478](https://nextjs.org/blog/CVE-2025-66478), poi respinta come doppione) è stata così rischiosa.  
 Non perché fosse tecnicamente più devastante di altre, ma perché ha colpito **esattamente il posto dove il mondo startup è più fragile: la fiducia cieca nella magia dei framework moderni**.
 
 Una vulnerabilità nella supply chain di un framework così diffuso può generare un impatto **peggiore di Log4j**, non tanto per la gravità intrinseca, quanto per la massa di progetti che dipendono da esso, spesso mantenuti da team piccolissimi e senza competenze DevOps.
@@ -26,7 +26,7 @@ Una vulnerabilità nella supply chain di un framework così diffuso può generar
 
 ## Non è solo una CVE: è un fallimento culturale
 
-La vulnerabilità in sé rientra nell'ampio spettro degli errori di validazione e isolamento che abbiamo già visto più volte negli ultimi anni: possibilità di accedere a percorsi non previsti, esposizione di file interni, bypass del layer server-side.
+La vulnerabilità in sé è un'**esecuzione di codice remota senza autenticazione** nei React Server Components, che Next.js usa nell'App Router: il codice vulnerabile deserializza in modo non sicuro i dati delle richieste HTTP dirette agli endpoint delle Server Function. È un errore di validazione che abbiamo già visto più volte negli ultimi anni, in altre forme.
 
 Il punto non è "quanto fosse grave il bug".  
 Il punto è che **ha colpito l'ecosistema che meno è preparato a gestirlo**.
@@ -65,7 +65,7 @@ E quando qualcosa si rompe — come nel caso di questa vulnerabilità Next.js �
 - credenziali lasciate in chiaro negli environment,  
 - static build che includono file mai destinati alla produzione.
 
-Questa falla ha permesso di leggere file server-side che **non avrebbero mai dovuto essere esposti**, e in molte installazioni improprie era possibile risalire a:
+Con un'esecuzione di codice remota, chi attacca può leggere tutto ciò che il processo vede, compresi file che **non avrebbero mai dovuto essere esposti**, e in molte installazioni improprie era possibile risalire a:
 
 - variabili d'ambiente sensibili,  
 - chiavi API,  
@@ -258,7 +258,7 @@ Ma:
 - gli ENV sono esposti con docker inspect;
 - se Next.js espone anche un file della build, le chiavi finiscono fuori.
 
-Questo è stato uno dei vettori più sfruttati nella vulnerabilità.
+Con un'esecuzione di codice remota, è la prima cosa che chi attacca va a leggere.
 
 ### Il Dockerfile "multi-process", con tutto nello stesso container
 
@@ -402,7 +402,7 @@ Quando arriva un incidente, senza log si vola alla cieca:
 - non sai da quanto è successo.
 
 E in uno scenario come quello della vulnerabilità Next.js —
-che può esporre file, segreti, variabili d'ambiente, o causare errori interni —
+che permette di eseguire codice sul server, e quindi di leggere file, segreti e variabili d'ambiente —
 la mancanza di logging rende impossibile capire se sei stato colpito, e quanto.
 
 Senza HEALTHCHECK e senza log, un'infrastruttura moderna è come un aereo senza strumenti:
@@ -423,9 +423,9 @@ può anche decollare, ma è solo questione di tempo prima che cada.
 
 Risultato:
 
-Una vulnerabilità moderata si trasforma in una compromissione totale dell'infrastruttura.
-Peggio di Log4j? Non dal punto di vista tecnico.
-Sì dal punto di vista operativo.
+Una vulnerabilità applicativa si trasforma in una compromissione totale dell'infrastruttura.
+Peggio di Log4j? Dal punto di vista tecnico sono della stessa categoria: un'esecuzione di codice remota da CVSS 10.
+Dal punto di vista operativo, sì.
 
 Perché in Log4j c'erano gli enterprise team.
 Qui c'erano due sviluppatori full-stack e un Dockerfile copiato da internet.
@@ -495,7 +495,7 @@ E un ecosistema complesso richiede cultura, non solo tool.
 
 ## Conclusione
 
-Questa vulnerabilità non passerà alla storia per la sua gravità tecnica.  
+Questa vulnerabilità non passerà alla storia solo per la sua gravità tecnica.  
 Passerà alla storia come **l'ennesima dimostrazione che lo sviluppo moderno è fragile**:
 
 - troppi strati,
@@ -513,3 +513,10 @@ E finché il DevOps verrà trattato come "una cosa che fa Docker", continueremo 
 
 > Non temere il bug zero-day.  
 > Tieni d'occhio l'infrastruttura costruita in fretta.
+
+## Changelog
+
+### 24 Novembre 2026
+
+- Corretta la descrizione della vulnerabilità secondo NVD: è un'esecuzione di codice remota senza autenticazione (CVSS 10), non un'esposizione di file; CVE-2025-66478 è stata respinta come doppione di CVE-2025-55182
+- Aggiunta un'infografica con i dati di NVD e le versioni correttive
